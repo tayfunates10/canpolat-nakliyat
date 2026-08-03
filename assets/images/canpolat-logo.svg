@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 96" role="img" aria-labelledby="title desc">
+<title id="title">Canpolat Nakliyat</title>
+<desc id="desc">Turuncu rota oku ve lacivert C harfinden oluşan Canpolat Nakliyat logosu</desc>
+<g fill="none" fill-rule="evenodd">
+  <path d="M55 12a36 36 0 1 0 0 72c15 0 27-7 33-18" stroke="#14283B" stroke-width="12" stroke-linecap="round"/>
+  <path d="M55 30h44l-13-13" stroke="#F28C18" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M99 30 86 43" stroke="#F28C18" stroke-width="11" stroke-linecap="round"/>
+  <circle cx="55" cy="48" r="8" fill="#F28C18"/>
+  <text x="120" y="48" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="800" letter-spacing=".8" fill="#F28C18">CANPOLAT</text>
+  <text x="122" y="72" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" letter-spacing="3.2" fill="#14283B">EVDEN EVE NAKLİYAT</text>
+</g>
+</svg>
