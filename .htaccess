@@ -2,11 +2,15 @@ Options -Indexes
 DirectoryIndex index.html
 AddDefaultCharset UTF-8
 
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteCond %{HTTPS} !=on
-  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
-</IfModule>
+# HTTPS yönlendirmesi, canpolatnakliyat.com için geçerli SSL sertifikası
+# doğrulandıktan sonra aşağıdaki bloğun başındaki # işaretleri kaldırılarak
+# etkinleştirilmelidir. SSL hazır değilken zorunlu yönlendirme siteyi erişilemez
+# hâle getirebilir.
+# <IfModule mod_rewrite.c>
+#   RewriteEngine On
+#   RewriteCond %{HTTPS} !=on
+#   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+# </IfModule>
 
 <IfModule mod_headers.c>
   Header always set X-Content-Type-Options "nosniff"
