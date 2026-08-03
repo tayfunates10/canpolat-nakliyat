@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 118" role="img" aria-labelledby="title desc">
+  <title id="title">Canpolat Evden Eve Nakliye</title>
+  <desc id="desc">Turuncu A ve koyu antrasit C monogramı ile Canpolat Evden Eve Nakliye yazısı</desc>
+  <g fill="none" fill-rule="evenodd">
+    <path d="M82 18A43 43 0 1 0 83 99c15 0 29-7 38-18" stroke="#303640" stroke-width="15" stroke-linecap="butt"/>
+    <path d="M33 103 76 17l43 86H99L76 56l-24 47H33Z" fill="#ED7B00"/>
+    <path d="M61 77h39l9 18H52l9-18Z" fill="#ED7B00"/>
+    <path d="M106 102h18v10h-18z" fill="#ED7B00"/>
+    <text x="142" y="65" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="800" letter-spacing=".3" fill="#ED7B00">CANPOLAT</text>
+    <text x="145" y="98" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="800" letter-spacing=".4" fill="#303640">EVDEN EVE NAKLİYE</text>
+  </g>
+</svg>

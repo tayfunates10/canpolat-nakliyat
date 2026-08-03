@@ -1,0 +1,10 @@
+{
+  "name": "canpolat-nakliyat",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Canpolat Nakliyat kurumsal web sitesi",
+  "scripts": {
+    "serve": "python3 -m http.server 8099",
+    "test": "node tests/site-audit.js"
+  }
+}
