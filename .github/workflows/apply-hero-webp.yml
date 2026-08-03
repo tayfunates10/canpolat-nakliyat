@@ -118,3 +118,5 @@ jobs:
           git add -- assets/images/hero/canpolat-hero-bg.webp assets/css/style.css .htaccess '*.html' bolgeler hizmetler
           git commit -m 'feat: apply responsive WebP hero background'
           git push origin HEAD:main
+
+# trigger: second-pass
