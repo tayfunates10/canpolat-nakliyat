@@ -7,6 +7,8 @@ on:
     paths:
       - '.hero-assets/**'
       - '.github/workflows/apply-hero-webp.yml'
+  issues:
+    types: [opened]
 
 permissions:
   contents: write
@@ -119,4 +121,4 @@ jobs:
           git commit -m 'feat: apply responsive WebP hero background'
           git push origin HEAD:main
 
-# trigger: second-pass
+# trigger: issue-event
