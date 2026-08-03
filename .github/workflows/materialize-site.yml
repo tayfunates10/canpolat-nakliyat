@@ -1,0 +1,52 @@
+name: Materialize Canpolat site
+
+on:
+  push:
+    branches:
+      - feat/canpolat-full-redesign
+    paths:
+      - '.site-package/**'
+      - '.github/workflows/materialize-site.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: feat/canpolat-full-redesign
+          fetch-depth: 0
+
+      - name: Restore website files
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .site-package/part-* > /tmp/canpolat-site.tar.gz.b64
+          base64 --decode /tmp/canpolat-site.tar.gz.b64 > /tmp/canpolat-site.tar.gz
+          tar -xzf /tmp/canpolat-site.tar.gz -C .
+
+      - name: Validate generated website
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/site-audit.js
+
+      - name: Commit materialized website
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm -r -- .site-package
+          git add -- .htaccess 404.html README.md index.html manifest.webmanifest package.json robots.txt sitemap.xml gizlilik.html hakkimizda.html assets bolgeler hizmetler tests
+          if git diff --cached --quiet; then
+            echo 'No generated changes to commit.'
+            exit 0
+          fi
+          git commit -m 'feat: build Canpolat Nakliyat corporate website'
+          git push origin HEAD:feat/canpolat-full-redesign
