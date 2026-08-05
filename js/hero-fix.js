@@ -57,43 +57,60 @@
     });
   }
 
-  function createRoute(crop) {
-    var ns = 'http://www.w3.org/2000/svg';
-    var svg = document.createElementNS(ns, 'svg');
-    var path = document.createElementNS(ns, 'path');
-    var pin = document.createElementNS(ns, 'g');
-    var pinBody = document.createElementNS(ns, 'path');
-    var pinHole = document.createElementNS(ns, 'circle');
-
-    svg.setAttribute('class', 'hero-fixed-route hero-fixed-item');
-    svg.setAttribute('viewBox', '0 0 1536 1024');
-    svg.setAttribute('aria-hidden', 'true');
-    svg.style.left = (-crop.x / crop.w * 100) + '%';
-    svg.style.top = (-crop.y / crop.h * 100) + '%';
-    svg.style.width = (1536 / crop.w * 100) + '%';
-    svg.style.height = (1024 / crop.h * 100) + '%';
-
-    path.setAttribute('d', 'M748 190 C680 171 595 182 510 214 C435 242 382 300 357 350 C338 394 353 449 416 496 C440 512 468 518 493 513');
-    path.setAttribute('class', 'hero-fixed-route__path');
-
-    pin.setAttribute('transform', 'translate(408 260)');
-    pinBody.setAttribute('d', 'M0-21c-12 0-21 9-21 21 0 16 21 37 21 37S21 16 21 0C21-12 12-21 0-21Z');
-    pinBody.setAttribute('class', 'hero-fixed-route__pin');
-    pinHole.setAttribute('r', '7');
-    pinHole.setAttribute('class', 'hero-fixed-route__hole');
-
-    pin.appendChild(pinBody);
-    pin.appendChild(pinHole);
-    svg.appendChild(path);
-    svg.appendChild(pin);
-    return svg;
-  }
-
   function applyCrop(element, crop) {
     element.style.left = (-crop.x / crop.w * 100) + '%';
     element.style.top = (-crop.y / crop.h * 100) + '%';
     element.style.width = (1536 / crop.w * 100) + '%';
     element.style.height = (1024 / crop.h * 100) + '%';
+  }
+
+  function createRoutePng(crop) {
+    var source = document.createElement('canvas');
+    var context = source.getContext('2d');
+    var image = new Image();
+    var pinX = 305;
+    var pinY = 145;
+
+    source.width = 1536;
+    source.height = 1024;
+
+    context.save();
+    context.strokeStyle = '#f7931e';
+    context.lineWidth = 4;
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
+    context.setLineDash([12, 10]);
+    context.beginPath();
+    context.moveTo(642, 73);
+    context.bezierCurveTo(535, 31, 395, 56, 315, 128);
+    context.bezierCurveTo(253, 187, 232, 283, 268, 350);
+    context.bezierCurveTo(286, 383, 318, 405, 358, 417);
+    context.stroke();
+    context.restore();
+
+    context.save();
+    context.fillStyle = '#f7a51a';
+    context.beginPath();
+    context.moveTo(pinX, pinY + 25);
+    context.bezierCurveTo(pinX - 7, pinY + 14, pinX - 20, pinY + 2, pinX - 20, pinY - 10);
+    context.bezierCurveTo(pinX - 20, pinY - 23, pinX - 11, pinY - 32, pinX, pinY - 32);
+    context.bezierCurveTo(pinX + 11, pinY - 32, pinX + 20, pinY - 23, pinX + 20, pinY - 10);
+    context.bezierCurveTo(pinX + 20, pinY + 2, pinX + 7, pinY + 14, pinX, pinY + 25);
+    context.closePath();
+    context.fill();
+
+    context.fillStyle = '#06121b';
+    context.beginPath();
+    context.arc(pinX, pinY - 10, 7, 0, Math.PI * 2);
+    context.fill();
+    context.restore();
+
+    image.className = 'hero-fixed-route hero-fixed-route--png hero-fixed-item';
+    image.alt = '';
+    image.decoding = 'async';
+    image.src = source.toDataURL('image/png');
+    applyCrop(image, crop);
+    return image;
   }
 
   function createLayer(canvas, crop, spec) {
@@ -163,13 +180,13 @@
     base.alt = '';
     base.decoding = 'async';
     base.fetchPriority = 'high';
-    base.src = 'assets/images/hero-parts/base.webp?v=20260806-3';
+    base.src = 'assets/images/hero-parts/base-clean.webp?v=20260806-4';
     applyCrop(base, crop);
 
     scene.appendChild(viewport);
     viewport.appendChild(canvas);
     canvas.appendChild(base);
-    canvas.appendChild(createRoute(crop));
+    canvas.appendChild(createRoutePng(crop));
 
     var specifications = [
       { name: 'plant', file: 'plant.webp', x: 1490, depth: 126, scale: 0.55, enterX: 20, enterY: 16, delay: 0.12, z: 3 },
