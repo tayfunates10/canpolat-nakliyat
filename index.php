@@ -12,10 +12,10 @@ if ($html === false) {
 }
 
 $assets = <<<'HTML'
-  <link rel="stylesheet" href="css/hero-fix.css?v=20260806-2">
-  <link rel="stylesheet" href="css/hero-base-fix.css?v=20260806-2">
-  <script src="js/hero-fix.js?v=20260806-2" defer></script>
-  <script src="js/hero-base-fix.js?v=20260806-2" defer></script>
+  <link rel="stylesheet" href="css/hero-fix.css?v=20260806-3">
+  <link rel="stylesheet" href="css/hero-base-fix.css?v=20260806-3">
+  <script src="js/hero-fix.js?v=20260806-3" defer></script>
+  <script src="js/hero-base-fix.js?v=20260806-3" defer></script>
 HTML;
 
 if (strpos($html, '</head>') !== false) {
