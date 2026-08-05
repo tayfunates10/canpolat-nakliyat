@@ -1,0 +1,10 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=$HOME/public_html/canpolatnakliyat.com/
+    - /bin/mkdir -p "$DEPLOYPATH"
+    - /usr/bin/find "$DEPLOYPATH" -mindepth 1 -maxdepth 1 ! -name 'cgi-bin' ! -name '.well-known' -exec /bin/rm -rf -- {} +
+    - /bin/cp -a index.html 404.html hakkimizda.html gizlilik.html robots.txt sitemap.xml manifest.webmanifest .htaccess assets css js hizmetler bolgeler "$DEPLOYPATH"
+    - /usr/bin/find "$DEPLOYPATH" -type d -exec /bin/chmod 755 {} +
+    - /usr/bin/find "$DEPLOYPATH" -type f -exec /bin/chmod 644 {} +
+    - /usr/bin/test -s "$DEPLOYPATH/index.html"
