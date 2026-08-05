@@ -45,22 +45,23 @@
 .hero-fixed-base {
   z-index: 1;
   object-fit: contain;
-  filter: none !important;
 }
 
 .hero-fixed-route {
-  z-index: 2;
+  z-index: 20;
   opacity: 0;
+  overflow: visible;
   transition: opacity 650ms ease 120ms;
 }
 
 .hero-fixed-route__path {
   fill: none;
   stroke: #ff6a0c;
-  stroke-width: 4;
+  stroke-width: 5;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: 15 12;
+  vector-effect: non-scaling-stroke;
 }
 
 .hero-fixed-route__pin {
@@ -101,6 +102,10 @@
   .hero-fixed-scene {
     width: 100%;
   }
+
+  .hero-fixed-route__path {
+    stroke-width: 5.5;
+  }
 }
 
 @media (max-width: 767px) {
@@ -110,6 +115,20 @@
 
   .hero-fixed-scene__viewport {
     min-height: 0;
+  }
+
+  .hero-fixed-route {
+    z-index: 20;
+    opacity: 0;
+  }
+
+  .hero-fixed-scene.is-ready .hero-fixed-route {
+    opacity: 1;
+  }
+
+  .hero-fixed-route__path {
+    stroke-width: 6;
+    stroke-dasharray: 12 10;
   }
 }
 
