@@ -1,9 +1,9 @@
 (function () {
   'use strict';
 
-  var DESKTOP_CROP = { x: 95, y: 70, w: 1441, h: 885 };
-  var TABLET_CROP = { x: 175, y: 70, w: 1290, h: 900 };
-  var MOBILE_CROP = { x: 245, y: 80, w: 1220, h: 905 };
+  var DESKTOP_CROP = { x: 50, y: 60, w: 1486, h: 900 };
+  var TABLET_CROP = { x: 60, y: 70, w: 1476, h: 900 };
+  var MOBILE_CROP = { x: 55, y: 80, w: 1481, h: 900 };
   var mountedMode = '';
   var resizeTimer = 0;
 
