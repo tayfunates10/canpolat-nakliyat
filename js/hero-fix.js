@@ -163,14 +163,13 @@
     base.alt = '';
     base.decoding = 'async';
     base.fetchPriority = 'high';
-    base.src = 'assets/images/hero-parts/base-clean.webp';
+    base.src = 'assets/images/hero-parts/base.webp?v=20260806-3';
     applyCrop(base, crop);
 
     scene.appendChild(viewport);
     viewport.appendChild(canvas);
     canvas.appendChild(base);
-
-    if (currentMode !== 'mobile') canvas.appendChild(createRoute(crop));
+    canvas.appendChild(createRoute(crop));
 
     var specifications = [
       { name: 'plant', file: 'plant.webp', x: 1490, depth: 126, scale: 0.55, enterX: 20, enterY: 16, delay: 0.12, z: 3 },
