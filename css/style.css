@@ -664,26 +664,20 @@ html.is-menu-open body { overflow: hidden; }
   align-self: center;
   padding-left: 18px;
 }
+.hero__picture {
+  display: block;
+  position: relative;
+  z-index: 1;
+}
 .hero__image {
   position: relative;
   z-index: 1;
   width: 100%;
   height: auto;
-  max-height: 430px;
-  aspect-ratio: 900 / 620;
+  max-height: 440px;
+  aspect-ratio: 16 / 9;
   object-fit: contain;
   object-position: right bottom;
-}
-
-/* Dekoratif rota çizgisi — görselin arkasında kalır */
-.hero__route {
-  position: absolute;
-  top: 2%;
-  left: 0;
-  z-index: 0;
-  width: 62%;
-  height: auto;
-  pointer-events: none;
 }
 
 /* Lokasyon rozeti */
@@ -1440,10 +1434,9 @@ html.is-menu-open body { overflow: hidden; }
   }
   .trust-item { padding: 0 12px; }
   .trust-item__text { font-size: 11.5px; }
-  .hero__badge {
-    width: 92px;
-    height: 92px;
-  }
+  /* Dar çerçeveli sahne sürümünün oranı */
+  .hero__image { aspect-ratio: 1000 / 789; }
+  .hero__badge { display: none; }
 
   /* Hizmetler: 3 sütun */
   .services__grid { grid-template-columns: repeat(3, 1fr); }
@@ -1558,17 +1551,10 @@ html.is-menu-open body { overflow: hidden; }
     margin: 4px 0 0;
   }
   .hero__image {
-    height: 300px;
-    max-height: 330px;
-    aspect-ratio: auto;
+    height: auto;
+    max-height: none;
     object-position: center bottom;
   }
-  .hero__route {
-    top: 12%;
-    width: 55%;
-  }
-  .hero__badge { display: none; }
-
   /* Dekoratif slider noktaları */
   .hero__dots {
     display: flex;
@@ -1896,8 +1882,6 @@ html.is-menu-open body { overflow: hidden; }
 
   .hero__title { font-size: clamp(30px, 9.6vw, 38px); }
   .hero__text { font-size: 13px; }
-  .hero__image { height: 262px; }
-
   .trust-item {
     gap: 5px;
     padding: 0 4px;

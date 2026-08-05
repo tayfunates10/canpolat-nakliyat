@@ -19,7 +19,7 @@
   <meta property="og:description" content="Canpolat Nakliyat; Edremit, Akçay, Altınoluk, Havran ve çevresinde evden eve, şehirler arası, ofis ve asansörlü taşıma hizmeti sunar.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.canpolatnakliyat.com/">
-  <meta property="og:image" content="https://www.canpolatnakliyat.com/assets/images/hero-canpolat.png">
+  <meta property="og:image" content="https://www.canpolatnakliyat.com/assets/images/hero-canpolat.webp">
   <meta property="og:locale" content="tr_TR">
   <meta property="og:site_name" content="Canpolat Nakliyat">
 
@@ -27,11 +27,12 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Canpolat Nakliyat | Edremit Evden Eve ve Şehirler Arası Nakliyat">
   <meta name="twitter:description" content="Canpolat Nakliyat; Edremit, Akçay, Altınoluk, Havran ve çevresinde evden eve, şehirler arası, ofis ve asansörlü taşıma hizmeti sunar.">
-  <meta name="twitter:image" content="https://www.canpolatnakliyat.com/assets/images/hero-canpolat.png">
+  <meta name="twitter:image" content="https://www.canpolatnakliyat.com/assets/images/hero-canpolat.webp">
 
   <!-- Görsel ve stil kaynakları -->
   <link rel="icon" href="assets/images/logo-canpolat.png" type="image/png">
-  <link rel="preload" as="image" href="assets/images/hero-canpolat.png" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/images/hero-canpolat.webp" fetchpriority="high" media="(min-width: 992px)">
+  <link rel="preload" as="image" href="assets/images/hero-canpolat-mobil.webp" fetchpriority="high" media="(max-width: 991px)">
   <link rel="stylesheet" href="css/style.css">
   <script src="js/script.js" defer></script>
 
@@ -346,22 +347,13 @@
 
         <!-- Hero görseli (mobilde metnin altında görünür) -->
         <div class="hero__media">
-          <img class="hero__image" src="assets/images/hero-canpolat.png"
-               alt="Canpolat Nakliyat kamyonu ve taşıma ekibi" width="900" height="620"
-               fetchpriority="high" decoding="async">
-
-          <!-- Dekoratif rota çizgisi -->
-          <svg class="hero__route" viewBox="0 0 420 340" aria-hidden="true" focusable="false">
-            <path d="M18 300 C 18 210, 90 232, 118 190 C 150 142, 96 96, 140 72 C 190 46, 280 60, 336 46"
-                  fill="none" stroke="var(--color-orange)" stroke-width="2"
-                  stroke-dasharray="7 9" stroke-linecap="round" opacity=".85"/>
-            <path d="M336 46 a12 12 0 1 0 .1 0" fill="none" stroke="var(--color-orange)"
-                  stroke-width="2" stroke-dasharray="7 9" opacity=".7"/>
-            <circle cx="18" cy="300" r="5" fill="var(--color-orange)"/>
-            <path d="M352 12c-7.7 0-14 6.3-14 14 0 10.5 14 24 14 24s14-13.5 14-24c0-7.7-6.3-14-14-14z"
-                  fill="var(--color-orange)"/>
-            <circle cx="352" cy="26" r="5" fill="var(--color-bg-deep)"/>
-          </svg>
+          <picture class="hero__picture">
+            <!-- Tablet ve mobilde sahnenin dar çerçeveli sürümü kullanılır (kamyon daha büyük görünür) -->
+            <source media="(max-width: 991px)" srcset="assets/images/hero-canpolat-mobil.webp">
+            <img class="hero__image" src="assets/images/hero-canpolat.webp"
+                 alt="Canpolat Nakliyat kamyonu, taşıma ekibi, asansörlü taşıma aracı ve paketlenmiş eşyalar"
+                 width="1600" height="900" fetchpriority="high" decoding="async">
+          </picture>
 
           <!-- Lokasyon rozeti -->
           <div class="hero__badge" aria-hidden="true">
