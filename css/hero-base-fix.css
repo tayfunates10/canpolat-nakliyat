@@ -4,7 +4,7 @@
   visibility: visible !important;
   opacity: 1 !important;
   z-index: 1 !important;
-  filter: brightness(1.08) contrast(1.02) !important;
+  filter: brightness(1.18) contrast(1.02) saturate(1.04) !important;
 }
 
 .hero-fixed-scene__canvas,
