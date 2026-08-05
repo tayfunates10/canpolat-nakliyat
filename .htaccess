@@ -1,5 +1,5 @@
 Options -Indexes
-DirectoryIndex index.html
+DirectoryIndex index.php index.html
 AddDefaultCharset UTF-8
 
 # HTTPS yönlendirmesi, canpolatnakliyat.com için geçerli SSL sertifikası
@@ -25,6 +25,7 @@ AddDefaultCharset UTF-8
   ExpiresByType text/css "access plus 30 days"
   ExpiresByType application/javascript "access plus 30 days"
   ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
   ExpiresByType image/webp "access plus 1 year"
 </IfModule>
 
