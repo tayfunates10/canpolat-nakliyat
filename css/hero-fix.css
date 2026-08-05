@@ -1,0 +1,124 @@
+.hero__media:has(.hero-fixed-scene) .hero__picture,
+.hero__media:has(.hero-fixed-scene) .hero__badge {
+  display: none !important;
+}
+
+.hero-fixed-scene {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  opacity: 0;
+  overflow: hidden;
+  isolation: isolate;
+  transition: opacity 240ms ease;
+}
+
+.hero-fixed-scene.is-mounted {
+  opacity: 1;
+}
+
+.hero-fixed-scene__viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--hero-crop-w) / var(--hero-crop-h);
+  overflow: hidden;
+}
+
+.hero-fixed-scene__canvas {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.hero-fixed-item,
+.hero-fixed-layer,
+.hero-fixed-route {
+  position: absolute;
+  display: block;
+  max-width: none;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  backface-visibility: hidden;
+}
+
+.hero-fixed-base {
+  z-index: 1;
+  object-fit: contain;
+  filter: none !important;
+}
+
+.hero-fixed-route {
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 650ms ease 120ms;
+}
+
+.hero-fixed-route__path {
+  fill: none;
+  stroke: #ff6a0c;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 15 12;
+}
+
+.hero-fixed-route__pin {
+  fill: #ff6a0c;
+}
+
+.hero-fixed-route__hole {
+  fill: #06121b;
+}
+
+.hero-fixed-layer {
+  z-index: var(--hero-z, 3);
+  height: auto;
+  opacity: 0;
+  filter: none !important;
+  transform: translate3d(var(--hero-enter-x, 0), var(--hero-enter-y, 0), 0);
+  transition:
+    opacity 700ms ease var(--hero-delay, 0s),
+    transform 900ms cubic-bezier(.22, 1, .36, 1) var(--hero-delay, 0s);
+}
+
+.hero-fixed-scene.is-ready .hero-fixed-route,
+.hero-fixed-scene.is-ready .hero-fixed-layer {
+  opacity: 1;
+}
+
+.hero-fixed-scene.is-ready .hero-fixed-layer {
+  transform: translate3d(0, 0, 0);
+}
+
+@media (max-width: 991px) {
+  .hero__media {
+    width: 100%;
+    max-width: 900px;
+    margin-inline: auto;
+  }
+
+  .hero-fixed-scene {
+    width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero__media {
+    margin-top: 6px;
+  }
+
+  .hero-fixed-scene__viewport {
+    min-height: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-fixed-scene,
+  .hero-fixed-route,
+  .hero-fixed-layer {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
