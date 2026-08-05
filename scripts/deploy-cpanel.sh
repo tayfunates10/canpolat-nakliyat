@@ -15,6 +15,7 @@ cleanup() {
 trap cleanup EXIT
 
 publish_paths=(
+  "index.php"
   "index.html"
   "404.html"
   "hakkimizda.html"
@@ -55,6 +56,10 @@ cp -a "${REPO_ROOT}/tools/hero/parts/." \
   "${STAGING_PATH}/assets/images/hero-parts/"
 
 # Temel çıktı doğrulaması: eksik veya boş bir paket canlı siteyi değiştirmesin.
+[[ -s "${STAGING_PATH}/index.php" ]] || {
+  echo "HATA: index.php boş veya oluşturulamadı." >&2
+  exit 1
+}
 [[ -s "${STAGING_PATH}/index.html" ]] || {
   echo "HATA: index.html boş veya oluşturulamadı." >&2
   exit 1
@@ -63,12 +68,28 @@ cp -a "${REPO_ROOT}/tools/hero/parts/." \
   echo "HATA: css/style.css boş veya oluşturulamadı." >&2
   exit 1
 }
+[[ -s "${STAGING_PATH}/css/hero-fix.css" ]] || {
+  echo "HATA: css/hero-fix.css boş veya oluşturulamadı." >&2
+  exit 1
+}
 [[ -s "${STAGING_PATH}/js/script.js" ]] || {
   echo "HATA: js/script.js boş veya oluşturulamadı." >&2
   exit 1
 }
-[[ -s "${STAGING_PATH}/assets/images/hero-parts/base.webp" ]] || {
-  echo "HATA: Katmanlı hero temel görseli oluşturulamadı." >&2
+[[ -s "${STAGING_PATH}/js/hero-fix.js" ]] || {
+  echo "HATA: js/hero-fix.js boş veya oluşturulamadı." >&2
+  exit 1
+}
+[[ -s "${STAGING_PATH}/assets/images/hero-parts/base-clean.webp" ]] || {
+  echo "HATA: Temiz hero kamyon ve zemin görseli oluşturulamadı." >&2
+  exit 1
+}
+[[ -s "${STAGING_PATH}/assets/images/hero-parts/grp_left.webp" ]] || {
+  echo "HATA: Sol taşıma ekibi katmanı oluşturulamadı." >&2
+  exit 1
+}
+[[ -s "${STAGING_PATH}/assets/images/hero-parts/grp_right.webp" ]] || {
+  echo "HATA: Sağ taşıma ekibi katmanı oluşturulamadı." >&2
   exit 1
 }
 [[ -s "${STAGING_PATH}/assets/images/hero-parts/lift.webp" ]] || {
@@ -89,12 +110,16 @@ cp -a "${STAGING_PATH}/." "${DEPLOY_PATH}/"
 find "${DEPLOY_PATH}" -type d -exec chmod 755 {} +
 find "${DEPLOY_PATH}" -type f -exec chmod 644 {} +
 
-[[ -s "${DEPLOY_PATH}/index.html" ]] || {
-  echo "HATA: Canlı klasörde index.html doğrulanamadı." >&2
+[[ -s "${DEPLOY_PATH}/index.php" ]] || {
+  echo "HATA: Canlı klasörde index.php doğrulanamadı." >&2
   exit 1
 }
-[[ -s "${DEPLOY_PATH}/assets/images/hero-parts/base.webp" ]] || {
-  echo "HATA: Canlı klasörde hero parçaları doğrulanamadı." >&2
+[[ -s "${DEPLOY_PATH}/assets/images/hero-parts/base-clean.webp" ]] || {
+  echo "HATA: Canlı klasörde temiz hero görseli doğrulanamadı." >&2
+  exit 1
+}
+[[ -s "${DEPLOY_PATH}/assets/images/hero-parts/grp_left.webp" ]] || {
+  echo "HATA: Canlı klasörde hero ekip katmanları doğrulanamadı." >&2
   exit 1
 }
 
