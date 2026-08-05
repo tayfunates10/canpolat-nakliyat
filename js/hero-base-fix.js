@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var BASE_SOURCE = 'assets/images/hero-parts/base.webp?v=20260806-3';
+  var BASE_SOURCE = 'assets/images/hero-parts/base-clean.webp?v=20260806-4';
   var observer;
   var stopTimer;
 
@@ -13,7 +13,7 @@
       image.style.setProperty('display', 'block', 'important');
       image.style.setProperty('visibility', 'visible', 'important');
       image.style.setProperty('opacity', '1', 'important');
-      image.style.setProperty('filter', 'brightness(1.18) contrast(1.02) saturate(1.04)', 'important');
+      image.style.setProperty('filter', 'none', 'important');
 
       if (image.getAttribute('data-base-source-fixed') !== 'true') {
         image.setAttribute('data-base-source-fixed', 'true');
