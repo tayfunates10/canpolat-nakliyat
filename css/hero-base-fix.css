@@ -1,0 +1,19 @@
+.hero-fixed-base,
+.hero-live-scene__base {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 1 !important;
+  filter: brightness(1.08) contrast(1.02) !important;
+}
+
+.hero-fixed-scene__canvas,
+.hero-live-scene__canvas {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.hero__picture[hidden] {
+  display: none !important;
+}
