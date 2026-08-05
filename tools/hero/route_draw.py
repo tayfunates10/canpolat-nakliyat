@@ -40,7 +40,7 @@ def dashes(curve, dash=16, gap=13):
         segs.append(cur)
     return segs
 
-def pin(draw, x, y, r=17, color=ORANGE, hole=(6, 20, 30)):
+def draw_pin(draw, x, y, r=17, color=ORANGE, hole=(6, 20, 30)):
     draw.ellipse([x - r, y - r, x + r, y + r], fill=color)
     draw.polygon([(x - r * 0.72, y + r * 0.62), (x + r * 0.72, y + r * 0.62),
                   (x, y + r * 2.35)], fill=color)
@@ -52,7 +52,7 @@ def draw_route(size, ctrl, pin_at, width=4):
     curve = catmull(ctrl)
     for seg in dashes(curve):
         d.line(seg, fill=ORANGE + (235,), width=width, joint='curve')
-    pin(d, *pin_at)
+    draw_pin(d, *pin_at)
     glow = layer.filter(ImageFilter.GaussianBlur(16))
     glow.putalpha(glow.getchannel('A').point(lambda v: int(v * 0.55)))
     return glow, layer

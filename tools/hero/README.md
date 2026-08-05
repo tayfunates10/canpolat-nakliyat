@@ -17,7 +17,7 @@ python3 compose.py     # Pillow gerekir:  pip install pillow
 | Dosya | Ölçü | Kullanım |
 | --- | --- | --- |
 | `assets/images/hero-canpolat.webp` | 1600 × 900 | 992 px ve üzeri (16:9 geniş sahne, rota dahil) |
-| `assets/images/hero-canpolat-mobil.webp` | 1000 × 789 | 991 px ve altı (dar çerçeve, kamyon daha büyük) |
+| `assets/images/hero-canpolat-mobil.webp` | 1000 × 745 | 991 px ve altı (dar çerçeve, kamyon daha büyük) |
 
 Her iki dosya da `index.html` içindeki `<picture>` etiketiyle seçilir.
 
@@ -26,12 +26,14 @@ Her iki dosya da `index.html` içindeki `<picture>` etiketiyle seçilir.
 | Dosya | İçerik |
 | --- | --- |
 | `base.webp` | Kamyon + taş platform + bulutlar. Arka planı site rengine (`#06121b`) eşitlenmiştir. |
+| `grp_left.webp` | Sol ekip: el arabalı işçi + koli paketleyen işçi + koliler |
+| `grp_right.webp` | Sağ ekip: iki işçi + koli yığını + el arabası |
+| `stack.webp` | Streçlenmiş eşyalar ve koliler |
+| `wrapped.webp` | Streçlenmiş koltuk |
+| `sofa.webp` | Mavi koltuk |
+| `boxes_sm.webp` | Öndeki küçük koliler |
+| `plant.webp` | Saksı bitkisi (arka plan) |
 | `lift.webp` | İnsansız asansörlü taşıma aracı |
-| `w_hand.webp` | El arabalı işçi |
-| `w_pack.webp` | Koli paketleyen işçi |
-| `w_boxes.webp` | Koli yığını |
-| `s_left.webp` | Streçlenmiş eşyalar ve koliler |
-| `s_sofa.webp` | Mavi koltuk ve puf |
 
 ## Sahneyi değiştirme
 
@@ -52,6 +54,10 @@ place('s_sofa', 1400, depth=20, scale=0.48, shadow_a=118)
 Parçaların tabanı `ground_y()` eğrisine oturur; bu eğri kamyon görselindeki taş
 platformun ön kenarından ölçülmüştür, bu yüzden hiçbir parça havada kalmaz.
 
+Kesim sırasında maske yumuşatması (`post_process_mask`) kullanılmaz; alfa kanalı
+kontrast eğrisiyle ~1 piksellik geçişe indirilir ve küçültme sonrası unsharp
+uygulanır. Böylece parçaların kenarları bulanıklaşmaz.
+
 Dekoratif turuncu rota `route_draw.py` ile vektörel çizilir (kaynak görseldeki
 bulutlu gri zemin kullanılmaz). Rota yalnızca masaüstü sürümünde yer alır.
 
@@ -65,7 +71,7 @@ python3 -c "
 from rembg import remove, new_session
 from PIL import Image
 im = Image.open('kaynak.png').convert('RGB').crop((x0, y0, x1, y1))
-remove(im, session=new_session('isnet-general-use'), post_process_mask=True).save('parts/yeni.webp')
+remove(im, session=new_session('isnet-general-use')).save('parts/yeni.webp')  # yumuşatma yok
 "
 ```
 

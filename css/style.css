@@ -1435,7 +1435,7 @@ html.is-menu-open body { overflow: hidden; }
   .trust-item { padding: 0 12px; }
   .trust-item__text { font-size: 11.5px; }
   /* Dar çerçeveli sahne sürümünün oranı */
-  .hero__image { aspect-ratio: 1000 / 789; }
+  .hero__image { aspect-ratio: 1000 / 745; }
   .hero__badge { display: none; }
 
   /* Hizmetler: 3 sütun */
