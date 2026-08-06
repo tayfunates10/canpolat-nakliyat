@@ -12,13 +12,13 @@ if ($html === false) {
 }
 
 $heroPicture = <<<'HTML'
-<picture class="hero__picture hero__picture--final">
+<picture class="hero__picture hero__picture--layout">
   <img
-    class="hero__image hero__image--final"
-    src="assets/images/hero-canpolat-final.webp?v=20260806-9"
-    alt="Canpolat Nakliyat kamyonu, profesyonel taşıma ekibi, paketlenmiş eşyalar, koltuk ve asansörlü taşıma sistemi"
-    width="1024"
-    height="576"
+    class="hero__image hero__image--layout"
+    src="assets/images/hero-layout.webp?v=20260806-10"
+    alt="Canpolat Nakliyat kamyonu, profesyonel taşıma çalışanları, paketlenmiş eşyalar, koliler ve taş platform"
+    width="1280"
+    height="720"
     fetchpriority="high"
     decoding="async">
 </picture>
@@ -47,14 +47,29 @@ if (is_string($withoutBadge)) {
 }
 
 $heroStyles = <<<'HTML'
-<style id="hero-final-styles">
-  .hero__picture--final {
-    display: block;
-    width: 100%;
+<style id="hero-layout-styles">
+  .hero,
+  .hero__inner,
+  .hero__content,
+  .hero__media {
+    min-width: 0;
+  }
+
+  .hero__media {
+    position: relative;
+    overflow: hidden;
     background: transparent;
   }
 
-  .hero__image--final {
+  .hero__picture--layout {
+    display: block;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  .hero__image--layout {
     display: block;
     width: 100%;
     height: auto;
@@ -65,24 +80,53 @@ $heroStyles = <<<'HTML'
     background: transparent;
     filter: none !important;
     opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .hero__badge,
+  .hero__dots {
+    display: none !important;
+  }
+
+  @media (max-width: 1199px) {
+    .hero__image--layout {
+      max-height: 460px;
+    }
   }
 
   @media (max-width: 991px) {
-    .hero__image--final {
+    .hero__media {
+      width: 100%;
+      max-width: 900px;
+      margin-inline: auto;
+      padding: 0;
+    }
+
+    .hero__image--layout {
+      width: 100%;
       max-height: none;
-      aspect-ratio: 16 / 9;
       object-position: center;
     }
   }
 
   @media (max-width: 767px) {
     .hero__media {
-      margin-top: 8px;
+      width: calc(100% + 8px);
+      max-width: none;
+      margin: 8px -4px 0;
     }
 
-    .hero__image--final {
+    .hero__picture--layout,
+    .hero__image--layout {
       width: 100%;
-      max-width: none;
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 430px) {
+    .hero__media {
+      width: calc(100% + 4px);
+      margin-inline: -2px;
     }
   }
 </style>
