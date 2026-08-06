@@ -29,12 +29,20 @@ publish_paths=(
 
 required_paths=(
   "${publish_paths[@]}"
-  "tools/hero/parts"
+  "tools/hero/final"
 )
 
 for path in "${required_paths[@]}"; do
   if [[ ! -e "${REPO_ROOT}/${path}" ]]; then
     echo "HATA: Yayın için gerekli dosya veya klasör eksik: ${path}" >&2
+    exit 1
+  fi
+done
+
+for part in 1 2 3 4 5 6; do
+  chunk="${REPO_ROOT}/tools/hero/final/hero-final.part${part}.b64"
+  if [[ ! -s "${chunk}" ]]; then
+    echo "HATA: Hero görsel parçası eksik veya boş: ${chunk}" >&2
     exit 1
   fi
 done
@@ -45,23 +53,51 @@ for path in "${publish_paths[@]}"; do
   cp -a "${REPO_ROOT}/${path}" "${STAGING_PATH}/"
 done
 
-mkdir -p "${STAGING_PATH}/assets/images/hero-parts"
-cp -a "${REPO_ROOT}/tools/hero/parts/." \
-  "${STAGING_PATH}/assets/images/hero-parts/"
+BASE64_BIN="$(command -v base64 || true)"
+if [[ -z "${BASE64_BIN}" ]]; then
+  echo "HATA: Sunucuda base64 komutu bulunamadı." >&2
+  exit 1
+fi
+
+HERO_B64="${STAGING_PATH}/hero-canpolat-final.b64"
+HERO_OUTPUT="${STAGING_PATH}/assets/images/hero-canpolat-final.webp"
+
+cat \
+  "${REPO_ROOT}/tools/hero/final/hero-final.part1.b64" \
+  "${REPO_ROOT}/tools/hero/final/hero-final.part2.b64" \
+  "${REPO_ROOT}/tools/hero/final/hero-final.part3.b64" \
+  "${REPO_ROOT}/tools/hero/final/hero-final.part4.b64" \
+  "${REPO_ROOT}/tools/hero/final/hero-final.part5.b64" \
+  "${REPO_ROOT}/tools/hero/final/hero-final.part6.b64" \
+  | tr -d '\r\n' > "${HERO_B64}"
+
+mkdir -p "$(dirname "${HERO_OUTPUT}")"
+"${BASE64_BIN}" --decode "${HERO_B64}" > "${HERO_OUTPUT}"
+rm -f "${HERO_B64}"
+
+if [[ ! -s "${HERO_OUTPUT}" ]]; then
+  echo "HATA: Hero görseli oluşturulamadı." >&2
+  exit 1
+fi
+
+hero_size="$(wc -c < "${HERO_OUTPUT}")"
+if [[ "${hero_size}" -lt 50000 ]]; then
+  echo "HATA: Oluşturulan hero görseli beklenenden küçük: ${hero_size} bayt" >&2
+  exit 1
+fi
+
+hero_header="$(od -An -tx1 -N12 "${HERO_OUTPUT}" | tr -d ' \n')"
+if [[ "${hero_header}" != 52494646*57454250 ]]; then
+  echo "HATA: Oluşturulan dosya geçerli bir WebP değil." >&2
+  exit 1
+fi
 
 required_output_files=(
   "index.php"
   "index.html"
   "css/style.css"
-  "css/hero-fix.css"
-  "css/hero-base-fix.css"
   "js/script.js"
-  "js/hero-fix.js"
-  "js/hero-base-fix.js"
-  "assets/images/hero-parts/base.webp"
-  "assets/images/hero-parts/grp_left.webp"
-  "assets/images/hero-parts/grp_right.webp"
-  "assets/images/hero-parts/lift.webp"
+  "assets/images/hero-canpolat-final.webp"
 )
 
 for file in "${required_output_files[@]}"; do
@@ -81,7 +117,7 @@ cp -a "${STAGING_PATH}/." "${DEPLOY_PATH}/"
 find "${DEPLOY_PATH}" -type d -exec chmod 755 {} +
 find "${DEPLOY_PATH}" -type f -exec chmod 644 {} +
 
-for file in "index.php" "assets/images/hero-parts/base.webp" "js/hero-base-fix.js"; do
+for file in "index.php" "assets/images/hero-canpolat-final.webp"; do
   if [[ ! -s "${DEPLOY_PATH}/${file}" ]]; then
     echo "HATA: Canlı klasörde dosya doğrulanamadı: ${file}" >&2
     exit 1
