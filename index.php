@@ -49,9 +49,9 @@ foreach ([
 }
 
 $assets = <<<'HTML'
-  <link rel="stylesheet" href="css/hero-animated.css?v=20260806-12">
-  <link rel="stylesheet" href="css/hero-position-fix.css?v=20260806-12">
-  <script src="js/hero-animated.js?v=20260806-12" defer></script>
+  <link rel="stylesheet" href="css/hero-animated.css?v=20260806-13">
+  <link rel="stylesheet" href="css/hero-position-fix.css?v=20260806-13">
+  <script src="js/hero-animated.js?v=20260806-13" defer></script>
 HTML;
 
 if (strpos($html, '</head>') !== false) {
