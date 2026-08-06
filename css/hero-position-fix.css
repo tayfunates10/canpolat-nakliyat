@@ -1,0 +1,83 @@
+/* Canpolat hero katman yerlesim duzeltmeleri — v12 */
+
+@media (max-width: 767px) {
+  .hero-animated {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+
+  .hero-animated .hero-layer--platform {
+    left: 0;
+    top: 58%;
+    width: 100%;
+  }
+
+  .hero-animated .hero-layer--truck {
+    left: 21%;
+    top: 10%;
+    width: 72%;
+  }
+
+  .hero-animated .hero-layer--box-stack {
+    left: 9%;
+    top: 34%;
+    width: 16%;
+  }
+
+  .hero-animated .hero-layer--mattress {
+    left: 23.5%;
+    top: 41%;
+    width: 12.5%;
+  }
+
+  .hero-animated .hero-layer--left-trolley {
+    left: 3.5%;
+    top: 40%;
+    width: 18%;
+  }
+
+  .hero-animated .hero-layer--chair {
+    left: 16.5%;
+    top: 54%;
+    width: 16%;
+  }
+
+  .hero-animated .hero-layer--carry-chair {
+    z-index: 11;
+    left: 59%;
+    top: 54%;
+    width: 11.5%;
+  }
+
+  .hero-animated .hero-layer--right-stack {
+    z-index: 8;
+    left: 86%;
+    top: 48%;
+    width: 12.5%;
+  }
+
+  .hero-animated .hero-layer--box-worker {
+    left: 72%;
+    top: 49%;
+    width: 10.5%;
+  }
+}
+
+@media (max-width: 430px) {
+  .hero-animated .hero-layer--truck {
+    left: 20.5%;
+    width: 72.5%;
+  }
+
+  .hero-animated .hero-layer--right-stack {
+    left: 86%;
+    width: 12%;
+  }
+
+  .hero-animated .hero-layer--box-worker {
+    left: 71.5%;
+    top: 49.5%;
+    width: 10.3%;
+  }
+}
