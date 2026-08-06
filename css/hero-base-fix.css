@@ -4,7 +4,26 @@
   visibility: visible !important;
   opacity: 1 !important;
   z-index: 1 !important;
-  filter: brightness(1.18) contrast(0.98) !important;
+  filter: brightness(1.16) contrast(0.86) saturate(0.98) !important;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0, #000 4%, #000 96%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 4%, #000 97%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0, #000 4%, #000 96%, transparent 100%),
+    linear-gradient(to bottom, transparent 0, #000 4%, #000 97%, transparent 100%);
+  mask-composite: intersect;
+}
+
+.hero,
+.hero__media,
+.hero-fixed-scene,
+.hero-fixed-scene__viewport,
+.hero-fixed-scene__canvas,
+.hero-live-scene,
+.hero-live-scene__viewport,
+.hero-live-scene__canvas {
+  background-color: var(--color-bg, #06121b) !important;
 }
 
 .hero-fixed-scene__canvas,
@@ -16,4 +35,16 @@
 
 .hero__picture[hidden] {
   display: none !important;
+}
+
+@media (max-width: 767px) {
+  .hero-fixed-base,
+  .hero-live-scene__base {
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0, #000 3%, #000 97%, transparent 100%),
+      linear-gradient(to bottom, transparent 0, #000 3%, #000 98%, transparent 100%);
+    mask-image:
+      linear-gradient(to right, transparent 0, #000 3%, #000 97%, transparent 100%),
+      linear-gradient(to bottom, transparent 0, #000 3%, #000 98%, transparent 100%);
+  }
 }
