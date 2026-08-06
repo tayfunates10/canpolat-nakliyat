@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var BASE_SOURCE = 'assets/images/hero-parts/base.webp?v=20260806-6';
+  var BASE_SOURCE = 'assets/images/hero-parts/base.webp?v=20260806-7';
   var observer;
 
   function fixBaseImages(scope) {
@@ -12,9 +12,9 @@
       image.style.setProperty('display', 'block', 'important');
       image.style.setProperty('visibility', 'visible', 'important');
       image.style.setProperty('opacity', '1', 'important');
-      image.style.setProperty('filter', 'brightness(1.18) contrast(0.98)', 'important');
+      image.style.setProperty('filter', 'brightness(1.16) contrast(0.86) saturate(0.98)', 'important');
 
-      if (image.src.indexOf('/base.webp') === -1) {
+      if (image.src.indexOf('/base.webp') === -1 || image.src.indexOf('20260806-7') === -1) {
         image.src = BASE_SOURCE;
       }
     });
