@@ -29,30 +29,14 @@ publish_paths=(
 
 required_paths=(
   "${publish_paths[@]}"
-  "tools/hero/layout-desktop"
+  "tools/hero/animated/assets.tar.gz"
+  "css/hero-animated.css"
+  "js/hero-animated.js"
 )
 
 for path in "${required_paths[@]}"; do
   if [[ ! -e "${REPO_ROOT}/${path}" ]]; then
     echo "HATA: Yayın için gerekli dosya veya klasör eksik: ${path}" >&2
-    exit 1
-  fi
-done
-
-hero_chunks=(
-  "hero.part1.b64"
-  "hero.part2.b64"
-  "hero.part3.b64"
-  "hero.part4.b64"
-  "hero.part5.b64"
-  "hero.part6a.b64"
-  "hero.part6b.b64"
-)
-
-for part in "${hero_chunks[@]}"; do
-  chunk="${REPO_ROOT}/tools/hero/layout-desktop/${part}"
-  if [[ ! -s "${chunk}" ]]; then
-    echo "HATA: Hero görsel parçası eksik veya boş: ${chunk}" >&2
     exit 1
   fi
 done
@@ -63,56 +47,34 @@ for path in "${publish_paths[@]}"; do
   cp -a "${REPO_ROOT}/${path}" "${STAGING_PATH}/"
 done
 
-# Önceki hero çalışmalarının canlı çıktıda kalmasını engelle.
 rm -f \
   "${STAGING_PATH}/assets/images/hero-canpolat.webp" \
   "${STAGING_PATH}/assets/images/hero-canpolat-mobil.webp" \
-  "${STAGING_PATH}/assets/images/hero-canpolat-final.webp"
-rm -rf "${STAGING_PATH}/assets/images/hero-parts"
+  "${STAGING_PATH}/assets/images/hero-canpolat-final.webp" \
+  "${STAGING_PATH}/assets/images/hero-layout.webp"
+rm -rf "${STAGING_PATH}/assets/images/hero-parts" \
+       "${STAGING_PATH}/assets/images/hero-animated"
 
-BASE64_BIN="$(command -v base64 || true)"
-if [[ -z "${BASE64_BIN}" ]]; then
-  echo "HATA: Sunucuda base64 komutu bulunamadı." >&2
-  exit 1
-fi
-
-HERO_B64="${STAGING_PATH}/hero-layout.b64"
-HERO_OUTPUT="${STAGING_PATH}/assets/images/hero-layout.webp"
-
-: > "${HERO_B64}"
-for part in "${hero_chunks[@]}"; do
-  cat "${REPO_ROOT}/tools/hero/layout-desktop/${part}" >> "${HERO_B64}"
-done
-tr -d '\r\n' < "${HERO_B64}" > "${HERO_B64}.clean"
-mv "${HERO_B64}.clean" "${HERO_B64}"
-
-mkdir -p "$(dirname "${HERO_OUTPUT}")"
-"${BASE64_BIN}" --decode "${HERO_B64}" > "${HERO_OUTPUT}"
-rm -f "${HERO_B64}"
-
-if [[ ! -s "${HERO_OUTPUT}" ]]; then
-  echo "HATA: Hero görseli oluşturulamadı." >&2
-  exit 1
-fi
-
-hero_size="$(wc -c < "${HERO_OUTPUT}")"
-if [[ "${hero_size}" -lt 50000 ]]; then
-  echo "HATA: Oluşturulan hero görseli beklenenden küçük: ${hero_size} bayt" >&2
-  exit 1
-fi
-
-hero_header="$(od -An -tx1 -N12 "${HERO_OUTPUT}" | tr -d ' \n')"
-if [[ "${hero_header}" != 52494646*57454250 ]]; then
-  echo "HATA: Oluşturulan dosya geçerli bir WebP değil." >&2
-  exit 1
-fi
+mkdir -p "${STAGING_PATH}/assets/images/hero-animated"
+tar -xzf "${REPO_ROOT}/tools/hero/animated/assets.tar.gz" \
+  -C "${STAGING_PATH}/assets/images/hero-animated"
 
 required_output_files=(
   "index.php"
   "index.html"
   "css/style.css"
+  "css/hero-animated.css"
   "js/script.js"
-  "assets/images/hero-layout.webp"
+  "js/hero-animated.js"
+  "assets/images/hero-animated/platform.webp"
+  "assets/images/hero-animated/truck.webp"
+  "assets/images/hero-animated/box_stack.webp"
+  "assets/images/hero-animated/mattress_worker.webp"
+  "assets/images/hero-animated/left_trolley.webp"
+  "assets/images/hero-animated/chair.webp"
+  "assets/images/hero-animated/carry_chair.webp"
+  "assets/images/hero-animated/right_stack.webp"
+  "assets/images/hero-animated/box_worker.webp"
 )
 
 for file in "${required_output_files[@]}"; do
@@ -132,11 +94,11 @@ cp -a "${STAGING_PATH}/." "${DEPLOY_PATH}/"
 find "${DEPLOY_PATH}" -type d -exec chmod 755 {} +
 find "${DEPLOY_PATH}" -type f -exec chmod 644 {} +
 
-for file in "index.php" "assets/images/hero-layout.webp"; do
+for file in "index.php" "css/hero-animated.css" "js/hero-animated.js" "assets/images/hero-animated/truck.webp"; do
   if [[ ! -s "${DEPLOY_PATH}/${file}" ]]; then
     echo "HATA: Canlı klasörde dosya doğrulanamadı: ${file}" >&2
     exit 1
   fi
 done
 
-printf 'Canpolat Nakliyat başarıyla yayınlandı: %s\n' "${DEPLOY_PATH}"
+printf 'Canpolat Nakliyat animasyonlu hero başarıyla yayınlandı: %s\n' "${DEPLOY_PATH}"

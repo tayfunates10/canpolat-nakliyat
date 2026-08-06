@@ -11,22 +11,25 @@ if ($html === false) {
     exit;
 }
 
-$heroPicture = <<<'HTML'
-<picture class="hero__picture hero__picture--layout">
-  <img
-    class="hero__image hero__image--layout"
-    src="assets/images/hero-layout.webp?v=20260806-10"
-    alt="Canpolat Nakliyat kamyonu, profesyonel taşıma çalışanları, paketlenmiş eşyalar, koliler ve taş platform"
-    width="1280"
-    height="720"
-    fetchpriority="high"
-    decoding="async">
-</picture>
+$heroMarkup = <<<'HTML'
+<div class="hero-animated" id="heroAnimated" role="img" aria-label="Canpolat Nakliyat kamyonu, profesyonel taşıma ekibi, paketlenmiş mobilyalar, koliler ve taş platform">
+  <div class="hero-animated__canvas">
+    <img class="hero-layer hero-layer--platform" src="assets/images/hero-animated/platform.webp?v=20260806-11" alt="" width="1200" height="296" fetchpriority="high" decoding="async">
+    <img class="hero-layer hero-layer--box-stack" src="assets/images/hero-animated/box_stack.webp?v=20260806-11" alt="" width="477" height="600" decoding="async">
+    <img class="hero-layer hero-layer--mattress" src="assets/images/hero-animated/mattress_worker.webp?v=20260806-11" alt="" width="447" height="600" decoding="async">
+    <img class="hero-layer hero-layer--left-trolley" src="assets/images/hero-animated/left_trolley.webp?v=20260806-11" alt="" width="433" height="600" decoding="async">
+    <img class="hero-layer hero-layer--chair" src="assets/images/hero-animated/chair.webp?v=20260806-11" alt="" width="600" height="365" decoding="async">
+    <img class="hero-layer hero-layer--carry-chair" src="assets/images/hero-animated/carry_chair.webp?v=20260806-11" alt="" width="600" height="491" decoding="async">
+    <img class="hero-layer hero-layer--right-stack" src="assets/images/hero-animated/right_stack.webp?v=20260806-11" alt="" width="600" height="485" decoding="async">
+    <img class="hero-layer hero-layer--truck" src="assets/images/hero-animated/truck.webp?v=20260806-11" alt="" width="900" height="657" fetchpriority="high" decoding="async">
+    <img class="hero-layer hero-layer--box-worker" src="assets/images/hero-animated/box_worker.webp?v=20260806-11" alt="" width="251" height="550" decoding="async">
+  </div>
+</div>
 HTML;
 
 $replacedHtml = preg_replace(
     '~<picture class="hero__picture">.*?</picture>~s',
-    $heroPicture,
+    $heroMarkup,
     $html,
     1
 );
@@ -35,105 +38,23 @@ if (is_string($replacedHtml)) {
     $html = $replacedHtml;
 }
 
-$withoutBadge = preg_replace(
+foreach ([
     '~\s*<!-- Lokasyon rozeti -->\s*<div class="hero__badge"[^>]*>.*?</div>~s',
-    '',
-    $html,
-    1
-);
-
-if (is_string($withoutBadge)) {
-    $html = $withoutBadge;
+    '~\s*<!-- Mobil dekoratif slider noktaları -->\s*<div class="hero__dots"[^>]*>.*?</div>~s',
+] as $pattern) {
+    $cleaned = preg_replace($pattern, '', $html, 1);
+    if (is_string($cleaned)) {
+        $html = $cleaned;
+    }
 }
 
-$heroStyles = <<<'HTML'
-<style id="hero-layout-styles">
-  .hero,
-  .hero__inner,
-  .hero__content,
-  .hero__media {
-    min-width: 0;
-  }
-
-  .hero__media {
-    position: relative;
-    overflow: hidden;
-    background: transparent;
-  }
-
-  .hero__picture--layout {
-    display: block;
-    width: 100%;
-    margin: 0;
-    overflow: hidden;
-    background: transparent;
-  }
-
-  .hero__image--layout {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-height: 520px;
-    aspect-ratio: 16 / 9;
-    object-fit: contain;
-    object-position: center bottom;
-    background: transparent;
-    filter: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-  }
-
-  .hero__badge,
-  .hero__dots {
-    display: none !important;
-  }
-
-  @media (max-width: 1199px) {
-    .hero__image--layout {
-      max-height: 460px;
-    }
-  }
-
-  @media (max-width: 991px) {
-    .hero__media {
-      width: 100%;
-      max-width: 900px;
-      margin-inline: auto;
-      padding: 0;
-    }
-
-    .hero__image--layout {
-      width: 100%;
-      max-height: none;
-      object-position: center;
-    }
-  }
-
-  @media (max-width: 767px) {
-    .hero__media {
-      width: calc(100% + 8px);
-      max-width: none;
-      margin: 8px -4px 0;
-    }
-
-    .hero__picture--layout,
-    .hero__image--layout {
-      width: 100%;
-      max-width: 100%;
-    }
-  }
-
-  @media (max-width: 430px) {
-    .hero__media {
-      width: calc(100% + 4px);
-      margin-inline: -2px;
-    }
-  }
-</style>
+$assets = <<<'HTML'
+  <link rel="stylesheet" href="css/hero-animated.css?v=20260806-11">
+  <script src="js/hero-animated.js?v=20260806-11" defer></script>
 HTML;
 
 if (strpos($html, '</head>') !== false) {
-    $html = str_replace('</head>', $heroStyles . "\n</head>", $html);
+    $html = str_replace('</head>', $assets . "\n</head>", $html);
 }
 
 header('Content-Type: text/html; charset=UTF-8');
