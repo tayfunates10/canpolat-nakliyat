@@ -1,4 +1,4 @@
-/* Canpolat hero yerlesim duzeltmeleri — v13
+/* Canpolat hero yerlesim duzeltmeleri — v14
    1024 px referans olcumu:
    - Hero yuksekligi: yaklasik 379 px
    - Metin / gorsel kolonlari: %26 / %74
@@ -183,7 +183,7 @@
   .hero-animated .hero-layer--right-stack {
     z-index: 8;
     left: 86%;
-    top: 48%;
+    top: 53%;
     width: 12.5%;
   }
 
@@ -207,6 +207,7 @@
 
   .hero-animated .hero-layer--right-stack {
     left: 86%;
+    top: 53.5%;
     width: 12%;
   }
 
