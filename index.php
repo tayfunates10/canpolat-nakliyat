@@ -50,7 +50,7 @@ foreach ([
 
 $assets = <<<'HTML'
   <link rel="stylesheet" href="css/hero-animated.css?v=20260806-13">
-  <link rel="stylesheet" href="css/hero-position-fix.css?v=20260806-13">
+  <link rel="stylesheet" href="css/hero-position-fix.css?v=20260807-14">
   <script src="js/hero-animated.js?v=20260806-13" defer></script>
 HTML;
 
