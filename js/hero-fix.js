@@ -159,9 +159,6 @@
     mountedMode = currentMode;
 
     removeOldScenes(media);
-    fallback.hidden = true;
-    fallback.style.display = 'none';
-    fallback.setAttribute('aria-hidden', 'true');
 
     var scene = document.createElement('div');
     var viewport = document.createElement('div');
@@ -180,7 +177,8 @@
     base.alt = '';
     base.decoding = 'async';
     base.fetchPriority = 'high';
-    base.src = 'assets/images/hero-parts/base-clean.webp?v=20260806-4';
+    base.src = 'assets/images/hero-parts/base.webp?v=20260806-6';
+    base.style.filter = 'brightness(1.18) contrast(0.98)';
     applyCrop(base, crop);
 
     scene.appendChild(viewport);
@@ -206,6 +204,9 @@
     media.insertBefore(scene, fallback);
 
     loadImage(base).then(function () {
+      fallback.hidden = true;
+      fallback.style.display = 'none';
+      fallback.setAttribute('aria-hidden', 'true');
       return Promise.all(promises);
     }).then(function () {
       scene.classList.add('is-mounted');
