@@ -63,6 +63,13 @@ for path in "${publish_paths[@]}"; do
   cp -a "${REPO_ROOT}/${path}" "${STAGING_PATH}/"
 done
 
+# Önceki hero çalışmalarının canlı çıktıda kalmasını engelle.
+rm -f \
+  "${STAGING_PATH}/assets/images/hero-canpolat.webp" \
+  "${STAGING_PATH}/assets/images/hero-canpolat-mobil.webp" \
+  "${STAGING_PATH}/assets/images/hero-canpolat-final.webp"
+rm -rf "${STAGING_PATH}/assets/images/hero-parts"
+
 BASE64_BIN="$(command -v base64 || true)"
 if [[ -z "${BASE64_BIN}" ]]; then
   echo "HATA: Sunucuda base64 komutu bulunamadı." >&2
