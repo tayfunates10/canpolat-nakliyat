@@ -1,9 +1,8 @@
 (function () {
   'use strict';
 
-  var BASE_SOURCE = 'assets/images/hero-parts/base-clean.webp?v=20260806-4';
+  var BASE_SOURCE = 'assets/images/hero-parts/base.webp?v=20260806-6';
   var observer;
-  var stopTimer;
 
   function fixBaseImages(scope) {
     var root = scope && scope.querySelectorAll ? scope : document;
@@ -13,10 +12,9 @@
       image.style.setProperty('display', 'block', 'important');
       image.style.setProperty('visibility', 'visible', 'important');
       image.style.setProperty('opacity', '1', 'important');
-      image.style.setProperty('filter', 'none', 'important');
+      image.style.setProperty('filter', 'brightness(1.18) contrast(0.98)', 'important');
 
-      if (image.getAttribute('data-base-source-fixed') !== 'true') {
-        image.setAttribute('data-base-source-fixed', 'true');
+      if (image.src.indexOf('/base.webp') === -1) {
         image.src = BASE_SOURCE;
       }
     });
@@ -43,7 +41,7 @@
 
     observer.observe(document.body, { childList: true, subtree: true });
 
-    stopTimer = window.setTimeout(function () {
+    window.setTimeout(function () {
       fixBaseImages(document);
       if (observer) observer.disconnect();
     }, 10000);
