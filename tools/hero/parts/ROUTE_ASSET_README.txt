@@ -1,0 +1,1 @@
+The runtime hero uses a raster route layer generated from the supplied reference artwork.
