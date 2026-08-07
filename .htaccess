@@ -2,12 +2,17 @@ Options -Indexes
 DirectoryIndex index.php index.html
 AddDefaultCharset UTF-8
 
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Eski statik index.html doğrudan açılmasın; her zaman R8'i üreten index.php çalışsın.
+  RewriteCond %{THE_REQUEST} \s/+index\.html(?:[?\s]) [NC]
+  RewriteRule ^index\.html$ / [R=301,L]
+</IfModule>
+
 # HTTPS yönlendirmesi, canpolatnakliyat.com için geçerli SSL sertifikası
-# doğrulandıktan sonra aşağıdaki bloğun başındaki # işaretleri kaldırılarak
-# etkinleştirilmelidir. SSL hazır değilken zorunlu yönlendirme siteyi erişilemez
-# hâle getirebilir.
+# doğrulandıktan sonra aşağıdaki koşul ve kural etkinleştirilmelidir.
 # <IfModule mod_rewrite.c>
-#   RewriteEngine On
 #   RewriteCond %{HTTPS} !=on
 #   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 # </IfModule>
