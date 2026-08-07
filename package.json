@@ -5,6 +5,9 @@
   "description": "Canpolat Nakliyat kurumsal web sitesi",
   "scripts": {
     "serve": "python3 -m http.server 8099",
-    "test": "node tests/site-audit.js"
+    "test": "node tests/site-audit.js && node tests/ftp-cleanup.js"
+  },
+  "devDependencies": {
+    "basic-ftp": "6.2.0"
   }
 }

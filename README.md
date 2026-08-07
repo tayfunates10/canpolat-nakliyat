@@ -224,6 +224,18 @@ yüklenmez.
 İlk başarılı yayından sonra aynı iş akışı her `main` push'unda yalnızca değişen dosyaları
 senkronlar. Eşzamanlı yayınlar sıraya alınır; yarım kalmış iki dağıtım aynı anda çalışmaz.
 
+### Canlı FTP kökünü eski dosyalardan temizleme
+
+Normal dağıtım, yalnız daha önce workflow tarafından izlenen dosyaları günceller veya kaldırır.
+Sunucuya eski yöntemlerle yüklenmiş izlenmeyen dosyaları temizlemek için **Actions → Canpolat
+Nakliyat FTP Deploy → Run workflow** ekranında `clean_live_root` seçeneğini işaretleyin. Bu işlem,
+GitHub yayın paketinde bulunmayan eski site dosyalarını siler ve ardından güncel paketi yeniden
+senkronlar.
+
+Temizlik sırasında `.well-known`, `cgi-bin`, `.user.ini`, `php.ini`, `.ftpquota`, `error_log` ve
+`.canpolat-ftp-deploy-state.json` korunur. `dangerous-clean-slate` kullanılmaz; çünkü bu seçenek
+hariç tutulan cPanel/SSL dosyalarını da geri dönüşsüz olarak siler.
+
 ### Yayınlanan ve korunan dosyalar
 
 - Site statiktir; ayrıca bir build komutu yoktur. `npm test` başarısız olursa FTP yüklemesi başlamaz.

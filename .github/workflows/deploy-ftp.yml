@@ -5,6 +5,12 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      clean_live_root:
+        description: GitHub yayın paketinde bulunmayan eski canlı dosyaları sil
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -27,7 +33,9 @@ jobs:
         run: npm test
 
       - name: Yayın betiklerini doğrula
-        run: bash -n scripts/prepare-deploy.sh scripts/deploy-cpanel.sh scripts/validate-ftp-config.sh
+        run: |
+          bash -n scripts/prepare-deploy.sh scripts/deploy-cpanel.sh scripts/validate-ftp-config.sh
+          node --check scripts/clean-ftp-root.js
 
       - name: FTP yayın paketini hazırla
         run: |
@@ -43,6 +51,34 @@ jobs:
           FTP_PROTOCOL: ${{ vars.FTP_PROTOCOL || 'ftps' }}
           FTP_PORT: ${{ vars.FTP_PORT || '21' }}
         run: scripts/validate-ftp-config.sh
+
+      - name: Kontrollü temizlik bağımlılığını kur
+        if: >-
+          ${{
+            (github.event_name == 'workflow_dispatch' && inputs.clean_live_root == true) ||
+            (github.event_name == 'push' && contains(github.event.head_commit.message, '[clean-live-root]'))
+          }}
+        run: npm ci --ignore-scripts --omit=optional --no-audit --no-fund
+
+      - name: Canlı FTP kökündeki eski dosyaları kontrollü temizle
+        if: >-
+          ${{
+            (github.event_name == 'workflow_dispatch' && inputs.clean_live_root == true) ||
+            (github.event_name == 'push' && contains(github.event.head_commit.message, '[clean-live-root]'))
+          }}
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_SERVER_DIR: ${{ vars.FTP_SERVER_DIR }}
+          FTP_PROTOCOL: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          FTP_PORT: ${{ vars.FTP_PORT || '21' }}
+          FTP_SECURITY: loose
+          FTP_LOCAL_DIR: ${{ runner.temp }}/canpolat-site
+          FTP_CLEAN_MODE: apply
+          FTP_CLEAN_CONFIRM: canpolatnakliyat.com
+          FTP_CLEAN_MAX_DELETE: '2000'
+        run: node scripts/clean-ftp-root.js
 
       - name: Siteyi FTP ile canlıya dağıt
         uses: SamKirkland/FTP-Deploy-Action@110f9186c050f71550953127052e77650219c287 # v4.4.0
