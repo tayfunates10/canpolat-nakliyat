@@ -56,4 +56,8 @@ L08 easing: `ease-out`; diğer katmanlar: `cubic-bezier(.22,1,.36,1)`.
 
 ## Fallback davranışı
 
-Tüm 13 R8 katmanı başarıyla yüklenene kadar mevcut `hero-canpolat.webp / hero-canpolat-mobil.webp` görseli gösterilir. Tek bir katman dahi yüklenmezse R8 animasyonu başlatılmaz ve mevcut hero fallback olarak kalır. Bu sayede eksik binary asset ile kırık canlı hero oluşmaz.
+Tüm 13 R8 katmanı başarıyla yüklenene kadar mevcut `hero-canpolat.webp / hero-canpolat-mobil.webp` görseli gösterilir. Katman sayısı 13 değilse veya tek bir katman dahi yüklenmezse R8 animasyonu başlatılmaz ve mevcut hero fallback olarak kalır. Bu sayede eksik binary asset ile kırık canlı hero oluşmaz.
+
+## Branch doğrulaması
+
+`hero-r8-layer-integration` dalı `main` dalına göre yalnız hero entegrasyonu, 13 PNG asset ve bu manifest değişikliklerini içerir. Production deploy için henüz merge yapılmamıştır.
