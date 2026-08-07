@@ -168,7 +168,7 @@ GitHub deposunda **Settings → Secrets and variables → Actions** bölümünü
 
 | Ad | Değer |
 | --- | --- |
-| `FTP_SERVER` | FTP sunucu adı; örnek: `ftp.canpolatnakliyat.com` (başına `ftp://` yazılmaz) |
+| `FTP_SERVER` | `ftp.avo.acb.mytemp.website` (başına `ftp://` yazılmaz) |
 | `FTP_USERNAME` | cPanel'de tanımlı FTP kullanıcı adı |
 | `FTP_PASSWORD` | FTP hesabının parolası |
 
@@ -176,13 +176,15 @@ GitHub deposunda **Settings → Secrets and variables → Actions** bölümünü
 
 | Ad | Gerekli değer | Açıklama |
 | --- | --- | --- |
-| `FTP_SERVER_DIR` | `public_html/canpolatnakliyat.com/` | Canlı sitenin FTP içindeki hedef klasörü; sondaki `/` korunmalı |
+| `FTP_SERVER_DIR` | `./` | FTP hesabı zaten `public_html/canpolatnakliyat.com` canlı site köküne bağlıdır |
 | `FTP_PROTOCOL` | `ftps` | Önerilen güvenli bağlantı. Sunucu yalnız düz FTP destekliyorsa `ftp` yazılır |
 | `FTP_PORT` | `21` | Hosting farklı bir FTP portu vermediyse `21` |
 
 Parola veya kullanıcı adı hiçbir zaman workflow/README dosyasına yazılmaz. Yalnızca GitHub
 Secrets içinde tutulur. `FTP_SERVER_DIR` güvenlik kontrolü nedeniyle yalnızca Canpolat alan adı
-klasörünü kabul eder; yanlışlıkla bütün `public_html` veya FTP kökü hedeflenemez.
+FTP hesabının canlı site kökü olan `./` değerini kabul eder. Böylece dosyalar yanlışlıkla
+`public_html/canpolatnakliyat.com/public_html/canpolatnakliyat.com` gibi iç içe bir klasöre
+yüklenmez.
 
 ### İlk çalıştırma ve kontrol
 

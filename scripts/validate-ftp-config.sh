@@ -21,10 +21,10 @@ if [[ "${FTP_SERVER}" == *"://"* || "${FTP_SERVER}" == */* ]]; then
 fi
 
 case "${FTP_SERVER_DIR}" in
-  public_html/canpolatnakliyat.com/|/public_html/canpolatnakliyat.com/)
+  ./)
     ;;
   *)
-    echo "HATA: FTP_SERVER_DIR yalnızca public_html/canpolatnakliyat.com/ olmalıdır." >&2
+    echo "HATA: FTP_SERVER_DIR yalnızca ./ olmalıdır; FTP hesabı canlı site köküne bağlıdır." >&2
     exit 1
     ;;
 esac
