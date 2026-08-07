@@ -160,6 +160,18 @@ otomatik olarak test eder, yayın paketini hazırlar ve FTP/FTPS ile canlı site
 Workflow dosyası varsayılan dalda bulunduğunda GitHub **Actions** ekranındaki `Run workflow`
 düğmesiyle elle de çalıştırılabilir.
 
+### cPanel'de FTP hesabını hazırlama
+
+Dağıtım için yalnız bu siteye ait ayrı bir FTP hesabı kullanın. cPanel'de FTP hesabını
+oluştururken **Directory** alanını `public_html/canpolatnakliyat.com` olarak ayarlayın. cPanel bu
+yolu `/home/<cpanel-kullanıcısı>/public_html/canpolatnakliyat.com` biçiminde gösterebilir; FTP
+hesabı açısından bu dizin `./` köküdür.
+
+Directory alanını `public_html/canpolatnakliyat.com/admin` olarak ayarlamayın. Böyle bir hesapla
+workflow başarılı görünse bile dosyalar canlı site kökü yerine `/admin` altına yüklenir. FTP
+hesabını `public_html/canpolatnakliyat.com` dizinine bağlamak ve GitHub'da
+`FTP_SERVER_DIR=./` kullanmak, canlıda doğrulanan kurulumdur.
+
 ### Bir defalık GitHub ayarları
 
 GitHub deposunda **Settings → Secrets and variables → Actions** bölümünü açın.
@@ -185,6 +197,21 @@ Secrets içinde tutulur. `FTP_SERVER_DIR` güvenlik kontrolü nedeniyle yalnızc
 FTP hesabının canlı site kökü olan `./` değerini kabul eder. Böylece dosyalar yanlışlıkla
 `public_html/canpolatnakliyat.com/public_html/canpolatnakliyat.com` gibi iç içe bir klasöre
 yüklenmez.
+
+### İş akışının çalışma sırası
+
+1. `main` dalına push yapıldığında veya **Actions → Canpolat Nakliyat FTP Deploy → Run workflow**
+   seçildiğinde dağıtım başlar.
+2. Depo kaynakları alınır ve `npm test` ile site denetimleri çalıştırılır. Testlerden biri
+   başarısız olursa FTP bağlantısı kurulmadan işlem durur.
+3. `scripts/prepare-deploy.sh`, yalnız canlıda bulunması gereken dosyaları geçici yayın paketine
+   kopyalar ve zorunlu dosyaların eksik ya da boş olmadığını denetler.
+4. `scripts/validate-ftp-config.sh`, gerekli Secret değerlerini, FTP portunu/protokolünü ve hedefin
+   tam olarak `./` olduğunu doğrular.
+5. Paket FTPS üzerinden FTP hesabının köküne, yani doğrudan
+   `public_html/canpolatnakliyat.com` dizinine senkronlanır.
+6. Sunucudaki `.canpolat-ftp-deploy-state.json` dosyası sonraki çalıştırmalarda yalnız değişen
+   dosyaların aktarılmasını sağlar.
 
 ### İlk çalıştırma ve kontrol
 
