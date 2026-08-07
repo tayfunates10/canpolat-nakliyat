@@ -24,7 +24,10 @@
     if (!stage) return;
 
     var layers = Array.prototype.slice.call(stage.querySelectorAll('.hero-r8__layer'));
-    if (!layers.length) return;
+    if (layers.length !== 13) {
+      stage.classList.add('has-error');
+      return;
+    }
 
     Promise.all(layers.map(imageReady)).then(function (results) {
       var allLoaded = results.every(Boolean);
