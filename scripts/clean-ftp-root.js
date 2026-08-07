@@ -3,7 +3,6 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
-const ftp = require("basic-ftp");
 
 const PROTECTED_ROOTS = new Set([
   ".canpolat-ftp-deploy-state.json",
@@ -184,6 +183,7 @@ function appendStepSummary(plan, protectedEntries, mode) {
 }
 
 async function main() {
+  const ftp = require("basic-ftp");
   const server = requireEnv("FTP_SERVER");
   const username = requireEnv("FTP_USERNAME");
   const password = requireEnv("FTP_PASSWORD");
