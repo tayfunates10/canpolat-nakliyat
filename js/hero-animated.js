@@ -14,8 +14,16 @@
         resolve(false);
       }, { once: true });
     }).then(function (loaded) {
-      if (!loaded || typeof image.decode !== 'function') return loaded;
-      return image.decode().then(function () { return true; }).catch(function () { return true; });
+      if (!loaded) return false;
+
+      var decoded = typeof image.decode === 'function'
+        ? image.decode().catch(function () { return undefined; })
+        : Promise.resolve();
+
+      return decoded.then(function () {
+        image.classList.add('is-loaded');
+        return true;
+      });
     });
   }
 
@@ -29,20 +37,31 @@
       return;
     }
 
-    Promise.all(layers.map(imageReady)).then(function (results) {
-      var allLoaded = results.every(Boolean);
+    var readiness = layers.map(function (image) {
+      return { image: image, promise: imageReady(image) };
+    });
 
-      if (!allLoaded) {
-        stage.classList.add('has-error');
-        return;
-      }
+    var critical = readiness.filter(function (entry) {
+      return entry.image.classList.contains('hero-r8__layer--p00') ||
+             entry.image.classList.contains('hero-r8__layer--t00');
+    });
+
+    Promise.all(critical.map(function (entry) { return entry.promise; })).then(function (results) {
+      if (!results.every(Boolean)) stage.classList.add('has-error');
 
       requestAnimationFrame(function () {
         requestAnimationFrame(function () {
-          stage.classList.remove('has-error');
           stage.classList.add('is-ready');
         });
       });
+    });
+
+    Promise.all(readiness.map(function (entry) { return entry.promise; })).then(function (results) {
+      if (results.every(Boolean)) {
+        stage.classList.remove('has-error');
+      } else {
+        stage.classList.add('has-error');
+      }
     });
   }
 
