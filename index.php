@@ -13,6 +13,18 @@ if ($html === false) {
 
 $html = str_replace('assets/images/logo-canpolat.png', 'assets/images/canpolat-logo.svg?v=20260807-15', $html);
 
+/* Eski hero hiçbir koşulda preload, sosyal paylaşım görseli veya fallback olarak kullanılmaz. */
+$html = preg_replace(
+    '~\s*<link\s+rel="preload"\s+as="image"\s+href="assets/images/hero-canpolat(?:-mobil)?\.webp"[^>]*>~i',
+    '',
+    $html
+) ?? $html;
+$html = str_replace(
+    'https://www.canpolatnakliyat.com/assets/images/hero-canpolat.webp',
+    'https://www.canpolatnakliyat.com/assets/images/canpolat-logo.svg',
+    $html
+);
+
 $iconReplaced = preg_replace(
     '~<link\s+rel="icon"[^>]*>~i',
     '<link rel="icon" href="assets/images/favicon-canpolat.svg?v=20260807-15" type="image/svg+xml">',
@@ -26,23 +38,19 @@ if (is_string($iconReplaced)) {
 $heroMarkup = <<<'HTML'
 <div class="hero-animated hero-r8" id="heroAnimated" role="img" aria-label="Canpolat Nakliyat kamyonu, profesyonel taşıma ekibi, paketlenmiş mobilyalar, koliler ve mobilya asansörü bulunan minyatür taşıma sahnesi">
   <div class="hero-animated__canvas hero-r8__canvas">
-    <picture class="hero-r8__fallback" aria-hidden="true">
-      <source media="(max-width: 991px)" srcset="assets/images/hero-canpolat-mobil.webp">
-      <img src="assets/images/hero-canpolat.webp" alt="" width="1200" height="900" decoding="async">
-    </picture>
-    <img class="hero-r8__layer hero-r8__layer--p00" src="assets/images/hero-r8/platform-p00-r8-reference-exact.png?v=20260807-r8-06" alt="" width="1536" height="1024" fetchpriority="high" decoding="async">
-    <img class="hero-r8__layer hero-r8__layer--l09" src="assets/images/hero-r8/layer-l09-r6.png?v=20260807-r8-06" alt="" width="1536" height="1024" decoding="async">
-    <img class="hero-r8__layer hero-r8__layer--t00" src="assets/images/hero-r8/truck-t00-r6.png?v=20260807-r8-06" alt="" width="1536" height="1024" fetchpriority="high" decoding="async">
-    <img class="hero-r8__layer hero-r8__layer--l01" src="assets/images/hero-r8/layer-l01-r6.png?v=20260807-r8-06" alt="" width="1536" height="1024" decoding="async">
-    <img class="hero-r8__layer hero-r8__layer--l02" src="assets/images/hero-r8/layer-l02-r6.png?v=20260807-r8-06" alt="" width="1536" height="1024" decoding="async">
-    <img class="hero-r8__layer hero-r8__layer--l04" src="assets/images/hero-r8/layer-l04-r6.png?v=20260807-r8-06" alt="" width="1536" height="1024" decoding="async">
-    <img class="hero-r8__layer hero-r8__layer--l03" src="assets/images/hero-r8/layer-l03-r6.png?v=20260807-r8-06" alt="" width="1536" height="1024" decoding="async">
-    <img class="hero-r8__layer hero-r8__layer--l05" src="assets/images/hero-r8/layer-l05-r6.png?v=20260807-r8-06" alt="" width="1536" height="1024" decoding="async">
-    <img class="hero-r8__layer hero-r8__layer--l06" src="assets/images/hero-r8/layer-l06-r6.png?v=20260807-r8-06" alt="" width="1536" height="1024" decoding="async">
-    <img class="hero-r8__layer hero-r8__layer--l10" src="assets/images/hero-r8/layer-l10-r6.png?v=20260807-r8-06" alt="" width="1536" height="1024" decoding="async">
-    <img class="hero-r8__layer hero-r8__layer--l11" src="assets/images/hero-r8/layer-l11-r6.png?v=20260807-r8-06" alt="" width="1536" height="1024" decoding="async">
-    <img class="hero-r8__layer hero-r8__layer--l07" src="assets/images/hero-r8/layer-l07-r6.png?v=20260807-r8-06" alt="" width="1536" height="1024" decoding="async">
-    <img class="hero-r8__layer hero-r8__layer--l08" src="assets/images/hero-r8/layer-l08-r6.png?v=20260807-r8-06" alt="" width="1536" height="1024" decoding="async">
+    <img class="hero-r8__layer hero-r8__layer--p00" src="assets/images/hero-r8/platform-p00-r8-reference-exact.png?v=20260807-r8-07" alt="" width="1536" height="1024" fetchpriority="high" decoding="async">
+    <img class="hero-r8__layer hero-r8__layer--l09" src="assets/images/hero-r8/layer-l09-r6.png?v=20260807-r8-07" alt="" width="1536" height="1024" decoding="async">
+    <img class="hero-r8__layer hero-r8__layer--t00" src="assets/images/hero-r8/truck-t00-r6.png?v=20260807-r8-07" alt="" width="1536" height="1024" fetchpriority="high" decoding="async">
+    <img class="hero-r8__layer hero-r8__layer--l01" src="assets/images/hero-r8/layer-l01-r6.png?v=20260807-r8-07" alt="" width="1536" height="1024" decoding="async">
+    <img class="hero-r8__layer hero-r8__layer--l02" src="assets/images/hero-r8/layer-l02-r6.png?v=20260807-r8-07" alt="" width="1536" height="1024" decoding="async">
+    <img class="hero-r8__layer hero-r8__layer--l04" src="assets/images/hero-r8/layer-l04-r6.png?v=20260807-r8-07" alt="" width="1536" height="1024" decoding="async">
+    <img class="hero-r8__layer hero-r8__layer--l03" src="assets/images/hero-r8/layer-l03-r6.png?v=20260807-r8-07" alt="" width="1536" height="1024" decoding="async">
+    <img class="hero-r8__layer hero-r8__layer--l05" src="assets/images/hero-r8/layer-l05-r6.png?v=20260807-r8-07" alt="" width="1536" height="1024" decoding="async">
+    <img class="hero-r8__layer hero-r8__layer--l06" src="assets/images/hero-r8/layer-l06-r6.png?v=20260807-r8-07" alt="" width="1536" height="1024" decoding="async">
+    <img class="hero-r8__layer hero-r8__layer--l10" src="assets/images/hero-r8/layer-l10-r6.png?v=20260807-r8-07" alt="" width="1536" height="1024" decoding="async">
+    <img class="hero-r8__layer hero-r8__layer--l11" src="assets/images/hero-r8/layer-l11-r6.png?v=20260807-r8-07" alt="" width="1536" height="1024" decoding="async">
+    <img class="hero-r8__layer hero-r8__layer--l07" src="assets/images/hero-r8/layer-l07-r6.png?v=20260807-r8-07" alt="" width="1536" height="1024" decoding="async">
+    <img class="hero-r8__layer hero-r8__layer--l08" src="assets/images/hero-r8/layer-l08-r6.png?v=20260807-r8-07" alt="" width="1536" height="1024" decoding="async">
   </div>
 </div>
 HTML;
@@ -53,8 +61,8 @@ if (is_string($replacedHtml)) {
 }
 
 $assets = <<<'HTML'
-  <link rel="stylesheet" href="css/hero-animated.css?v=20260807-r8-06">
-  <script src="js/hero-animated.js?v=20260807-r8-06" defer></script>
+  <link rel="stylesheet" href="css/hero-animated.css?v=20260807-r8-07">
+  <script src="js/hero-animated.js?v=20260807-r8-07" defer></script>
 HTML;
 
 if (strpos($html, '</head>') !== false) {
