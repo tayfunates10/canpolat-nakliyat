@@ -22,6 +22,7 @@ fi
 publish_paths=(
   "index.php"
   "index.html"
+  "index-template.html"
   "404.html"
   "hakkimizda.html"
   "gizlilik.html"
@@ -65,6 +66,7 @@ rm -rf "${OUTPUT_PATH}/assets/images/hero-parts"
 required_output_files=(
   "index.php"
   "index.html"
+  "index-template.html"
   "css/style.css"
   "css/hero-animated.css"
   "js/script.js"
@@ -99,5 +101,11 @@ for forbidden in \
     exit 1
   fi
 done
+
+# Public index.html eski hero markup'ı veya eski görsel yollarını içeremez.
+if grep -Eq 'hero__picture|hero-canpolat(-mobil)?\.webp' "${OUTPUT_PATH}/index.html"; then
+  echo "HATA: Public index.html içinde eski hero izi bulundu." >&2
+  exit 1
+fi
 
 printf 'Yayın paketi başarıyla hazırlandı: %s\n' "${OUTPUT_PATH}"
