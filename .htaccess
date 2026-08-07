@@ -1,16 +1,25 @@
 Options -Indexes
-DirectoryIndex index.php index.html
+DirectoryIndex index.php
 AddDefaultCharset UTF-8
+
+<IfModule LiteSpeed>
+  # Ana sayfada eski HTML snapshot/page-cache devreye girmesin.
+  CacheDisable public /
+  CacheDisable private /
+</IfModule>
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  # Eski hero dosyaları tamamen emekli edildi. Sunucuda eski bir kopya kalsa bile servis etme.
-  RewriteRule ^assets/images/hero-canpolat(?:-mobil)?\.webp$ - [G,L,NC]
+  # Kök istek her koşulda doğrudan PHP girişine gider; index.html DirectoryIndex değildir.
+  RewriteRule ^$ index.php [L]
 
-  # Eski statik index.html doğrudan açılmasın; her zaman R8'i üreten index.php çalışsın.
+  # Eski statik index.html dışarıdan çağrılırsa doğrudan yeni PHP girişine yönlendir.
   RewriteCond %{THE_REQUEST} \s/+index\.html(?:[?\s]) [NC]
-  RewriteRule ^index\.html$ / [R=301,L]
+  RewriteRule ^index\.html$ /index.php [R=302,L,NE]
+
+  # Eski hero dosyaları tamamen emekli edildi. Sunucuda/browser dışında bir kopya kalsa bile servis etme.
+  RewriteRule ^assets/images/hero-canpolat(?:-mobil)?\.webp$ - [G,L,NC]
 </IfModule>
 
 # HTTPS yönlendirmesi, canpolatnakliyat.com için geçerli SSL sertifikası
@@ -26,6 +35,13 @@ AddDefaultCharset UTF-8
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
   Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+
+  # Ana sayfanın HTML/PHP çıktısı tarayıcı veya ara cache tarafından saklanmaz.
+  <FilesMatch "^(index\.php|index\.html)$">
+    Header always set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header always set Pragma "no-cache"
+    Header always set Expires "0"
+  </FilesMatch>
 </IfModule>
 
 <IfModule mod_expires.c>
