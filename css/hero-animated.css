@@ -209,8 +209,7 @@
   --hero-ease: ease-out;
 }
 
-.hero__badge,
-.hero__dots,
+/* Eski tek-parça hero görseli yerine R8 kullanılır; rozet ve mobil noktalar korunur. */
 .hero__picture,
 .hero__image {
   display: none !important;
@@ -218,12 +217,16 @@
 
 @media (prefers-reduced-motion: reduce) {
   .hero-r8__layer {
-    opacity: 1 !important;
     transform: none !important;
     transition: none !important;
   }
 
+  .hero-r8.is-ready .hero-r8__layer {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
   .hero-r8__fallback {
-    display: none !important;
+    transition: none !important;
   }
 }
