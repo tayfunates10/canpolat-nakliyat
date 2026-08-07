@@ -39,7 +39,6 @@ publish_paths=(
 required_paths=(
   "${publish_paths[@]}"
   "css/hero-animated.css"
-  "css/hero-position-fix.css"
   "js/hero-animated.js"
   "assets/images/hero-r8/ASSET-MANIFEST.md"
 )
@@ -67,7 +66,6 @@ required_output_files=(
   "index.html"
   "css/style.css"
   "css/hero-animated.css"
-  "css/hero-position-fix.css"
   "js/script.js"
   "js/hero-animated.js"
   "assets/images/hero-canpolat.webp"
