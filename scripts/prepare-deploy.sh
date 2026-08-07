@@ -54,9 +54,10 @@ for path in "${publish_paths[@]}"; do
   cp -a "${REPO_ROOT}/${path}" "${OUTPUT_PATH}/"
 done
 
-# R8 fallback görselleri korunur. Yalnız artık kullanılmayan eski tek-parça
-# varyantlar ve legacy hero-parts klasörü yayın paketinden çıkarılır.
+# Eski hero varlıklarının production paketine hiçbir şekilde girmesine izin verme.
 rm -f \
+  "${OUTPUT_PATH}/assets/images/hero-canpolat.webp" \
+  "${OUTPUT_PATH}/assets/images/hero-canpolat-mobil.webp" \
   "${OUTPUT_PATH}/assets/images/hero-canpolat-final.webp" \
   "${OUTPUT_PATH}/assets/images/hero-layout.webp"
 rm -rf "${OUTPUT_PATH}/assets/images/hero-parts"
@@ -68,8 +69,6 @@ required_output_files=(
   "css/hero-animated.css"
   "js/script.js"
   "js/hero-animated.js"
-  "assets/images/hero-canpolat.webp"
-  "assets/images/hero-canpolat-mobil.webp"
   "assets/images/hero-r8/platform-p00-r8-reference-exact.png"
   "assets/images/hero-r8/truck-t00-r6.png"
   "assets/images/hero-r8/layer-l01-r6.png"
@@ -88,6 +87,15 @@ required_output_files=(
 for file in "${required_output_files[@]}"; do
   if [[ ! -s "${OUTPUT_PATH}/${file}" ]]; then
     echo "HATA: Yayın çıktısı eksik veya boş: ${file}" >&2
+    exit 1
+  fi
+done
+
+for forbidden in \
+  "assets/images/hero-canpolat.webp" \
+  "assets/images/hero-canpolat-mobil.webp"; do
+  if [[ -e "${OUTPUT_PATH}/${forbidden}" ]]; then
+    echo "HATA: Eski hero production paketinde bulunmamalı: ${forbidden}" >&2
     exit 1
   fi
 done
