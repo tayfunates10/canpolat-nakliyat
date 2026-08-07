@@ -8,14 +8,14 @@
 .hero__media {
   position: relative;
   width: 100%;
-  overflow: hidden;
+  overflow: visible;
   background: transparent;
 }
 
 .hero-animated {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 3 / 2;
   margin: 0 auto;
   overflow: hidden;
   isolation: isolate;
@@ -23,115 +23,190 @@
   background: transparent;
 }
 
-.hero-animated__canvas {
+.hero-animated__canvas,
+.hero-r8__canvas {
   position: absolute;
   inset: 0;
   overflow: hidden;
 }
 
-.hero-layer {
+.hero-r8__fallback {
   position: absolute;
+  inset: 0;
+  z-index: 0;
   display: block;
-  height: auto;
+  opacity: 1;
+  transition: opacity 220ms ease;
+}
+
+.hero-r8__fallback img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/*
+ * R8 katmanlarının her biri 1536x1024 tam şeffaf tuvaldir.
+ * Nihai koordinatlar PNG'nin kendi alfa tuvalinde bulunur. Bu nedenle hiçbir
+ * breakpointte left/top/width ile obje bazlı yeniden yerleşim yapılmaz.
+ */
+.hero-r8__layer {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
   max-width: none;
+  object-fit: contain;
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
   opacity: 0;
-  transform: var(--hero-enter-transform, translate3d(0, 24px, 0));
-  transform-origin: center bottom;
-  transition:
-    opacity 680ms ease var(--hero-delay, 0ms),
-    transform 980ms cubic-bezier(.2, .82, .25, 1) var(--hero-delay, 0ms);
+  transform: translate3d(var(--hero-x, 0), var(--hero-y, 0), 0) scale(var(--hero-scale, .98));
+  transform-origin: center center;
+  transition-property: opacity, transform;
+  transition-duration: var(--hero-duration, 500ms);
+  transition-delay: var(--hero-delay, 0ms);
+  transition-timing-function: var(--hero-ease, cubic-bezier(.22, 1, .36, 1));
   will-change: transform, opacity;
   backface-visibility: hidden;
   filter: none !important;
 }
 
-.hero-animated.is-ready .hero-layer {
+.hero-r8.is-ready .hero-r8__layer {
   opacity: 1;
   transform: translate3d(0, 0, 0) scale(1);
 }
 
-.hero-layer--platform {
-  z-index: 1;
-  left: 1.3%;
-  top: 52.7%;
-  width: 97.3%;
-  --hero-delay: 40ms;
-  --hero-enter-transform: translate3d(0, 46px, 0) scale(.92);
+.hero-r8.is-ready .hero-r8__fallback {
+  opacity: 0;
+  pointer-events: none;
 }
 
-.hero-layer--box-stack {
-  z-index: 3;
-  left: 10.7%;
-  top: 25.2%;
-  width: 15.3%;
+.hero-r8.has-error .hero-r8__layer.is-missing {
+  display: none;
+}
+
+/* Kesin Z sırası: P00 → L09 → T00 → L01 → L02 → L04 → L03 → L05 → L06 → L10 → L11 → L07 → L08 */
+.hero-r8__layer--p00 { z-index: 1; }
+.hero-r8__layer--l09 { z-index: 2; }
+.hero-r8__layer--t00 { z-index: 3; }
+.hero-r8__layer--l01 { z-index: 4; }
+.hero-r8__layer--l02 { z-index: 5; }
+.hero-r8__layer--l04 { z-index: 6; }
+.hero-r8__layer--l03 { z-index: 7; }
+.hero-r8__layer--l05 { z-index: 8; }
+.hero-r8__layer--l06 { z-index: 9; }
+.hero-r8__layer--l10 { z-index: 10; }
+.hero-r8__layer--l11 { z-index: 11; }
+.hero-r8__layer--l07 { z-index: 12; }
+.hero-r8__layer--l08 { z-index: 13; }
+
+/* Kilitli giriş animasyonları. Bitiş tüm katmanlarda X/Y 0, scale 1, opacity 1. */
+.hero-r8__layer--p00 {
+  --hero-x: 0%;
+  --hero-y: 0%;
+  --hero-scale: .98;
+  --hero-delay: 0ms;
+  --hero-duration: 500ms;
+}
+
+.hero-r8__layer--t00 {
+  --hero-x: 5%;
+  --hero-y: 0%;
+  --hero-scale: .98;
+  --hero-delay: 150ms;
+  --hero-duration: 750ms;
+}
+
+.hero-r8__layer--l09 {
+  --hero-x: 3%;
+  --hero-y: 3%;
+  --hero-scale: .98;
   --hero-delay: 400ms;
-  --hero-enter-transform: translate3d(0, -48px, 0) scale(.94);
+  --hero-duration: 650ms;
 }
 
-.hero-layer--mattress {
-  z-index: 4;
-  left: 22.5%;
-  top: 33.6%;
-  width: 11.4%;
-  --hero-delay: 640ms;
-  --hero-enter-transform: translate3d(0, -62px, 0) scale(.94);
-}
-
-.hero-layer--left-trolley {
-  z-index: 6;
-  left: 2.3%;
-  top: 30.7%;
-  width: 19.5%;
+.hero-r8__layer--l03 {
+  --hero-x: 0%;
+  --hero-y: 4%;
+  --hero-scale: .98;
   --hero-delay: 520ms;
-  --hero-enter-transform: translate3d(-76px, 12px, 0) scale(.96);
+  --hero-duration: 600ms;
 }
 
-.hero-layer--chair {
-  z-index: 5;
-  left: 12.1%;
-  top: 48.4%;
-  width: 16.3%;
-  --hero-delay: 760ms;
-  --hero-enter-transform: translate3d(0, 44px, 0) scale(.86);
+.hero-r8__layer--l02 {
+  --hero-x: -3%;
+  --hero-y: 1%;
+  --hero-scale: .98;
+  --hero-delay: 660ms;
+  --hero-duration: 650ms;
 }
 
-.hero-layer--carry-chair {
-  z-index: 7;
-  left: 24.7%;
-  top: 45.1%;
-  width: 16.9%;
-  --hero-delay: 880ms;
-  --hero-enter-transform: translate3d(-42px, 30px, 0) scale(.93);
+.hero-r8__layer--l01 {
+  --hero-x: -3%;
+  --hero-y: 1%;
+  --hero-scale: .98;
+  --hero-delay: 800ms;
+  --hero-duration: 700ms;
 }
 
-.hero-layer--right-stack {
-  z-index: 5;
-  left: 85.9%;
-  top: 36.5%;
-  width: 12.7%;
-  --hero-delay: 1000ms;
-  --hero-enter-transform: translate3d(78px, 8px, 0) scale(.95);
+.hero-r8__layer--l04 {
+  --hero-x: 0%;
+  --hero-y: 4%;
+  --hero-scale: .98;
+  --hero-delay: 940ms;
+  --hero-duration: 600ms;
 }
 
-.hero-layer--truck {
-  z-index: 10;
-  left: 26.7%;
-  top: 5.2%;
-  width: 60%;
-  --hero-delay: 180ms;
-  --hero-enter-transform: translate3d(0, -54px, 0) scale(.95);
+.hero-r8__layer--l05 {
+  --hero-x: 0%;
+  --hero-y: 3%;
+  --hero-scale: .98;
+  --hero-delay: 1080ms;
+  --hero-duration: 500ms;
 }
 
-.hero-layer--box-worker {
-  z-index: 12;
-  left: 72.9%;
-  top: 47.4%;
-  width: 9.8%;
-  --hero-delay: 1120ms;
-  --hero-enter-transform: translate3d(58px, 34px, 0) scale(.94);
+.hero-r8__layer--l06 {
+  --hero-x: 0%;
+  --hero-y: 3%;
+  --hero-scale: .97;
+  --hero-delay: 1200ms;
+  --hero-duration: 500ms;
+}
+
+.hero-r8__layer--l10 {
+  --hero-x: 0%;
+  --hero-y: 3%;
+  --hero-scale: .98;
+  --hero-delay: 1300ms;
+  --hero-duration: 500ms;
+}
+
+.hero-r8__layer--l11 {
+  --hero-x: 0%;
+  --hero-y: 3%;
+  --hero-scale: .98;
+  --hero-delay: 1400ms;
+  --hero-duration: 500ms;
+}
+
+.hero-r8__layer--l07 {
+  --hero-x: 0%;
+  --hero-y: 3%;
+  --hero-scale: .98;
+  --hero-delay: 1500ms;
+  --hero-duration: 500ms;
+}
+
+.hero-r8__layer--l08 {
+  --hero-x: 0%;
+  --hero-y: 1%;
+  --hero-scale: .99;
+  --hero-delay: 1600ms;
+  --hero-duration: 450ms;
+  --hero-ease: ease-out;
 }
 
 .hero__badge,
@@ -141,69 +216,14 @@
   display: none !important;
 }
 
-@media (max-width: 1199px) {
-  .hero-animated {
-    max-width: 980px;
-  }
-}
-
-@media (max-width: 991px) {
-  .hero__media {
-    width: 100%;
-    max-width: 900px;
-    margin-inline: auto;
-  }
-
-  .hero-animated {
-    aspect-ratio: 16 / 10;
-  }
-
-  .hero-layer--platform { left: 1%; top: 56%; width: 98%; }
-  .hero-layer--truck { left: 24%; top: 7%; width: 64%; }
-  .hero-layer--box-stack { left: 8%; top: 29%; width: 17%; }
-  .hero-layer--mattress { left: 21%; top: 37%; width: 13%; }
-  .hero-layer--left-trolley { left: 0; top: 35%; width: 21%; }
-  .hero-layer--chair { left: 9%; top: 52%; width: 19%; }
-  .hero-layer--carry-chair { left: 22%; top: 50%; width: 18%; }
-  .hero-layer--right-stack { left: 83%; top: 41%; width: 16%; }
-  .hero-layer--box-worker { left: 74%; top: 52%; width: 12%; }
-}
-
-@media (max-width: 767px) {
-  .hero__media {
-    width: calc(100% + 8px);
-    max-width: none;
-    margin: 10px -4px 0;
-    padding: 0;
-  }
-
-  .hero-animated {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-  }
-
-  .hero-layer--platform { left: 0; top: 58%; width: 100%; }
-  .hero-layer--truck { left: 20%; top: 10%; width: 73%; }
-  .hero-layer--box-stack { left: 7%; top: 31%; width: 18%; }
-  .hero-layer--mattress { left: 21%; top: 39%; width: 14%; }
-  .hero-layer--left-trolley { left: -1%; top: 37%; width: 21%; }
-  .hero-layer--chair { left: 9%; top: 52%; width: 20%; }
-  .hero-layer--carry-chair { left: 22%; top: 51%; width: 18%; }
-  .hero-layer--right-stack { left: 82%; top: 43%; width: 17%; }
-  .hero-layer--box-worker { left: 73%; top: 53%; width: 12%; }
-}
-
-@media (max-width: 430px) {
-  .hero__media {
-    width: calc(100% + 4px);
-    margin-inline: -2px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .hero-layer {
+  .hero-r8__layer {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
+  }
+
+  .hero-r8__fallback {
+    display: none !important;
   }
 }
