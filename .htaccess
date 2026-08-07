@@ -5,6 +5,9 @@ AddDefaultCharset UTF-8
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
+  # Eski hero dosyaları tamamen emekli edildi. Sunucuda eski bir kopya kalsa bile servis etme.
+  RewriteRule ^assets/images/hero-canpolat(?:-mobil)?\.webp$ - [G,L,NC]
+
   # Eski statik index.html doğrudan açılmasın; her zaman R8'i üreten index.php çalışsın.
   RewriteCond %{THE_REQUEST} \s/+index\.html(?:[?\s]) [NC]
   RewriteRule ^index\.html$ / [R=301,L]
