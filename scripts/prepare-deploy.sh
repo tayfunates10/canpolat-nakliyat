@@ -39,7 +39,9 @@ publish_paths=(
 required_paths=(
   "${publish_paths[@]}"
   "css/hero-animated.css"
+  "css/hero-position-fix.css"
   "js/hero-animated.js"
+  "assets/images/hero-r8/ASSET-MANIFEST.md"
 )
 
 for path in "${required_paths[@]}"; do
@@ -53,9 +55,9 @@ for path in "${publish_paths[@]}"; do
   cp -a "${REPO_ROOT}/${path}" "${OUTPUT_PATH}/"
 done
 
+# R8 fallback görselleri korunur. Yalnız artık kullanılmayan eski tek-parça
+# varyantlar ve legacy hero-parts klasörü yayın paketinden çıkarılır.
 rm -f \
-  "${OUTPUT_PATH}/assets/images/hero-canpolat.webp" \
-  "${OUTPUT_PATH}/assets/images/hero-canpolat-mobil.webp" \
   "${OUTPUT_PATH}/assets/images/hero-canpolat-final.webp" \
   "${OUTPUT_PATH}/assets/images/hero-layout.webp"
 rm -rf "${OUTPUT_PATH}/assets/images/hero-parts"
@@ -65,17 +67,24 @@ required_output_files=(
   "index.html"
   "css/style.css"
   "css/hero-animated.css"
+  "css/hero-position-fix.css"
   "js/script.js"
   "js/hero-animated.js"
-  "assets/images/hero-animated/platform.webp"
-  "assets/images/hero-animated/truck.webp"
-  "assets/images/hero-animated/box_stack.webp"
-  "assets/images/hero-animated/mattress_worker.webp"
-  "assets/images/hero-animated/left_trolley.webp"
-  "assets/images/hero-animated/chair.webp"
-  "assets/images/hero-animated/carry_chair.webp"
-  "assets/images/hero-animated/right_stack.webp"
-  "assets/images/hero-animated/box_worker.webp"
+  "assets/images/hero-canpolat.webp"
+  "assets/images/hero-canpolat-mobil.webp"
+  "assets/images/hero-r8/platform-p00-r8-reference-exact.png"
+  "assets/images/hero-r8/truck-t00-r6.png"
+  "assets/images/hero-r8/layer-l01-r6.png"
+  "assets/images/hero-r8/layer-l02-r6.png"
+  "assets/images/hero-r8/layer-l03-r6.png"
+  "assets/images/hero-r8/layer-l04-r6.png"
+  "assets/images/hero-r8/layer-l05-r6.png"
+  "assets/images/hero-r8/layer-l06-r6.png"
+  "assets/images/hero-r8/layer-l07-r6.png"
+  "assets/images/hero-r8/layer-l08-r6.png"
+  "assets/images/hero-r8/layer-l09-r6.png"
+  "assets/images/hero-r8/layer-l10-r6.png"
+  "assets/images/hero-r8/layer-l11-r6.png"
 )
 
 for file in "${required_output_files[@]}"; do
