@@ -1,0 +1,66 @@
+name: Canpolat Nakliyat FTP Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: canpolat-production-ftp
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Test ve FTP ile yayınla
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Kaynak kodu al
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Site denetimlerini çalıştır
+        run: npm test
+
+      - name: Yayın betiklerini doğrula
+        run: bash -n scripts/prepare-deploy.sh scripts/deploy-cpanel.sh scripts/validate-ftp-config.sh
+
+      - name: FTP yayın paketini hazırla
+        run: |
+          mkdir -p "${RUNNER_TEMP}/canpolat-site"
+          scripts/prepare-deploy.sh "${RUNNER_TEMP}/canpolat-site"
+
+      - name: FTP ayarlarını güvenli biçimde doğrula
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_SERVER_DIR: ${{ vars.FTP_SERVER_DIR }}
+          FTP_PROTOCOL: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          FTP_PORT: ${{ vars.FTP_PORT || '21' }}
+        run: scripts/validate-ftp-config.sh
+
+      - name: Siteyi FTP ile canlıya dağıt
+        uses: SamKirkland/FTP-Deploy-Action@110f9186c050f71550953127052e77650219c287 # v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          port: ${{ vars.FTP_PORT || '21' }}
+          local-dir: ${{ runner.temp }}/canpolat-site/
+          server-dir: ${{ vars.FTP_SERVER_DIR }}
+          state-name: .canpolat-ftp-deploy-state.json
+          dangerous-clean-slate: false
+          security: strict
+          log-level: standard
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.well-known/**
+            **/cgi-bin/**

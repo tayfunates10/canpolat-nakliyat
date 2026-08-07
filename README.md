@@ -150,3 +150,60 @@ E-posta yalnızca doldurulmuşsa format kontrolünden geçer. Telefon, temel Tü
   tüm görsellerde `width`/`height` ve `aspect-ratio`, `defer` ile tek JS dosyası, harici bağımlılık yok.
 - **Hareket azaltma:** `prefers-reduced-motion: reduce` desteklenir.
 - **Renkler:** `css/style.css` başındaki `:root` değişkenlerinden yönetilir.
+
+---
+
+## 8. `main` dalından otomatik FTP dağıtımı
+
+`.github/workflows/deploy-ftp.yml` iş akışı, `main` dalına gelen her push sonrasında siteyi
+otomatik olarak test eder, yayın paketini hazırlar ve FTP/FTPS ile canlı siteye senkronlar.
+Workflow dosyası varsayılan dalda bulunduğunda GitHub **Actions** ekranındaki `Run workflow`
+düğmesiyle elle de çalıştırılabilir.
+
+### Bir defalık GitHub ayarları
+
+GitHub deposunda **Settings → Secrets and variables → Actions** bölümünü açın.
+
+**Repository secrets** altında şu üç gizli değeri oluşturun:
+
+| Ad | Değer |
+| --- | --- |
+| `FTP_SERVER` | FTP sunucu adı; örnek: `ftp.canpolatnakliyat.com` (başına `ftp://` yazılmaz) |
+| `FTP_USERNAME` | cPanel'de tanımlı FTP kullanıcı adı |
+| `FTP_PASSWORD` | FTP hesabının parolası |
+
+**Repository variables** altında şu değerleri oluşturun:
+
+| Ad | Gerekli değer | Açıklama |
+| --- | --- | --- |
+| `FTP_SERVER_DIR` | `public_html/canpolatnakliyat.com/` | Canlı sitenin FTP içindeki hedef klasörü; sondaki `/` korunmalı |
+| `FTP_PROTOCOL` | `ftps` | Önerilen güvenli bağlantı. Sunucu yalnız düz FTP destekliyorsa `ftp` yazılır |
+| `FTP_PORT` | `21` | Hosting farklı bir FTP portu vermediyse `21` |
+
+Parola veya kullanıcı adı hiçbir zaman workflow/README dosyasına yazılmaz. Yalnızca GitHub
+Secrets içinde tutulur. `FTP_SERVER_DIR` güvenlik kontrolü nedeniyle yalnızca Canpolat alan adı
+klasörünü kabul eder; yanlışlıkla bütün `public_html` veya FTP kökü hedeflenemez.
+
+### İlk çalıştırma ve kontrol
+
+1. Yukarıdaki secret ve variable değerlerini kaydedin.
+2. `main` dalına bir commit gönderin; ilk dağıtım otomatik olarak başlar.
+3. Sırasıyla `Site denetimlerini çalıştır`, `FTP yayın paketini hazırla` ve
+   `Siteyi FTP ile canlıya dağıt` adımlarının yeşil olduğunu doğrulayın.
+4. `https://www.canpolatnakliyat.com` adresini gizli sekmede açarak son değişikliği kontrol edin.
+
+İlk başarılı yayından sonra aynı iş akışı her `main` push'unda yalnızca değişen dosyaları
+senkronlar. Eşzamanlı yayınlar sıraya alınır; yarım kalmış iki dağıtım aynı anda çalışmaz.
+
+### Yayınlanan ve korunan dosyalar
+
+- Site statiktir; ayrıca bir build komutu yoktur. `npm test` başarısız olursa FTP yüklemesi başlamaz.
+- `scripts/prepare-deploy.sh`, yalnız canlı site için gereken HTML/PHP, CSS, JavaScript, görsel,
+  `.htaccess`, sitemap ve manifest dosyalarını geçici bir klasöre hazırlar.
+- Eski hero dosyaları paketten çıkarılır; `assets/images/hero-animated/` altındaki güncel animasyon
+  parçaları doğrudan pakete alınır ve zorunlu dosyaların boş olmadığı doğrulanır.
+- `cgi-bin` ve `.well-known` FTP senkronunun dışında tutulur. `dangerous-clean-slate` kapalıdır.
+- `.canpolat-ftp-deploy-state.json`, bir sonraki çalıştırmada yalnız değişen dosyaları belirlemek
+  için sunucuda otomatik oluşturulan senkron durum dosyasıdır; silinmemelidir.
+- Mevcut `.cpanel.yml` elle cPanel dağıtımı için çalışmaya devam eder ve FTP akışıyla aynı yayın
+  paketi hazırlama betiğini kullanır.
