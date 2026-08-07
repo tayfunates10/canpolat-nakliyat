@@ -103,9 +103,16 @@ const siteCssPath = path.join(root, 'css/style.css');
 const heroCssPath = path.join(root, 'css/hero-animated.css');
 const heroJsPath = path.join(root, 'js/hero-animated.js');
 const deployPath = path.join(root, 'scripts/prepare-deploy.sh');
+const htaccessPath = path.join(root, '.htaccess');
 
-for (const required of [indexHtmlPath, indexPhpPath, siteCssPath, heroCssPath, heroJsPath, deployPath]) {
+for (const required of [indexHtmlPath, indexPhpPath, siteCssPath, heroCssPath, heroJsPath, deployPath, htaccessPath]) {
   if (!fs.existsSync(required)) failures.push(`Hero R8 altyapı dosyası eksik: ${path.relative(root, required)}`);
+}
+
+/* Eski hero binary dosyaları artık repoda bulunamaz. */
+for (const legacy of ['hero-canpolat.webp', 'hero-canpolat-mobil.webp']) {
+  const legacyPath = path.join(root, 'assets/images', legacy);
+  if (fs.existsSync(legacyPath)) failures.push(`Eski hero dosyası repoda bulunmamalı: assets/images/${legacy}`);
 }
 
 if (fs.existsSync(indexHtmlPath)) {
@@ -130,6 +137,9 @@ if (fs.existsSync(indexPhpPath)) {
   }
   if (source.includes('hero-position-fix.css')) {
     failures.push('index.php eski hero-position-fix.css dosyasını yüklememelidir.');
+  }
+  if (source.includes('class="hero-r8__fallback"')) {
+    failures.push('index.php içinde eski hero fallback markup bulunmamalıdır.');
   }
 
   let previous = -1;
@@ -165,6 +175,7 @@ if (fs.existsSync(heroCssPath)) {
   ]) {
     if (!css.includes(token)) failures.push(`css/hero-animated.css Hero R8 kuralı eksik: ${token}`);
   }
+  if (css.includes('.hero-r8__fallback')) failures.push('css/hero-animated.css eski fallback stilini içermemelidir.');
 
   const expectedZ = [
     ['p00', 1], ['l09', 2], ['t00', 3], ['l01', 4], ['l02', 5], ['l04', 6], ['l03', 7],
@@ -175,8 +186,6 @@ if (fs.existsSync(heroCssPath)) {
     if (!pattern.test(css)) failures.push(`Hero R8 z-index değişmiş: ${name.toUpperCase()} beklenen ${z}`);
   }
 
-  /* Katman sınıflarında kalıcı koordinat/ölçü değişikliği yasaktır. Yalnız
-     z-index ve giriş animasyonuna ait --hero-* değişkenleri kullanılabilir. */
   const layerBlockPattern = /\.hero-r8__layer--([a-z0-9]+)\s*\{([^}]*)\}/g;
   for (const match of css.matchAll(layerBlockPattern)) {
     const layer = match[1].toUpperCase();
@@ -205,10 +214,22 @@ if (fs.existsSync(deployPath)) {
       failures.push(`prepare-deploy.sh Hero R8 dosyasını zorunlu doğrulamıyor: ${filename}`);
     }
   }
+  for (const legacy of ['hero-canpolat.webp', 'hero-canpolat-mobil.webp']) {
+    if (!deploy.includes(`assets/images/${legacy}`)) {
+      failures.push(`prepare-deploy.sh eski hero temizliğini zorunlu uygulamıyor: ${legacy}`);
+    }
+  }
+}
+
+if (fs.existsSync(htaccessPath)) {
+  const htaccess = fs.readFileSync(htaccessPath, 'utf8');
+  if (!htaccess.includes('DirectoryIndex index.php index.html')) failures.push('.htaccess index.php önceliği eksik.');
+  if (!htaccess.includes('hero-canpolat(?:-mobil)?\\.webp')) failures.push('.htaccess eski hero URL engeli eksik.');
+  if (!htaccess.includes('RewriteRule ^index\\.html$ / [R=301,L]')) failures.push('.htaccess doğrudan index.html yönlendirmesi eksik.');
 }
 
 if (failures.length) {
   console.error(failures.join('\n'));
   process.exit(1);
 }
-console.log(`${htmlFiles.length} HTML dosyası, responsive Hero düzeni ve 13/13 kilitli Hero R8 katmanı kontrol edildi.`);
+console.log(`${htmlFiles.length} HTML dosyası, responsive Hero düzeni, eski hero kaldırma koruması ve 13/13 kilitli Hero R8 katmanı kontrol edildi.`);
