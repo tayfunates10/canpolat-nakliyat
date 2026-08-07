@@ -97,13 +97,30 @@ for (const [id, filename, expectedHash] of heroLayers) {
   }
 }
 
+const indexHtmlPath = path.join(root, 'index.html');
 const indexPhpPath = path.join(root, 'index.php');
+const siteCssPath = path.join(root, 'css/style.css');
 const heroCssPath = path.join(root, 'css/hero-animated.css');
 const heroJsPath = path.join(root, 'js/hero-animated.js');
 const deployPath = path.join(root, 'scripts/prepare-deploy.sh');
 
-for (const required of [indexPhpPath, heroCssPath, heroJsPath, deployPath]) {
+for (const required of [indexHtmlPath, indexPhpPath, siteCssPath, heroCssPath, heroJsPath, deployPath]) {
   if (!fs.existsSync(required)) failures.push(`Hero R8 altyapı dosyası eksik: ${path.relative(root, required)}`);
+}
+
+if (fs.existsSync(indexHtmlPath)) {
+  const source = fs.readFileSync(indexHtmlPath, 'utf8');
+  const mobileOrder = ['hero__eyebrow', 'hero__title', 'hero__text', 'hero__media', 'hero__dots', 'hero__trust', 'hero__actions'];
+  let previous = -1;
+  for (const className of mobileOrder) {
+    const current = source.indexOf(`class="${className}`);
+    if (current === -1) {
+      failures.push(`index.html mobil Hero sırası öğesi eksik: ${className}`);
+      continue;
+    }
+    if (current <= previous) failures.push(`index.html mobil Hero içerik sırası bozulmuş: ${className}`);
+    previous = current;
+  }
 }
 
 if (fs.existsSync(indexPhpPath)) {
@@ -127,6 +144,16 @@ if (fs.existsSync(indexPhpPath)) {
   }
 }
 
+if (fs.existsSync(siteCssPath)) {
+  const css = fs.readFileSync(siteCssPath, 'utf8');
+  if (!/\.hero__inner\s*\{[^}]*grid-template-columns:\s*40fr\s+60fr\s*;/s.test(css)) {
+    failures.push('Masaüstü Hero 40/60 metin-sahne oranı değişmiş.');
+  }
+  if (!/@media\s*\(max-width:\s*767px\)[\s\S]*?\.hero__inner\s*\{\s*display:\s*block\s*;\s*\}/.test(css)) {
+    failures.push('Mobil Hero alt alta düzen kuralı eksik.');
+  }
+}
+
 if (fs.existsSync(heroCssPath)) {
   const css = fs.readFileSync(heroCssPath, 'utf8');
   for (const token of [
@@ -134,6 +161,7 @@ if (fs.existsSync(heroCssPath)) {
     '.hero-r8.is-ready .hero-r8__layer',
     'translate3d(0, 0, 0) scale(1)',
     '@media (prefers-reduced-motion: reduce)',
+    'object-fit: contain',
   ]) {
     if (!css.includes(token)) failures.push(`css/hero-animated.css Hero R8 kuralı eksik: ${token}`);
   }
@@ -145,6 +173,22 @@ if (fs.existsSync(heroCssPath)) {
   for (const [name, z] of expectedZ) {
     const pattern = new RegExp(`\\.hero-r8__layer--${name}\\s*\\{\\s*z-index:\\s*${z};\\s*\\}`);
     if (!pattern.test(css)) failures.push(`Hero R8 z-index değişmiş: ${name.toUpperCase()} beklenen ${z}`);
+  }
+
+  /* Katman sınıflarında kalıcı koordinat/ölçü değişikliği yasaktır. Yalnız
+     z-index ve giriş animasyonuna ait --hero-* değişkenleri kullanılabilir. */
+  const layerBlockPattern = /\.hero-r8__layer--([a-z0-9]+)\s*\{([^}]*)\}/g;
+  for (const match of css.matchAll(layerBlockPattern)) {
+    const layer = match[1].toUpperCase();
+    const declarations = match[2].split(';').map(item => item.trim()).filter(Boolean);
+    for (const declaration of declarations) {
+      const colon = declaration.indexOf(':');
+      if (colon === -1) continue;
+      const property = declaration.slice(0, colon).trim();
+      if (property !== 'z-index' && !property.startsWith('--hero-')) {
+        failures.push(`Hero R8 ${layer} katmanında kalıcı yerleşim özelliği yasak: ${property}`);
+      }
+    }
   }
 }
 
@@ -167,4 +211,4 @@ if (failures.length) {
   console.error(failures.join('\n'));
   process.exit(1);
 }
-console.log(`${htmlFiles.length} HTML dosyası, yerel bağlantılar, eski marka kalıntıları ve 13/13 kilitli Hero R8 katmanı kontrol edildi.`);
+console.log(`${htmlFiles.length} HTML dosyası, responsive Hero düzeni ve 13/13 kilitli Hero R8 katmanı kontrol edildi.`);
