@@ -203,6 +203,10 @@ senkronlar. Eşzamanlı yayınlar sıraya alınır; yarım kalmış iki dağıt�
 - Eski hero dosyaları paketten çıkarılır; `assets/images/hero-animated/` altındaki güncel animasyon
   parçaları doğrudan pakete alınır ve zorunlu dosyaların boş olmadığı doğrulanır.
 - `cgi-bin` ve `.well-known` FTP senkronunun dışında tutulur. `dangerous-clean-slate` kapalıdır.
+- GoDaddy paylaşımlı sunucusu `ftp.avo.acb.mytemp.website` adıyla uyuşmayan ortak bir FTPS
+  sertifikası sunduğu için bağlantıda `security: loose` kullanılır. Veri aktarımı FTPS ile şifreli
+  kalır; yalnız sertifikanın hostname eşleşmesi aranmaz. İleride sertifikayla eşleşen gerçek
+  `*.prod.sxb1.secureserver.net` sunucu adı alınırsa ayar yeniden `strict` yapılmalıdır.
 - `.canpolat-ftp-deploy-state.json`, bir sonraki çalıştırmada yalnız değişen dosyaları belirlemek
   için sunucuda otomatik oluşturulan senkron durum dosyasıdır; silinmemelidir.
 - Mevcut `.cpanel.yml` elle cPanel dağıtımı için çalışmaya devam eder ve FTP akışıyla aynı yayın

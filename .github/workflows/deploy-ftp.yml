@@ -56,7 +56,7 @@ jobs:
           server-dir: ${{ vars.FTP_SERVER_DIR }}
           state-name: .canpolat-ftp-deploy-state.json
           dangerous-clean-slate: false
-          security: strict
+          security: loose
           log-level: standard
           exclude: |
             **/.git*
