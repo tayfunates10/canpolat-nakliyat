@@ -18,6 +18,9 @@ AddDefaultCharset UTF-8
   RewriteCond %{THE_REQUEST} \s/+index\.html(?:[?\s]) [NC]
   RewriteRule ^index\.html$ /index.php [R=302,L,NE]
 
+  # PHP'nin kullandığı ham şablon web üzerinden hiçbir koşulda görüntülenemez.
+  RewriteRule ^index-template\.html$ - [F,L,NC]
+
   # Eski hero dosyaları tamamen emekli edildi. Sunucuda/browser dışında bir kopya kalsa bile servis etme.
   RewriteRule ^assets/images/hero-canpolat(?:-mobil)?\.webp$ - [G,L,NC]
 </IfModule>
