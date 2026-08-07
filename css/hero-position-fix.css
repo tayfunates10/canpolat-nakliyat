@@ -1,4 +1,4 @@
-/* Canpolat hero responsive layout - v15
+/* Canpolat hero responsive layout - v16
    Hedef: mobildeki dikey hero kompozisyonunu tum ekranlarda korumak.
    Tum katmanlar ayni 3:2 sahne koordinat sisteminde yuzde ile konumlanir.
 */
@@ -13,6 +13,7 @@
 .hero-animated .hero-layer--platform{left:0;top:58%;width:100%}
 .hero-animated .hero-layer--route{z-index:2;left:.8%;top:4.5%;width:23.5%;--hero-delay:70ms;--hero-enter-transform:translate3d(-18px,-10px,0) scale(.96)}
 .hero-animated .hero-layer--truck{z-index:10;left:21%;top:10%;width:72%;--hero-delay:180ms;--hero-enter-transform:translate3d(0,-34px,0) scale(.97)}
+.hero-animated .hero-layer--elevator{z-index:7;left:76.5%;top:15%;width:21.5%;--hero-delay:520ms;--hero-enter-transform:translate3d(26px,20px,0) scale(.96)}
 .hero-animated .hero-layer--box-stack{left:9%;top:34%;width:16%}
 .hero-animated .hero-layer--mattress{left:23.5%;top:41%;width:12.5%}
 .hero-animated .hero-layer--left-trolley{left:3.5%;top:40%;width:18%}
@@ -29,4 +30,4 @@
 @media (min-width:1200px){.hero{min-height:820px;padding-top:48px;padding-bottom:72px}.hero__media{width:min(100%,1220px)}.hero-animated{aspect-ratio:3/2}}
 @media (min-width:768px) and (max-width:1199px){.hero{min-height:720px}.hero__media{width:min(100%,980px)}}
 @media (max-width:767px){.hero{min-height:0;padding:20px 0 28px}.hero__eyebrow{margin-bottom:12px;font-size:10px;letter-spacing:.08em}.hero__title{margin-bottom:12px;font-size:clamp(32px,10.5vw,42px)}.hero__text{max-width:340px;margin-bottom:6px;font-size:13.5px}.hero__media{width:calc(100% + 8px);margin:4px -4px 0}.hero-animated{aspect-ratio:3/2}.hero__trust{justify-content:space-between;width:100%;margin:18px 0;padding:12px 0}.trust-item{padding:0 6px}.hero__actions{flex-direction:column;gap:10px;width:100%}.hero__actions .btn{width:100%}}
-@media (max-width:430px){.hero__media{width:calc(100% + 4px);margin-inline:-2px}.hero-animated .hero-layer--truck{left:20.5%;width:72.5%}.hero-animated .hero-layer--route{left:.5%;top:4.2%;width:23.8%}.hero-animated .hero-layer--right-stack{left:82%;top:52%;width:11.2%}.hero-animated .hero-layer--box-worker{left:71.5%;top:49.5%;width:10.3%}}
+@media (max-width:430px){.hero__media{width:calc(100% + 4px);margin-inline:-2px}.hero-animated .hero-layer--truck{left:20.5%;width:72.5%}.hero-animated .hero-layer--route{left:.5%;top:4.2%;width:23.8%}.hero-animated .hero-layer--elevator{left:75.5%;top:15.5%;width:22.5%}.hero-animated .hero-layer--right-stack{left:82%;top:52%;width:11.2%}.hero-animated .hero-layer--box-worker{left:71.5%;top:49.5%;width:10.3%}}
