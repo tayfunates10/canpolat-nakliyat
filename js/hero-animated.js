@@ -2,13 +2,20 @@
   'use strict';
 
   function imageReady(image) {
-    if (image.complete && image.naturalWidth > 0) return Promise.resolve();
-    if (typeof image.decode === 'function') {
-      return image.decode().catch(function () {});
-    }
     return new Promise(function (resolve) {
-      image.addEventListener('load', resolve, { once: true });
-      image.addEventListener('error', resolve, { once: true });
+      if (image.complete) {
+        resolve(image.naturalWidth > 0);
+        return;
+      }
+
+      image.addEventListener('load', function () { resolve(true); }, { once: true });
+      image.addEventListener('error', function () {
+        image.classList.add('is-missing');
+        resolve(false);
+      }, { once: true });
+    }).then(function (loaded) {
+      if (!loaded || typeof image.decode !== 'function') return loaded;
+      return image.decode().then(function () { return true; }).catch(function () { return true; });
     });
   }
 
@@ -16,13 +23,20 @@
     var stage = document.getElementById('heroAnimated');
     if (!stage) return;
 
-    var images = Array.prototype.slice.call(stage.querySelectorAll('img'));
-    var ready = Promise.all(images.map(imageReady));
-    var timeout = new Promise(function (resolve) { setTimeout(resolve, 1300); });
+    var layers = Array.prototype.slice.call(stage.querySelectorAll('.hero-r8__layer'));
+    if (!layers.length) return;
 
-    Promise.race([ready, timeout]).then(function () {
+    Promise.all(layers.map(imageReady)).then(function (results) {
+      var allLoaded = results.every(Boolean);
+
+      if (!allLoaded) {
+        stage.classList.add('has-error');
+        return;
+      }
+
       requestAnimationFrame(function () {
         requestAnimationFrame(function () {
+          stage.classList.remove('has-error');
           stage.classList.add('is-ready');
         });
       });
