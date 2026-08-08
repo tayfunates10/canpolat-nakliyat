@@ -1,10 +1,19 @@
 {
   "name": "Canpolat Nakliyat",
   "short_name": "Canpolat",
+  "description": "Edremit merkezli evden eve ve şehirler arası nakliyat hizmetleri.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#303640",
-  "theme_color": "#303640",
-  "lang": "tr",
-  "icons": []
+  "background_color": "#06121b",
+  "theme_color": "#06121b",
+  "lang": "tr-TR",
+  "icons": [
+    {
+      "src": "/assets/images/favicon-canpolat.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
 }

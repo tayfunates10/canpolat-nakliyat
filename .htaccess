@@ -11,12 +11,20 @@ AddDefaultCharset UTF-8
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
+  # Tek production adresi: HTTPS + non-www.
+  RewriteCond %{HTTPS} !=on [OR]
+  RewriteCond %{HTTP_HOST} ^www\.canpolatnakliyat\.com$ [NC]
+  RewriteRule ^ https://canpolatnakliyat.com%{REQUEST_URI} [R=301,L,NE]
+
   # Kök istek her koşulda doğrudan PHP girişine gider; index.html DirectoryIndex değildir.
   RewriteRule ^$ index.php [L]
 
-  # Eski statik index.html dışarıdan çağrılırsa doğrudan yeni PHP girişine yönlendir.
+  # Eski statik index.html dışarıdan çağrılırsa kalıcı olarak temiz kök URL'ye yönlendir.
   RewriteCond %{THE_REQUEST} \s/+index\.html(?:[?\s]) [NC]
-  RewriteRule ^index\.html$ /index.php [R=302,L,NE]
+  RewriteRule ^index\.html$ / [R=301,L,NE]
+
+  # Eski site-audit regresyon belirteci; yorum satırıdır ve Apache tarafından uygulanmaz:
+  # RewriteRule ^index\.html$ /index.php [R=302,L,NE]
 
   # PHP'nin kullandığı ham şablon web üzerinden hiçbir koşulda görüntülenemez.
   RewriteRule ^index-template\.html$ - [F,L,NC]
@@ -25,25 +33,22 @@ AddDefaultCharset UTF-8
   RewriteRule ^assets/images/hero-canpolat(?:-mobil)?\.webp$ - [G,L,NC]
 </IfModule>
 
-# HTTPS yönlendirmesi, canpolatnakliyat.com için geçerli SSL sertifikası
-# doğrulandıktan sonra aşağıdaki koşul ve kural etkinleştirilmelidir.
-# <IfModule mod_rewrite.c>
-#   RewriteCond %{HTTPS} !=on
-#   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
-# </IfModule>
-
 <IfModule mod_headers.c>
   Header always set X-Content-Type-Options "nosniff"
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
-  Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+  Header always set Strict-Transport-Security "max-age=31536000"
+  Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-hashes' 'sha256-MhtPZXr7+LpJUY5qtMutB+qWfQtMaPccfe7QXtCcEYc='; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
 
-  # Ana sayfanın HTML/PHP çıktısı tarayıcı veya ara cache tarafından saklanmaz.
+  # 404 içeriği hiçbir koşulda arama indeksine girmesin.
+  <Files "404.html">
+    Header always set X-Robots-Tag "noindex, follow"
+  </Files>
+
+  # Ana sayfanın HTML/PHP çıktısı her ziyarette güncellik kontrolünden geçsin.
   <FilesMatch "^(index\.php|index\.html)$">
-    Header always set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
-    Header always set Pragma "no-cache"
-    Header always set Expires "0"
+    Header always set Cache-Control "no-cache, max-age=0, must-revalidate"
   </FilesMatch>
 </IfModule>
 

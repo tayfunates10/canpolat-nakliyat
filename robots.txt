@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /api/
 Disallow: /tests/
+Disallow: /index-template.html
 
 Sitemap: https://canpolatnakliyat.com/sitemap.xml
