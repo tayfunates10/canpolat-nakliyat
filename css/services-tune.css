@@ -1,0 +1,202 @@
+/* Canpolat Nakliyat — Hizmetlerimiz ince ayarı
+ * Amaç: referans düzenin masaüstü 5 kart / mobil kompakt satır mantığını korumak.
+ * İçerik, görsel dosyaları ve bağlantılar değiştirilmez.
+ */
+
+.services {
+  position: relative;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(31, 73, 95, 0.10) 0%, transparent 42%),
+    var(--color-bg);
+}
+
+.services .section-label {
+  margin-bottom: 5px;
+}
+
+.services .section-title {
+  margin-bottom: 24px;
+}
+
+.services__grid {
+  gap: 14px;
+  align-items: stretch;
+}
+
+.service-card {
+  min-width: 0;
+  min-height: 300px;
+  padding: 12px 12px 15px;
+  background: linear-gradient(180deg, rgba(13, 32, 43, 0.96), rgba(8, 23, 32, 0.98));
+  border-color: rgba(151, 174, 190, 0.22);
+  border-radius: 11px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.015);
+}
+
+.service-card:hover {
+  border-color: rgba(255, 98, 0, 0.36);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22);
+}
+
+.service-card__media {
+  aspect-ratio: 16 / 10;
+  margin-bottom: 13px;
+  background:
+    radial-gradient(circle at 50% 62%, rgba(35, 73, 92, 0.18), transparent 68%),
+    var(--color-panel-deep);
+  border: 1px solid rgba(151, 174, 190, 0.08);
+  border-radius: 8px;
+}
+
+.service-card__media img {
+  object-position: center center;
+}
+
+.service-card__title {
+  min-height: 40px;
+  margin-bottom: 7px;
+  font-size: 15.5px;
+  line-height: 1.28;
+}
+
+.service-card__text {
+  margin-bottom: 13px;
+  font-size: 12.75px;
+  line-height: 1.5;
+}
+
+.service-card__more {
+  gap: 6px;
+  font-size: 12.5px;
+}
+
+@media (max-width: 1199px) {
+  .service-card {
+    min-height: 286px;
+  }
+}
+
+@media (max-width: 991px) and (min-width: 768px) {
+  .services__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .service-card {
+    min-height: 278px;
+  }
+}
+
+@media (max-width: 767px) {
+  .services {
+    padding-top: 30px;
+    padding-bottom: 34px;
+    background: var(--color-bg);
+  }
+
+  .services .section-label {
+    margin-bottom: 12px;
+    font-size: 10.5px;
+    letter-spacing: 0.11em;
+  }
+
+  .services__grid {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+
+  .service-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    min-height: 72px;
+    padding: 7px 11px 7px 8px;
+    background: linear-gradient(90deg, rgba(10, 26, 36, 0.98), rgba(8, 22, 31, 0.98));
+    border-color: rgba(151, 174, 190, 0.20);
+    border-radius: 8px;
+    box-shadow: none;
+  }
+
+  .service-card:hover {
+    transform: none;
+    background: var(--color-panel-hover);
+    border-color: var(--color-border-strong);
+    box-shadow: none;
+  }
+
+  .service-card__media {
+    width: 76px;
+    flex: 0 0 76px;
+    aspect-ratio: 16 / 10;
+    margin: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 5px;
+  }
+
+  .service-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .service-card__body {
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .service-card__title {
+    min-height: 0;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .service-card__text,
+  .service-card__more {
+    display: none;
+  }
+
+  .service-card__chevron {
+    display: block;
+    width: 18px;
+    height: 18px;
+    margin-left: auto;
+    color: var(--color-muted);
+  }
+}
+
+@media (max-width: 430px) {
+  .services {
+    padding-top: 26px;
+    padding-bottom: 30px;
+  }
+
+  .service-card {
+    gap: 10px;
+    min-height: 68px;
+    padding: 6px 10px 6px 7px;
+  }
+
+  .service-card__media {
+    width: 70px;
+    flex-basis: 70px;
+  }
+
+  .service-card__title {
+    font-size: 13.5px;
+  }
+
+  .service-card__chevron {
+    width: 17px;
+    height: 17px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-card,
+  .service-card__more svg {
+    transition: none !important;
+  }
+}
