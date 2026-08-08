@@ -237,10 +237,29 @@ async function runAxe(page) {
       if (failedRequests.length) fail(failures, label, `Başarısız ağ isteği: ${failedRequests.join(' | ')}`);
       if (httpErrors.length) fail(failures, label, `HTTP hata yanıtı: ${httpErrors.join(' | ')}`);
 
+      /*
+       * QA ekran görüntüsünde fixed/sticky header element crop üzerine binmesin.
+       * Testlerin tamamı gerçek header davranışı açıkken yukarıda çalıştırılır;
+       * yalnız final section screenshot'ı için görünürlüğü geçici kapatılır.
+       */
+      await page.evaluate(() => {
+        const header = document.querySelector('#site-header');
+        if (header) header.dataset.qaPreviousVisibility = header.style.visibility || '';
+        if (header) header.style.visibility = 'hidden';
+      });
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
       const sectionHandle = await page.$('#hakkimizda');
       const screenshot = path.join(outputDir, `section-03-${label}.png`);
       if (sectionHandle) await sectionHandle.screenshot({ path: screenshot });
       else fail(failures, label, 'Hakkımızda bölümü screenshot için bulunamadı.');
+
+      await page.evaluate(() => {
+        const header = document.querySelector('#site-header');
+        if (!header) return;
+        header.style.visibility = header.dataset.qaPreviousVisibility || '';
+        delete header.dataset.qaPreviousVisibility;
+      });
 
       results.push({ label, screenshot: path.basename(screenshot), state, axe, reducedMotion, consoleErrors, pageErrors, failedRequests, httpErrors });
       await page.close();
