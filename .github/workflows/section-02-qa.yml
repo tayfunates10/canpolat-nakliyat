@@ -89,6 +89,13 @@ jobs:
           SECTION02_ARTIFACT_DIR: artifacts/section-02
         run: node tests/section02-browser-audit.js
 
+      - name: Bölüm 02 temiz section-only onay görselleri
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+          SECTION02_BASE_URL: http://127.0.0.1:8099/
+          SECTION02_VISUAL_DIR: artifacts/section-02-clean
+        run: node tests/section02-visual-capture.js
+
       - name: PHP sunucu logunu artifact klasörüne ekle
         if: always()
         shell: bash
