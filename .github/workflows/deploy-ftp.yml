@@ -18,7 +18,7 @@ permissions:
 
 concurrency:
   group: canpolat-production-ftp
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -150,8 +150,8 @@ jobs:
             echo "legacy_body=${legacy_body}" >> "${GITHUB_OUTPUT}"
           }
 
-          for attempt in $(seq 1 12); do
-            echo "Canlı doğrulama denemesi ${attempt}/12"
+          for attempt in $(seq 1 6); do
+            echo "Canlı doğrulama denemesi ${attempt}/6"
             last_headers="$(curl -sS -L -D - -o /dev/null --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/?${QUERY}" || true)"
             last_body="$(curl -sS -L --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/?${QUERY}" || true)"
             last_old_code="$(curl -sS -o /dev/null -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/assets/images/hero-canpolat.webp?${QUERY}" || true)"
