@@ -2,7 +2,7 @@
   'use strict';
 
   function initQuoteDelivery() {
-    var form = document.getElementById('quote-form');
+    var form = document.getElementById('quote-request-form');
     if (!form) return;
 
     var alertBox = document.getElementById('form-alert');
@@ -31,7 +31,11 @@
 
     if (dateField) {
       dateField.addEventListener('focus', function () {
+        if (dateField.type === 'text') dateField.type = 'date';
         if (dateField.type === 'date') dateField.min = todayIso();
+      });
+      dateField.addEventListener('blur', function () {
+        if (!dateField.value && dateField.type === 'date') dateField.type = 'text';
       });
     }
 
@@ -50,7 +54,6 @@
 
     form.addEventListener('submit', function (event) {
       event.preventDefault();
-      event.stopImmediatePropagation();
       clearMessages();
 
       if (!form.checkValidity()) {
@@ -99,7 +102,7 @@
           button.removeAttribute('aria-busy');
         }
       });
-    }, true);
+    });
   }
 
   if (document.readyState === 'loading') {
