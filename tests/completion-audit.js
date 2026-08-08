@@ -28,8 +28,8 @@ const notFound = read('404.html');
 const deploy = read('scripts/prepare-deploy.sh');
 const packageService = read('hizmetler/paketleme-montaj.html');
 
-requireToken('index.php', indexPhp, "https://canpolatnakliyat.com/", 'canonical production alan adı non-www olmalıdır.');
-requireToken('index.php', indexPhp, "action=\"/api/teklif.php\"", 'fiyat teklif formu gerçek POST endpointine bağlanmalıdır.');
+requireToken('index.php', indexPhp, 'https://canpolatnakliyat.com/', 'canonical production alan adı non-www olmalıdır.');
+requireToken('index.php', indexPhp, 'action="/api/teklif.php"', 'fiyat teklif formu gerçek POST endpointine bağlanmalıdır.');
 requireToken('index.php', indexPhp, 'js/quote-form.js', 'form teslim JavaScript dosyası yüklenmelidir.');
 for (const service of [
   '/hizmetler/evden-eve-nakliyat.html',
@@ -41,17 +41,17 @@ for (const service of [
   requireToken('index.php', indexPhp, service, `hizmet kartı hedefi eksik: ${service}`);
 }
 
-requireToken('js/quote-form.js', quoteJs, "fetch(endpoint", 'form gönderimi fetch ile yapılmalıdır.');
-requireToken('js/quote-form.js', quoteJs, "form.checkValidity()", 'tarayıcı form doğrulaması korunmalıdır.');
-requireToken('js/quote-form.js', quoteJs, "stopImmediatePropagation()", 'eski demo submit işleyicisi gerçek gönderimi engellememelidir.');
+requireToken('js/quote-form.js', quoteJs, 'fetch(endpoint', 'form gönderimi fetch ile yapılmalıdır.');
+requireToken('js/quote-form.js', quoteJs, 'form.checkValidity()', 'tarayıcı form doğrulaması korunmalıdır.');
+requireToken('js/quote-form.js', quoteJs, 'stopImmediatePropagation()', 'eski demo submit işleyicisi gerçek gönderimi engellememelidir.');
 
-requireToken('api/teklif.php', quoteApi, "REQUEST_METHOD", 'endpoint yalnız POST kabul etmelidir.');
-requireToken('api/teklif.php', quoteApi, "finish(405", 'POST dışı istekler 405 dönmelidir.');
-requireToken('api/teklif.php', quoteApi, "validPhone", 'telefon sunucu tarafında doğrulanmalıdır.');
-requireToken('api/teklif.php', quoteApi, "FILTER_VALIDATE_EMAIL", 'e-posta sunucu tarafında doğrulanmalıdır.');
-requireToken('api/teklif.php', quoteApi, "mail($recipient", 'doğrulanan teklif talebi e-posta ile teslim edilmelidir.');
-requireToken('api/teklif.php', quoteApi, "website", 'spam honeypot kontrolü bulunmalıdır.');
-requireToken('api/teklif.php', quoteApi, "429", 'hızlı tekrar gönderimleri sınırlanmalıdır.');
+requireToken('api/teklif.php', quoteApi, 'REQUEST_METHOD', 'endpoint yalnız POST kabul etmelidir.');
+requireToken('api/teklif.php', quoteApi, 'finish(405', 'POST dışı istekler 405 dönmelidir.');
+requireToken('api/teklif.php', quoteApi, 'validPhone', 'telefon sunucu tarafında doğrulanmalıdır.');
+requireToken('api/teklif.php', quoteApi, 'FILTER_VALIDATE_EMAIL', 'e-posta sunucu tarafında doğrulanmalıdır.');
+requireToken('api/teklif.php', quoteApi, 'mail($recipient', 'doğrulanan teklif talebi e-posta ile teslim edilmelidir.');
+requireToken('api/teklif.php', quoteApi, 'website', 'spam honeypot kontrolü bulunmalıdır.');
+requireToken('api/teklif.php', quoteApi, '429', 'hızlı tekrar gönderimleri sınırlanmalıdır.');
 
 requireToken('.htaccess', htaccess, 'https://canpolatnakliyat.com%{REQUEST_URI}', 'HTTPS + non-www canonical yönlendirmesi bulunmalıdır.');
 requireToken('.htaccess', htaccess, 'Strict-Transport-Security', 'HSTS başlığı bulunmalıdır.');
@@ -74,6 +74,43 @@ requireToken('hizmetler/paketleme-montaj.html', packageService, '<h1>Paketleme v
 requireToken('scripts/prepare-deploy.sh', deploy, '"api"', 'API klasörü production paketine dahil edilmelidir.');
 requireToken('scripts/prepare-deploy.sh', deploy, '"js/quote-form.js"', 'quote-form.js production paketinde zorunlu olmalıdır.');
 requireToken('scripts/prepare-deploy.sh', deploy, '"hizmetler/paketleme-montaj.html"', 'yeni hizmet sayfası production paketinde zorunlu olmalıdır.');
+
+const publicPages = [
+  'hakkimizda.html',
+  'gizlilik.html',
+  'bolgeler/edremit-nakliyat.html',
+  'hizmetler/evden-eve-nakliyat.html',
+  'hizmetler/sehirler-arasi-nakliyat.html',
+  'hizmetler/ofis-isyeri-tasima.html',
+  'hizmetler/asansorlu-tasima.html',
+  'hizmetler/paketleme-montaj.html',
+];
+
+for (const page of publicPages) {
+  const html = read(page);
+  requireToken(page, html, '<meta name="theme-color" content="#06121b">', 'production tema rengi #06121b olmalıdır.');
+  requireToken(page, html, 'rel="icon" href="/assets/images/favicon-canpolat.svg"', 'favicon gerçek favicon dosyasını kullanmalıdır.');
+  requireToken(page, html, 'rel="manifest" href="/manifest.webmanifest"', 'manifest bağlantısı bulunmalıdır.');
+  requireToken(page, html, 'https://canpolatnakliyat.com/', 'canonical/OG adresleri non-www production origin kullanmalıdır.');
+  if (html.includes('media="print" onload=')) failures.push(`${page}: CSP'ye bağımlı eski inline font onload yöntemi kullanılmamalıdır.`);
+  if (/<link\s+rel="icon"[^>]+canpolat-logo\.svg/i.test(html)) failures.push(`${page}: marka logosu favicon olarak kullanılmamalıdır.`);
+  if (html.includes('https://www.canpolatnakliyat.com')) failures.push(`${page}: www origin kullanılmamalıdır.`);
+}
+
+const serviceNavigationPages = [
+  'hakkimizda.html',
+  'bolgeler/edremit-nakliyat.html',
+  'hizmetler/evden-eve-nakliyat.html',
+  'hizmetler/sehirler-arasi-nakliyat.html',
+  'hizmetler/ofis-isyeri-tasima.html',
+  'hizmetler/asansorlu-tasima.html',
+  'hizmetler/paketleme-montaj.html',
+];
+for (const page of serviceNavigationPages) {
+  const html = read(page);
+  requireToken(page, html, '/hizmetler/paketleme-montaj.html', 'beşinci hizmet olan Paketleme & Montaj bağlantısı bulunmalıdır.');
+  requireToken(page, html, 'alt="Canpolat Nakliyat"', 'marka logo alt metni genel marka adıyla tutarlı olmalıdır.');
+}
 
 if (failures.length) {
   console.error('Tamamlama denetimi başarısız:');
