@@ -69,6 +69,13 @@ jobs:
           SECTION00_ARTIFACT_DIR: artifacts/section-00
         run: node tests/section00-browser-audit.js
 
+      - name: R8 desktop final-state QA ve ekran görüntüleri
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+          SECTION00_BASE_URL: http://127.0.0.1:8099/
+          SECTION00_ARTIFACT_DIR: artifacts/section-00
+        run: node tests/hero-r8-desktop-final-audit.js
+
       - name: PHP sunucu logunu artifact klasörüne ekle
         if: always()
         shell: bash
