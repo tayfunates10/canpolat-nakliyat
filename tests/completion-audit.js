@@ -33,6 +33,9 @@ const staticJs = read('assets/js/main.js');
 requireToken('index.php', indexPhp, 'https://canpolatnakliyat.com/', 'canonical production alan adı non-www olmalıdır.');
 requireToken('index.php', indexPhp, 'action="/api/teklif.php"', 'fiyat teklif formu gerçek POST endpointine bağlanmalıdır.');
 requireToken('index.php', indexPhp, 'js/quote-form.js', 'form teslim JavaScript dosyası yüklenmelidir.');
+requireToken('index.php', indexPhp, 'Taşıma kapsamı, sorumluluklar ve varsa ek güvence seçenekleri', 'sigorta/ek güvence kapsamı koşulsuz garanti gibi sunulmamalıdır.');
+requireToken('index.php', indexPhp, 'Taşıma kapsamında sökülen ve yeniden kuruluma uygun mobilyalara montaj desteği sağlıyoruz.', 'montaj kapsamı uygun mobilyalarla sınırlandırılmalıdır.');
+requireToken('index.php', indexPhp, 'Edremit ve çevresinde planlı, özenli ve ulaşılabilir nakliyat hizmeti.', 'CTA koşulsuz sigorta vaadi içermemelidir.');
 for (const service of [
   '/hizmetler/evden-eve-nakliyat.html',
   '/hizmetler/sehirler-arasi-nakliyat.html',
