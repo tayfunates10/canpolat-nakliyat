@@ -137,7 +137,7 @@ $html = preg_replace(
 ) ?? $html;
 $html = str_replace(
     'https://canpolatnakliyat.com/assets/images/hero-canpolat.webp',
-    'https://canpolatnakliyat.com/assets/images/canpolat-logo.svg',
+    'https://canpolatnakliyat.com/assets/images/service-evden-eve.webp',
     $html
 );
 
