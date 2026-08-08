@@ -40,8 +40,14 @@ publish_paths=(
 required_paths=(
   "${publish_paths[@]}"
   "css/hero-animated.css"
+  "css/services-tune.css"
   "js/hero-animated.js"
   "assets/images/hero-r8/ASSET-MANIFEST.md"
+  "assets/images/service-evden-eve.webp"
+  "assets/images/service-sehirler-arasi.webp"
+  "assets/images/service-ofis.webp"
+  "assets/images/service-asansorlu.webp"
+  "assets/images/service-paketleme.webp"
 )
 
 for path in "${required_paths[@]}"; do
@@ -69,8 +75,14 @@ required_output_files=(
   "index-template.html"
   "css/style.css"
   "css/hero-animated.css"
+  "css/services-tune.css"
   "js/script.js"
   "js/hero-animated.js"
+  "assets/images/service-evden-eve.webp"
+  "assets/images/service-sehirler-arasi.webp"
+  "assets/images/service-ofis.webp"
+  "assets/images/service-asansorlu.webp"
+  "assets/images/service-paketleme.webp"
   "assets/images/hero-r8/platform-p00-r8-reference-exact.png"
   "assets/images/hero-r8/truck-t00-r6.png"
   "assets/images/hero-r8/layer-l01-r6.png"
