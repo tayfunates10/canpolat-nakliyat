@@ -35,13 +35,7 @@ $html = str_replace('css/services-tune.css?v=20260808-svc-03', 'css/services-tun
 $html = str_replace('<meta name="theme-color" content="#06121b">', '<meta name="theme-color" content="#253349">', $html);
 $html = str_replace('7/24 Bizi Arayın', 'Bizi Arayın', $html);
 
-/*
- * Şablondaki eski, koşulsuz ticari vaatleri production çıktısında nitelendir.
- * Sigorta/ek güvence kapsamı ve montaj kapsamı ancak teklif/sözleşme aşamasında
- * netleştirilebileceği için tüm ziyaretçilere garanti edilmiş gibi sunulmaz.
- * Aynı metinler JSON-LD FAQ içinde de bulunduğundan str_replace her iki kopyayı
- * birlikte günceller ve görünen SSS ile yapılandırılmış veri tutarlı kalır.
- */
+/* Koşulsuz ticari vaatleri production çıktısında nitelendir. */
 $html = str_replace(
     'Eşyalarım sigortalı mı taşınıyor?',
     'Taşıma kapsamı ve ek güvence nasıl belirleniyor?',
@@ -73,11 +67,7 @@ $html = str_replace(
     $html
 );
 
-/*
- * BÖLÜM 01 — Hero güven unsurları ve ana açıklama.
- * Doğrulanmamış sigorta/zaman garantisi/hız iddialarını tasarımı bozmadan
- * daha doğru ve sürdürülebilir ifadelerle değiştirir.
- */
+/* BÖLÜM 01 — Hero güvenli içerik dönüşümleri. */
 $html = str_replace(
     'Canpolat Nakliyat olarak eşyalarınızı özenle taşıyor, zamanında ve güvenli hizmet sunuyoruz.',
     'Canpolat Nakliyat olarak eşyalarınızı özenle taşıyor, süreci planlı ve düzenli şekilde yürütüyoruz.',
@@ -95,11 +85,7 @@ $html = str_replace(
 );
 $html = str_replace('<em>Hızlı Servis</em>', '<em>Yerel Hizmet</em>', $html);
 
-/*
- * BÖLÜM 02 — Hizmet kartı açıklamaları.
- * Kesin teslim süresi/hasarsızlık/uzmanlık gibi doğrulanmamış vaatler yerine
- * hizmetin gerçek kapsamını anlatan planlı ve koşullu ifadeler kullanılır.
- */
+/* BÖLÜM 02 — Hizmet kartı açıklamaları. */
 $html = str_replace(
     'Eşyalarınızı özenle paketliyor, güvenle yeni adresinize ulaştırıyoruz.',
     'Eşyalarınızı özenle paketleyip planlı şekilde yeni adresinize taşıyoruz.',
@@ -126,7 +112,7 @@ $html = str_replace(
     $html
 );
 
-/* CSP ile çakışan eski inline boot scriptini kaldır; ana JS zaten görsel fallback yönetiyor. */
+/* CSP ile çakışan eski inline boot scriptini kaldır. */
 $html = preg_replace(
     '~\s*<!-- Eksik görsellerde.*?-->\s*<script>.*?</script>\s*~s',
     "\n",
@@ -134,11 +120,7 @@ $html = preg_replace(
     1
 ) ?? $html;
 
-/*
- * Formu gerçek POST endpoint'ine bağla ve legacy demo handler'ın beklediği
- * `quote-form` kimliğinden ayır. Yeni form JS'si yüklenmezse tarayıcının doğal
- * form gönderimi devreye girer; sahte istemci-side başarı mesajı oluşmaz.
- */
+/* Teklif formunu gerçek POST endpoint'ine bağla. */
 $html = str_replace(
     '<form class="quote__form" id="quote-form" novalidate>',
     '<form class="quote__form" id="quote-request-form" action="/api/teklif.php" method="post">',
@@ -155,7 +137,7 @@ $html = str_replace(
     $html
 );
 
-/* Hizmet kartlarındaki “Detaylı Bilgi” aksiyonları gerçek detay sayfalarına gider. */
+/* Hizmet kartları gerçek detay sayfalarına gider. */
 $serviceUrls = [
     '/hizmetler/evden-eve-nakliyat.html',
     '/hizmetler/sehirler-arasi-nakliyat.html',
@@ -181,6 +163,33 @@ $linkedHtml = preg_replace_callback(
 if (is_string($linkedHtml) && $serviceReplaceCount === 5) {
     $html = $linkedHtml;
 }
+
+/* BÖLÜM 03 — Onaylı Hakkımızda partial'ını eski section yerine fail-closed yerleştir. */
+$aboutFile = __DIR__ . '/partials/section-03-about.html';
+$aboutMarkup = @file_get_contents($aboutFile);
+if ($aboutMarkup === false) {
+    http_response_code(500);
+    header('Content-Type: text/plain; charset=UTF-8');
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    echo 'Hakkımızda bölümü okunamadı.';
+    exit;
+}
+$aboutReplaceCount = 0;
+$aboutReplacedHtml = preg_replace(
+    '~<section class="about section" id="hakkimizda">.*?</section>~s',
+    $aboutMarkup,
+    $html,
+    1,
+    $aboutReplaceCount
+);
+if (!is_string($aboutReplacedHtml) || $aboutReplaceCount !== 1) {
+    http_response_code(500);
+    header('Content-Type: text/plain; charset=UTF-8');
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    echo 'Hakkımızda bölümü doğrulanamadı.';
+    exit;
+}
+$html = $aboutReplacedHtml;
 
 /* Henüz gerçek hesap adresi olmayan sosyal ikonları ve boş şartlar linkini yayınlama. */
 $html = preg_replace('~\s*<ul class="social">.*?</ul>~s', '', $html, 1) ?? $html;
@@ -256,6 +265,7 @@ $assets = <<<'HTML'
   <link rel="preload" as="image" href="assets/images/hero-r8/truck-t00-r6.png?v=20260808-r8-11" fetchpriority="high">
   <link rel="stylesheet" href="css/hero-animated.css?v=20260808-r8-13">
   <link rel="stylesheet" href="css/section-00.css?v=20260808-01">
+  <link rel="stylesheet" href="css/section-03.css?v=20260809-01">
   <script src="js/quote-form.js?v=20260808-01" defer></script>
   <script src="js/hero-animated.js?v=20260808-r8-11" defer></script>
 HTML;
