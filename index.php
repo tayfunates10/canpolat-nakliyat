@@ -13,7 +13,13 @@ $mustResetClientCache = !isset($_COOKIE[$cacheResetCookie]);
 if ($mustResetClientCache) {
     header('X-LiteSpeed-Purge: *');
     header('Clear-Site-Data: "cache"');
-    setcookie($cacheResetCookie, '1', time() + 31536000, '/', '', true, true);
+    setcookie($cacheResetCookie, '1', [
+        'expires' => time() + 31536000,
+        'path' => '/',
+        'secure' => true,
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
 }
 
 $indexFile = __DIR__ . '/index-template.html';
@@ -49,6 +55,11 @@ $html = str_replace(
 $html = str_replace(
     '<p class="form-alert" id="form-alert" role="alert" hidden></p>',
     '<p class="form-alert" id="form-alert" role="alert" hidden></p>\n          <div aria-hidden="true" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden"><label for="website">Web sitesi</label><input type="text" id="website" name="website" tabindex="-1" autocomplete="off"></div>',
+    $html
+);
+$html = str_replace(
+    '<button class="btn btn--primary btn--submit" type="submit">',
+    '<p class="quote__subtitle" style="margin:10px 0 0">Kişisel verileriniz yalnız teklif talebinizi yanıtlamak ve taşıma planını değerlendirmek amacıyla işlenir. Ayrıntılar için <a href="/gizlilik.html" style="text-decoration:underline">Gizlilik ve Kişisel Veriler</a> sayfasını inceleyin.</p>\n\n          <button class="btn btn--primary btn--submit" type="submit">',
     $html
 );
 
