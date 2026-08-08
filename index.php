@@ -31,6 +31,7 @@ if ($html === false) {
 $html = str_replace('https://www.canpolatnakliyat.com', 'https://canpolatnakliyat.com', $html);
 $html = str_replace('assets/images/logo-canpolat.png', 'assets/images/canpolat-logo.svg?v=20260808-03', $html);
 $html = str_replace('href="css/style.css"', 'href="css/style.css?v=20260808-r8-11"', $html);
+$html = str_replace('css/services-tune.css?v=20260808-svc-03', 'css/services-tune.css?v=20260809-svc-04', $html);
 $html = str_replace('<meta name="theme-color" content="#06121b">', '<meta name="theme-color" content="#253349">', $html);
 $html = str_replace('7/24 Bizi Arayın', 'Bizi Arayın', $html);
 
@@ -93,6 +94,37 @@ $html = str_replace(
     $html
 );
 $html = str_replace('<em>Hızlı Servis</em>', '<em>Yerel Hizmet</em>', $html);
+
+/*
+ * BÖLÜM 02 — Hizmet kartı açıklamaları.
+ * Kesin teslim süresi/hasarsızlık/uzmanlık gibi doğrulanmamış vaatler yerine
+ * hizmetin gerçek kapsamını anlatan planlı ve koşullu ifadeler kullanılır.
+ */
+$html = str_replace(
+    'Eşyalarınızı özenle paketliyor, güvenle yeni adresinize ulaştırıyoruz.',
+    'Eşyalarınızı özenle paketleyip planlı şekilde yeni adresinize taşıyoruz.',
+    $html
+);
+$html = str_replace(
+    "Türkiye'nin her yerine güvenli, planlı ve zamanında taşıma hizmeti.",
+    'Şehirler arası taşıma sürecini rota ve eşya durumuna göre planlıyoruz.',
+    $html
+);
+$html = str_replace(
+    'Ofis, büro ve iş yerlerinizi en kısa sürede yeni adresinize taşıyoruz.',
+    'Ofis ve iş yeri taşımalarını iş akışını gözeterek düzenli şekilde yürütüyoruz.',
+    $html
+);
+$html = str_replace(
+    'Yüksek katlara hızlı, güvenli ve hasarsız taşıma imkanı.',
+    'Bina ve çevre koşulları uygunsa dış cephe taşıma asansörü kullanıyoruz.',
+    $html
+);
+$html = str_replace(
+    'Profesyonel paketleme ve uzman montaj ekibimizle hizmetinizdeyiz.',
+    'Taşıma kapsamına uygun paketleme ve yeniden kurulum desteği sağlıyoruz.',
+    $html
+);
 
 /* CSP ile çakışan eski inline boot scriptini kaldır; ana JS zaten görsel fallback yönetiyor. */
 $html = preg_replace(
