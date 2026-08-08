@@ -32,7 +32,24 @@ jobs:
 
       - name: Site denetimlerini çalıştır
         id: audit
-        run: npm test
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          npm test > "${RUNNER_TEMP}/npm-test.log" 2>&1
+          code=$?
+          cat "${RUNNER_TEMP}/npm-test.log"
+          summary="$(grep -E 'Hero|HATA|eksik|bozul|bulunmamalı|kırık|Error|error|FAIL|fail' "${RUNNER_TEMP}/npm-test.log" | head -n 1 || true)"
+          if [[ -z "${summary}" ]]; then
+            summary="$(tail -n 1 "${RUNNER_TEMP}/npm-test.log" || true)"
+          fi
+          slug="$(printf '%s' "${summary}" | tr '[:space:]' '-' | tr -cd '[:alnum:]_.:-' | cut -c1-72)"
+          echo "summary=${slug:-unknown}" >> "${GITHUB_OUTPUT}"
+          exit "${code}"
+
+      - name: Site denetimi başarısızsa durdur
+        if: steps.audit.outcome != 'success'
+        run: exit 1
 
       - name: Yayın betiklerini doğrula
         id: scripts_check
@@ -170,6 +187,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           T: ${{ steps.audit.outcome }}
+          TM: ${{ steps.audit.outputs.summary }}
           S: ${{ steps.scripts_check.outcome }}
           P: ${{ steps.package.outcome }}
           C: ${{ steps.ftp_config.outcome }}
@@ -181,17 +199,21 @@ jobs:
           R8_CODE: ${{ steps.live_verify.outputs.r8_code }}
           LAYERS: ${{ steps.live_verify.outputs.layer_count }}
           VERSION_OK: ${{ steps.live_verify.outputs.version_ok }}
-          LEGACY_BODY: ${{ steps.live_verify.outputs.legacy_body }}
         shell: bash
         run: |
           set -Eeuo pipefail
-          CONTEXT="pipe t=${T:-?} s=${S:-?} p=${P:-?} c=${C:-?} d=${D:-?} cl=${CL:-?} f=${F:-?} l=${L:-?}"
+          if [[ "${T:-}" != "success" ]]; then
+            CONTEXT="test ${T:-?} ${TM:-unknown}"
+          else
+            CONTEXT="pipe t=${T:-?} s=${S:-?} p=${P:-?} c=${C:-?} d=${D:-?} cl=${CL:-?} f=${F:-?} l=${L:-?}"
+          fi
+
           if [[ "${L:-}" == "success" ]]; then
             STATE="success"
             DESCRIPTION="R8-11 live; old=${OLD_CODE} r8=${R8_CODE} layers=${LAYERS}"
           else
             STATE="failure"
-            DESCRIPTION="Live verify failed; old=${OLD_CODE:-?} r8=${R8_CODE:-?} v=${VERSION_OK:-?}"
+            DESCRIPTION="Pipeline/live verification failed"
           fi
 
           curl --fail-with-body -sS -L \
