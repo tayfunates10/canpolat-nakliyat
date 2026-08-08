@@ -1,0 +1,116 @@
+name: Section 03 About QA
+
+on:
+  push:
+    branches:
+      - work/section-03-about-20260809
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  section03:
+    name: About + previous sections regression QA
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Kaynak kodu al
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Node ortamını hazırla
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Repo bağımlılıklarını kur
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Mevcut production test zincirini çalıştır
+        run: npm test
+
+      - name: Bölüm 00 statik regresyon denetimi
+        run: node tests/section00-audit.js
+
+      - name: Bölüm 01 statik regresyon denetimi
+        run: node tests/section01-audit.js
+
+      - name: Bölüm 02 statik regresyon denetimi
+        run: node tests/section02-audit.js
+
+      - name: Bölüm 03 statik denetimi
+        run: node tests/section03-audit.js
+
+      - name: Chromium ve erişilebilirlik bağımlılıklarını geçici kur
+        run: npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund puppeteer-core@24.16.0 axe-core@4.10.3
+
+      - name: Chrome ve PHP ortamını doğrula
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          php -v
+          google-chrome --version
+
+      - name: Gerçek PHP sitesini yerelde başlat
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          php -S 127.0.0.1:8099 > "${RUNNER_TEMP}/section03-php.log" 2>&1 &
+          echo $! > "${RUNNER_TEMP}/section03-php.pid"
+          for attempt in $(seq 1 20); do
+            if curl -fsS http://127.0.0.1:8099/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat "${RUNNER_TEMP}/section03-php.log" || true
+          exit 1
+
+      - name: Bölüm 00 browser regresyonu
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+          SECTION00_BASE_URL: http://127.0.0.1:8099/
+          SECTION00_ARTIFACT_DIR: artifacts/regression-section-00
+        run: node tests/section00-browser-audit.js
+
+      - name: Bölüm 01 browser regresyonu
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+          SECTION01_BASE_URL: http://127.0.0.1:8099/
+          SECTION01_ARTIFACT_DIR: artifacts/regression-section-01
+        run: node tests/section01-browser-audit.js
+
+      - name: Bölüm 02 browser regresyonu
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+          SECTION02_BASE_URL: http://127.0.0.1:8099/
+          SECTION02_ARTIFACT_DIR: artifacts/regression-section-02
+        run: node tests/section02-browser-audit.js
+
+      - name: Bölüm 03 responsive browser QA ve ekran görüntüleri
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+          SECTION03_BASE_URL: http://127.0.0.1:8099/
+          SECTION03_ARTIFACT_DIR: artifacts/section-03
+        run: node tests/section03-browser-audit.js
+
+      - name: PHP sunucu logunu artifact klasörüne ekle
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p artifacts/section-03
+          cp "${RUNNER_TEMP}/section03-php.log" artifacts/section-03/php-server.log 2>/dev/null || true
+
+      - name: Bölüm 03 ve regresyon QA artifactlerini yükle
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: section-03-qa-${{ github.sha }}
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 14
