@@ -118,7 +118,7 @@
 .hero-r8__layer--l07 { z-index: 12; }
 .hero-r8__layer--l08 { z-index: 13; }
 
-/* Kilitli giriş animasyonları. Bitiş tüm katmanlarda X/Y 0, scale 1, opacity 1. */
+/* Kilitli masaüstü giriş animasyonları. */
 .hero-r8__layer--p00 {
   --hero-x: 0%;
   --hero-y: 0%;
@@ -257,6 +257,21 @@
     height: 11px;
     border-width: 3px;
   }
+
+  /* Mobilde aynı kompozisyon daha hızlı ve akıcı tamamlanır. */
+  .hero-r8__layer--p00 { --hero-delay: 0ms; --hero-duration: 360ms; }
+  .hero-r8__layer--t00 { --hero-delay: 80ms; --hero-duration: 520ms; }
+  .hero-r8__layer--l09 { --hero-delay: 200ms; --hero-duration: 440ms; }
+  .hero-r8__layer--l03 { --hero-delay: 280ms; --hero-duration: 400ms; }
+  .hero-r8__layer--l02 { --hero-delay: 360ms; --hero-duration: 430ms; }
+  .hero-r8__layer--l01 { --hero-delay: 440ms; --hero-duration: 460ms; }
+  .hero-r8__layer--l04 { --hero-delay: 520ms; --hero-duration: 400ms; }
+  .hero-r8__layer--l05 { --hero-delay: 600ms; --hero-duration: 360ms; }
+  .hero-r8__layer--l06 { --hero-delay: 660ms; --hero-duration: 360ms; }
+  .hero-r8__layer--l10 { --hero-delay: 720ms; --hero-duration: 340ms; }
+  .hero-r8__layer--l11 { --hero-delay: 780ms; --hero-duration: 340ms; }
+  .hero-r8__layer--l07 { --hero-delay: 840ms; --hero-duration: 340ms; }
+  .hero-r8__layer--l08 { --hero-delay: 900ms; --hero-duration: 320ms; }
 }
 
 @media (prefers-reduced-motion: reduce) {
