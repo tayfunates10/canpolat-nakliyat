@@ -171,12 +171,13 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
+          CONTEXT="prod old=${OLD_CODE:-?} r8=${R8_CODE:-?} layers=${LAYERS:-?} v=${VERSION_OK:-?} legacy=${LEGACY_BODY:-?}"
           if [[ "${LIVE_OUTCOME}" == "success" ]]; then
             STATE="success"
-            DESCRIPTION="PASS old=${OLD_CODE} r8=${R8_CODE} layers=${LAYERS} v=${VERSION_OK} legacy=${LEGACY_BODY}"
+            DESCRIPTION="R8-11 live; legacy hero removed"
           else
             STATE="failure"
-            DESCRIPTION="FAIL old=${OLD_CODE:-?} r8=${R8_CODE:-?} layers=${LAYERS:-?} v=${VERSION_OK:-?} legacy=${LEGACY_BODY:-?}"
+            DESCRIPTION="Live R8-11 verification failed"
           fi
 
           curl --fail-with-body -sS -L \
@@ -185,7 +186,7 @@ jobs:
             -H "Authorization: Bearer ${GH_TOKEN}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
-            -d "{\"state\":\"${STATE}\",\"context\":\"production/canpolat-live\",\"description\":\"${DESCRIPTION}\"}"
+            -d "{\"state\":\"${STATE}\",\"context\":\"${CONTEXT}\",\"description\":\"${DESCRIPTION}\"}"
 
       - name: Canlı doğrulama başarısızsa yayını başarısız işaretle
         if: steps.live_verify.outcome != 'success'
