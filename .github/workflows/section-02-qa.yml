@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - work/section-02-services-20260809
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
