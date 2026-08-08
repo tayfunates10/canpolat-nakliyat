@@ -33,6 +33,7 @@ const staticJs = read('assets/js/main.js');
 requireToken('index.php', indexPhp, 'https://canpolatnakliyat.com/', 'canonical production alan adı non-www olmalıdır.');
 requireToken('index.php', indexPhp, 'id="quote-request-form" action="/api/teklif.php" method="post"', 'production teklif formu legacy demo ID’sinden ayrılmalı ve gerçek POST endpointine bağlanmalıdır.');
 requireToken('index.php', indexPhp, 'js/quote-form.js', 'form teslim JavaScript dosyası yüklenmelidir.');
+requireToken('index.php', indexPhp, 'https://canpolatnakliyat.com/assets/images/service-evden-eve.webp', 'ana sayfa paylaşım/structured-data görseli mevcut onaylı raster hizmet görselini kullanmalıdır.');
 requireToken('index.php', indexPhp, 'Taşıma kapsamı, sorumluluklar ve varsa ek güvence seçenekleri', 'sigorta/ek güvence kapsamı koşulsuz garanti gibi sunulmamalıdır.');
 requireToken('index.php', indexPhp, 'Taşıma kapsamında sökülen ve yeniden kuruluma uygun mobilyalara montaj desteği sağlıyoruz.', 'montaj kapsamı uygun mobilyalarla sınırlandırılmalıdır.');
 requireToken('index.php', indexPhp, 'Edremit ve çevresinde planlı, özenli ve ulaşılabilir nakliyat hizmeti.', 'CTA koşulsuz sigorta vaadi içermemelidir.');
@@ -87,6 +88,8 @@ requireToken('gizlilik.html', privacy, 'Kanun’un 11. maddesi', 'ilgili kişi h
 requireToken('gizlilik.html', privacy, 'pazarlama veya reklam iletisi', 'teklif talebinin pazarlama onayı olmadığı belirtilmelidir.');
 
 requireToken('hizmetler/paketleme-montaj.html', packageService, '<h1>Paketleme ve Montaj</h1>', 'eksik hizmet detay sayfası tamamlanmalıdır.');
+requireToken('hizmetler/paketleme-montaj.html', packageService, 'ofis, asansörlü taşıma ve paketleme/montaj hizmetleri', 'footer hizmet özeti Paketleme & Montaj hizmetini de içermelidir.');
+if (packageService.includes('profesyonel paketleme')) failures.push('hizmetler/paketleme-montaj.html: doğrulanmamış “profesyonel paketleme” nitelemesi metadata içinde kullanılmamalıdır.');
 requireToken('scripts/prepare-deploy.sh', deploy, '"api"', 'API klasörü production paketine dahil edilmelidir.');
 requireToken('scripts/prepare-deploy.sh', deploy, '"js/quote-form.js"', 'quote-form.js production paketinde zorunlu olmalıdır.');
 requireToken('scripts/prepare-deploy.sh', deploy, '"hizmetler/paketleme-montaj.html"', 'yeni hizmet sayfası production paketinde zorunlu olmalıdır.');
