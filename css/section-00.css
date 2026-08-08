@@ -130,8 +130,9 @@ select:focus-visible {
   color: var(--color-muted);
 }
 
+/* #EF7C00 marka turuncusu korunur; koyu lacivert metin WCAG AA kontrastını sağlar. */
 .btn--primary {
-  color: #ffffff;
+  color: var(--color-bg-deep);
   background: var(--color-orange);
 }
 
