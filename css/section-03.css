@@ -296,19 +296,19 @@
 .about-v2__service strong { display: block; margin-bottom: 4px; font-size: 14px; line-height: 1.25; color: #fff; }
 .about-v2__service small { display: block; font-size: 12px; line-height: 1.45; color: var(--color-muted); }
 
-.about-v2.is-inview .about-v2__brand-overlay,
-.about-v2.is-inview .about-v2__pin-wrap,
-.about-v2.is-inview .about-v2__visual-item,
-.about-v2.is-inview .about-v2__service {
+.about-v2.is-visible .about-v2__brand-overlay,
+.about-v2.is-visible .about-v2__pin-wrap,
+.about-v2.is-visible .about-v2__visual-item,
+.about-v2.is-visible .about-v2__service {
   opacity: 1;
   transform: none;
 }
 
-.about-v2.is-inview .about-v2__route-line {
+.about-v2.is-visible .about-v2__route-line {
   animation: aboutRouteDraw 1s ease .2s forwards;
 }
 
-.about-v2.is-inview .about-v2__pin-pulse {
+.about-v2.is-visible .about-v2__pin-pulse {
   animation: aboutPinPulse 1.85s ease-out .9s 2;
 }
 
