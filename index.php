@@ -72,6 +72,28 @@ $html = str_replace(
     $html
 );
 
+/*
+ * BÖLÜM 01 — Hero güven unsurları ve ana açıklama.
+ * Doğrulanmamış sigorta/zaman garantisi/hız iddialarını tasarımı bozmadan
+ * daha doğru ve sürdürülebilir ifadelerle değiştirir.
+ */
+$html = str_replace(
+    'Canpolat Nakliyat olarak eşyalarınızı özenle taşıyor, zamanında ve güvenli hizmet sunuyoruz.',
+    'Canpolat Nakliyat olarak eşyalarınızı özenle taşıyor, süreci planlı ve düzenli şekilde yürütüyoruz.',
+    $html
+);
+$html = str_replace(
+    '<span class="trust-item__l1">Sigortalı</span> <span class="trust-item__l2">Taşıma</span>',
+    '<span class="trust-item__l1">Özenli</span> <span class="trust-item__l2">Taşıma</span>',
+    $html
+);
+$html = str_replace(
+    '<span class="trust-item__l1">Zamanında</span> <span class="trust-item__l2">Teslimat</span>',
+    '<span class="trust-item__l1">Planlı</span> <span class="trust-item__l2">Süreç</span>',
+    $html
+);
+$html = str_replace('<em>Hızlı Servis</em>', '<em>Yerel Hizmet</em>', $html);
+
 /* CSP ile çakışan eski inline boot scriptini kaldır; ana JS zaten görsel fallback yönetiyor. */
 $html = preg_replace(
     '~\s*<!-- Eksik görsellerde.*?-->\s*<script>.*?</script>\s*~s',
