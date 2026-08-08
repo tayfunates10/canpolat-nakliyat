@@ -3,12 +3,13 @@ const path = require('path');
 
 const root = path.resolve(__dirname, '..');
 const phpPath = path.join(root, 'index.php');
-const partialPath = path.join(root, 'partials', 'section-03-about.html');
+const partialPath = path.join(root, 'partials', 'section-03-about.inc');
 const cssPath = path.join(root, 'css', 'section-03.css');
 const deployPath = path.join(root, 'scripts', 'prepare-deploy.sh');
 const htaccessPath = path.join(root, '.htaccess');
 const obsoleteSvgPath = path.join(root, 'assets', 'images', 'about-canpolat-generated.svg');
 const obsoleteJsPath = path.join(root, 'js', 'section-03.js');
+const obsoleteHtmlPartialPath = path.join(root, 'partials', 'section-03-about.html');
 const failures = [];
 
 function expect(condition, message) {
@@ -25,7 +26,7 @@ const css = fs.existsSync(cssPath) ? fs.readFileSync(cssPath, 'utf8') : '';
 const deploy = fs.existsSync(deployPath) ? fs.readFileSync(deployPath, 'utf8') : '';
 const htaccess = fs.existsSync(htaccessPath) ? fs.readFileSync(htaccessPath, 'utf8') : '';
 
-expect(php.includes("__DIR__ . '/partials/section-03-about.html'"), 'index.php Bölüm 03 partial dosyasını okumuyor.');
+expect(php.includes("__DIR__ . '/partials/section-03-about.inc'"), 'index.php Bölüm 03 partial dosyasını okumuyor.');
 expect(php.includes('$aboutReplaceCount !== 1'), 'Bölüm 03 fail-closed replace koruması eksik.');
 expect(php.includes('css/section-03.css?v=20260809-01'), 'Bölüm 03 CSS cache-bust yüklemesi eksik.');
 expect(php.includes('~<section class="about section" id="hakkimizda">.*?</section>~s'), 'Eski Hakkımızda section replacement deseni eksik.');
@@ -56,11 +57,12 @@ expect(css.includes('grid-template-columns: repeat(4, minmax(0,1fr));'), 'Görse
 expect(css.includes('grid-template-columns: repeat(2, minmax(0,1fr));'), 'İki sütunlu hizmet/kompakt düzen kuralları eksik.');
 
 expect(deploy.includes('"partials"'), 'Deploy paketine partials klasörü dahil değil.');
-expect(deploy.includes('"partials/section-03-about.html"'), 'Deploy doğrulamasında Bölüm 03 partial eksik.');
+expect(deploy.includes('"partials/section-03-about.inc"'), 'Deploy doğrulamasında Bölüm 03 partial eksik.');
 expect(deploy.includes('"css/section-03.css"'), 'Deploy doğrulamasında Bölüm 03 CSS eksik.');
 expect(htaccess.includes('RewriteRule ^partials/ - [F,L,NC]'), 'Partial dosyaları web erişimine karşı korunmuyor.');
 expect(!fs.existsSync(obsoleteSvgPath), 'Eski deneme about SVG dosyası hâlâ repoda.');
 expect(!fs.existsSync(obsoleteJsPath), 'Gereksiz section-03.js hâlâ repoda.');
+expect(!fs.existsSync(obsoleteHtmlPartialPath), 'Eski .html partial hâlâ repo audit kapsamına giriyor.');
 
 if (failures.length) {
   console.error('BÖLÜM 03 STATIC AUDIT FAIL');
