@@ -1,0 +1,83 @@
+name: Section 01 Hero QA
+
+on:
+  push:
+    branches:
+      - work/section-01-hero-20260808
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  section01:
+    name: Hero static + responsive browser QA
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Kaynak kodu al
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Node ortamını hazırla
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Repo bağımlılıklarını kur
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Mevcut production test zincirini çalıştır
+        run: npm test
+
+      - name: Bölüm 01 statik Hero denetimini çalıştır
+        run: node tests/section01-audit.js
+
+      - name: Chromium ve erişilebilirlik bağımlılıklarını geçici kur
+        run: npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund puppeteer-core@24.16.0 axe-core@4.10.3
+
+      - name: Chrome ve PHP ortamını doğrula
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          php -v
+          google-chrome --version
+
+      - name: Gerçek PHP sitesini yerelde başlat
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          php -S 127.0.0.1:8099 > "${RUNNER_TEMP}/section01-php.log" 2>&1 &
+          echo $! > "${RUNNER_TEMP}/section01-php.pid"
+          for attempt in $(seq 1 20); do
+            if curl -fsS http://127.0.0.1:8099/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat "${RUNNER_TEMP}/section01-php.log" || true
+          exit 1
+
+      - name: Bölüm 01 responsive Hero QA ve ekran görüntüleri
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+          SECTION01_BASE_URL: http://127.0.0.1:8099/
+          SECTION01_ARTIFACT_DIR: artifacts/section-01
+        run: node tests/section01-browser-audit.js
+
+      - name: PHP sunucu logunu artifact klasörüne ekle
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p artifacts/section-01
+          cp "${RUNNER_TEMP}/section01-php.log" artifacts/section-01/php-server.log 2>/dev/null || true
+
+      - name: Bölüm 01 QA artifactlerini yükle
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: section-01-qa-${{ github.sha }}
+          path: artifacts/section-01/
+          if-no-files-found: error
+          retention-days: 14
