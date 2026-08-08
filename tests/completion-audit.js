@@ -52,8 +52,16 @@ requireToken('js/quote-form.js', quoteJs, 'stopImmediatePropagation()', 'eski de
 
 requireToken('api/teklif.php', quoteApi, 'REQUEST_METHOD', 'endpoint yalnız POST kabul etmelidir.');
 requireToken('api/teklif.php', quoteApi, 'finish(405', 'POST dışı istekler 405 dönmelidir.');
-requireToken('api/teklif.php', quoteApi, 'validPhone', 'telefon sunucu tarafında doğrulanmalıdır.');
+requireToken('api/teklif.php', quoteApi, 'requestOriginIsAllowed', 'bilinen yabancı origin istekleri reddedilmelidir.');
+requireToken('api/teklif.php', quoteApi, 'finish(403', 'origin doğrulama hatası 403 dönmelidir.');
+requireToken('api/teklif.php', quoteApi, 'finish(413', 'aşırı büyük form gövdesi reddedilmelidir.');
+requireToken('api/teklif.php', quoteApi, 'normalizePhone', 'telefon numarası normalize edilmelidir.');
+requireToken('api/teklif.php', quoteApi, "/^[1-9][0-9]{9}$/", 'Türkiye ulusal formatında sabit veya cep telefonu kabul edilmelidir.');
+requireToken('api/teklif.php', quoteApi, 'normalizeMoveDate', 'taşınma tarihi gerçek bir takvim tarihi olarak normalize edilmelidir.');
+requireToken('api/teklif.php', quoteApi, "$date < date('Y-m-d')", 'geçmiş taşınma tarihi sunucu tarafında reddedilmelidir.');
 requireToken('api/teklif.php', quoteApi, 'FILTER_VALIDATE_EMAIL', 'e-posta sunucu tarafında doğrulanmalıdır.');
+requireToken('api/teklif.php', quoteApi, 'CANPOLAT_QUOTE_FROM_EMAIL', 'mail From adresi güvenli ve yapılandırılabilir olmalıdır.');
+requireToken('api/teklif.php', quoteApi, "'info@canpolatnakliyat.com'", 'varsayılan mail alanı mevcut iletişim adresiyle aynı olmalıdır.');
 requireToken('api/teklif.php', quoteApi, 'mail($recipient', 'doğrulanan teklif talebi e-posta ile teslim edilmelidir.');
 requireToken('api/teklif.php', quoteApi, 'website', 'spam honeypot kontrolü bulunmalıdır.');
 requireToken('api/teklif.php', quoteApi, '429', 'hızlı tekrar gönderimleri sınırlanmalıdır.');
