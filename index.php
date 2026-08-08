@@ -24,6 +24,25 @@ if ($html === false) {
 $html = str_replace('assets/images/logo-canpolat.png', 'assets/images/canpolat-logo.svg?v=20260808-03', $html);
 $html = str_replace('href="css/style.css"', 'href="css/style.css?v=20260808-r8-11"', $html);
 
+/* Hizmet kartlarında artık gerçekten mevcut, optimize WebP thumbnail'lar kullanılır. */
+$html = str_replace(
+    [
+        'assets/images/service-evden-eve.png',
+        'assets/images/service-sehirler-arasi.png',
+        'assets/images/service-ofis.png',
+        'assets/images/service-asansorlu.png',
+        'assets/images/service-paketleme.png',
+    ],
+    [
+        'assets/images/service-evden-eve.webp?v=20260808-svc-02',
+        'assets/images/service-sehirler-arasi.webp?v=20260808-svc-02',
+        'assets/images/service-ofis.webp?v=20260808-svc-02',
+        'assets/images/service-asansorlu.webp?v=20260808-svc-02',
+        'assets/images/service-paketleme.webp?v=20260808-svc-02',
+    ],
+    $html
+);
+
 $html = preg_replace(
     '~\s*<link\s+rel="preload"\s+as="image"\s+href="assets/images/hero-canpolat(?:-mobil)?\.webp"[^>]*>~i',
     '',
@@ -91,7 +110,7 @@ $assets = <<<'HTML'
   </style>
   <link rel="preload" as="image" href="assets/images/hero-r8/platform-p00-r8-reference-exact.png?v=20260808-r8-11" fetchpriority="high">
   <link rel="preload" as="image" href="assets/images/hero-r8/truck-t00-r6.png?v=20260808-r8-11" fetchpriority="high">
-  <link rel="stylesheet" href="css/services-tune.css?v=20260808-svc-01">
+  <link rel="stylesheet" href="css/services-tune.css?v=20260808-svc-02">
   <link rel="stylesheet" href="css/hero-animated.css?v=20260808-r8-13">
   <script src="js/hero-animated.js?v=20260808-r8-11" defer></script>
 HTML;
