@@ -115,6 +115,16 @@ jobs:
           last_old_code="000"
           last_r8_code="000"
           layer_count="0"
+          version_ok="no"
+          legacy_body="unknown"
+
+          write_outputs() {
+            echo "old_code=${last_old_code}" >> "${GITHUB_OUTPUT}"
+            echo "r8_code=${last_r8_code}" >> "${GITHUB_OUTPUT}"
+            echo "layer_count=${layer_count}" >> "${GITHUB_OUTPUT}"
+            echo "version_ok=${version_ok}" >> "${GITHUB_OUTPUT}"
+            echo "legacy_body=${legacy_body}" >> "${GITHUB_OUTPUT}"
+          }
 
           for attempt in $(seq 1 12); do
             echo "Canlı doğrulama denemesi ${attempt}/12"
@@ -122,29 +132,30 @@ jobs:
             last_body="$(curl -sS -L --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/?${QUERY}" || true)"
             last_old_code="$(curl -sS -o /dev/null -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/assets/images/hero-canpolat.webp?${QUERY}" || true)"
             last_r8_code="$(curl -sS -o /dev/null -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/assets/images/hero-r8/platform-p00-r8-reference-exact.png?${QUERY}" || true)"
-            layer_count="$(grep -o 'hero-r8__layer' <<<"${last_body}" | wc -l | tr -d ' ')"
+            layer_count="$( (grep -o 'hero-r8__layer' <<<"${last_body}" || true) | wc -l | tr -d ' ')"
 
-            if grep -qi '^x-hero-version:[[:space:]]*R8-11' <<<"${last_headers}" \
+            if grep -qi '^x-hero-version:[[:space:]]*R8-11' <<<"${last_headers}"; then version_ok="yes"; else version_ok="no"; fi
+            if grep -Eq 'hero-canpolat(-mobil)?\.webp' <<<"${last_body}"; then legacy_body="yes"; else legacy_body="no"; fi
+
+            if [[ "${version_ok}" == "yes" ]] \
               && grep -q 'hero-r8__layer--p00' <<<"${last_body}" \
               && grep -q 'hero-r8__layer--t00' <<<"${last_body}" \
-              && ! grep -q 'hero-canpolat\.webp' <<<"${last_body}" \
-              && ! grep -q 'hero-canpolat-mobil\.webp' <<<"${last_body}" \
+              && [[ "${legacy_body}" == "no" ]] \
               && [[ "${last_old_code}" == "404" || "${last_old_code}" == "410" ]] \
               && [[ "${last_r8_code}" == "200" ]] \
               && (( layer_count >= 13 )); then
+              write_outputs
               echo "PASS: Canlı site R8-11 kullanıyor; eski hero servis edilmiyor."
               exit 0
             fi
 
-            echo "Henüz doğrulanmadı: old=${last_old_code}, r8=${last_r8_code}, layers=${layer_count}"
+            echo "Henüz doğrulanmadı: old=${last_old_code}, r8=${last_r8_code}, layers=${layer_count}, version=${version_ok}, legacyBody=${legacy_body}"
             sleep 10
           done
 
+          write_outputs
           echo "FAIL: Canlı Hero R8-11 doğrulanamadı."
-          echo "Eski hero HTTP: ${last_old_code}"
-          echo "R8 platform HTTP: ${last_r8_code}"
-          echo "R8 layer sayısı: ${layer_count}"
-          printf '%s\n' "${last_headers}"
+          echo "old=${last_old_code}, r8=${last_r8_code}, layers=${layer_count}, version=${version_ok}, legacyBody=${legacy_body}"
           exit 1
 
       - name: Canlı doğrulama durumunu commit'e yaz
@@ -152,15 +163,20 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           LIVE_OUTCOME: ${{ steps.live_verify.outcome }}
+          OLD_CODE: ${{ steps.live_verify.outputs.old_code }}
+          R8_CODE: ${{ steps.live_verify.outputs.r8_code }}
+          LAYERS: ${{ steps.live_verify.outputs.layer_count }}
+          VERSION_OK: ${{ steps.live_verify.outputs.version_ok }}
+          LEGACY_BODY: ${{ steps.live_verify.outputs.legacy_body }}
         shell: bash
         run: |
           set -Eeuo pipefail
           if [[ "${LIVE_OUTCOME}" == "success" ]]; then
             STATE="success"
-            DESCRIPTION="R8-11 live; legacy hero removed"
+            DESCRIPTION="PASS old=${OLD_CODE} r8=${R8_CODE} layers=${LAYERS} v=${VERSION_OK} legacy=${LEGACY_BODY}"
           else
             STATE="failure"
-            DESCRIPTION="Live R8-11 verification failed"
+            DESCRIPTION="FAIL old=${OLD_CODE:-?} r8=${R8_CODE:-?} layers=${LAYERS:-?} v=${VERSION_OK:-?} legacy=${LEGACY_BODY:-?}"
           fi
 
           curl --fail-with-body -sS -L \
