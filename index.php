@@ -91,7 +91,7 @@ $assets = <<<'HTML'
   </style>
   <link rel="preload" as="image" href="assets/images/hero-r8/platform-p00-r8-reference-exact.png?v=20260808-r8-11" fetchpriority="high">
   <link rel="preload" as="image" href="assets/images/hero-r8/truck-t00-r6.png?v=20260808-r8-11" fetchpriority="high">
-  <link rel="stylesheet" href="css/hero-animated.css?v=20260808-r8-11">
+  <link rel="stylesheet" href="css/hero-animated.css?v=20260808-r8-12">
   <script src="js/hero-animated.js?v=20260808-r8-11" defer></script>
 HTML;
 
