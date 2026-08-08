@@ -85,9 +85,17 @@ fs.mkdirSync(outputDir, { recursive: true });
       if (state.visibleCount !== 13) failures.push(`${label}: final durumda görünür R8 katmanı ${state.visibleCount}/13.`);
       if (state.scrollWidth > state.viewportWidth + 1) failures.push(`${label}: yatay taşma var (${state.scrollWidth} > ${state.viewportWidth}).`);
 
-      const screenshot = path.join(outputDir, `hero-r8-final-${label}.png`);
-      await page.screenshot({ path: screenshot, fullPage: false });
-      results.push({ label, screenshot: path.basename(screenshot), state });
+      const finalScreenshot = path.join(outputDir, `hero-r8-final-${label}.png`);
+      const standardScreenshot = path.join(outputDir, `section-00-${label}.png`);
+      await page.screenshot({ path: finalScreenshot, fullPage: false });
+      fs.copyFileSync(finalScreenshot, standardScreenshot);
+
+      results.push({
+        label,
+        screenshot: path.basename(finalScreenshot),
+        standardScreenshot: path.basename(standardScreenshot),
+        state,
+      });
       await page.close();
     }
   } finally {
@@ -107,6 +115,7 @@ fs.mkdirSync(outputDir, { recursive: true });
 
   console.log('HERO R8 DESKTOP FINAL QA PASS');
   console.log('- 1024 / 1366 / 1440 / 1920 final-state görüntüleri üretildi');
+  console.log('- Standart Bölüm 00 desktop screenshotları final-state görüntüleriyle güncellendi');
   console.log('- Her viewportta 13/13 katman yüklü ve opacity=1');
   console.log('- Yatay taşma: 0');
 })();
