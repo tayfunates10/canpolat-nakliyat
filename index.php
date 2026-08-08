@@ -31,6 +31,8 @@ if ($html === false) {
 $html = str_replace('https://www.canpolatnakliyat.com', 'https://canpolatnakliyat.com', $html);
 $html = str_replace('assets/images/logo-canpolat.png', 'assets/images/canpolat-logo.svg?v=20260808-03', $html);
 $html = str_replace('href="css/style.css"', 'href="css/style.css?v=20260808-r8-11"', $html);
+$html = str_replace('<meta name="theme-color" content="#06121b">', '<meta name="theme-color" content="#253349">', $html);
+$html = str_replace('7/24 Bizi Arayın', 'Bizi Arayın', $html);
 
 /*
  * Şablondaki eski, koşulsuz ticari vaatleri production çıktısında nitelendir.
@@ -199,6 +201,7 @@ $assets = <<<'HTML'
   <link rel="preload" as="image" href="assets/images/hero-r8/platform-p00-r8-reference-exact.png?v=20260808-r8-11" fetchpriority="high">
   <link rel="preload" as="image" href="assets/images/hero-r8/truck-t00-r6.png?v=20260808-r8-11" fetchpriority="high">
   <link rel="stylesheet" href="css/hero-animated.css?v=20260808-r8-13">
+  <link rel="stylesheet" href="css/section-00.css?v=20260808-01">
   <script src="js/quote-form.js?v=20260808-01" defer></script>
   <script src="js/hero-animated.js?v=20260808-r8-11" defer></script>
 HTML;
