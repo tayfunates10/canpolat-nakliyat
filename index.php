@@ -32,6 +32,44 @@ $html = str_replace('https://www.canpolatnakliyat.com', 'https://canpolatnakliya
 $html = str_replace('assets/images/logo-canpolat.png', 'assets/images/canpolat-logo.svg?v=20260808-03', $html);
 $html = str_replace('href="css/style.css"', 'href="css/style.css?v=20260808-r8-11"', $html);
 
+/*
+ * Şablondaki eski, koşulsuz ticari vaatleri production çıktısında nitelendir.
+ * Sigorta/ek güvence kapsamı ve montaj kapsamı ancak teklif/sözleşme aşamasında
+ * netleştirilebileceği için tüm ziyaretçilere garanti edilmiş gibi sunulmaz.
+ * Aynı metinler JSON-LD FAQ içinde de bulunduğundan str_replace her iki kopyayı
+ * birlikte günceller ve görünen SSS ile yapılandırılmış veri tutarlı kalır.
+ */
+$html = str_replace(
+    'Eşyalarım sigortalı mı taşınıyor?',
+    'Taşıma kapsamı ve ek güvence nasıl belirleniyor?',
+    $html
+);
+$html = str_replace(
+    'Taşıma kapsamına göre eşyalarınız sigortalı olarak taşınır. Ayrıntılar sözleşme öncesinde açıklanır.',
+    'Taşıma kapsamı, sorumluluklar ve varsa ek güvence seçenekleri teklif ve sözleşme aşamasında açıkça belirtilir.',
+    $html
+);
+$html = str_replace(
+    'Edremit ve çevresinde hızlı, güvenli ve sigortalı nakliyat hizmeti.',
+    'Edremit ve çevresinde planlı, özenli ve ulaşılabilir nakliyat hizmeti.',
+    $html
+);
+$html = str_replace(
+    'Ücretsiz keşif ve hızlı teklif için formu doldurun, sizi arayalım.',
+    'Taşıma bilgilerinizi paylaşın; teklif değerlendirmesi için sizi arayalım.',
+    $html
+);
+$html = str_replace(
+    'Ücretsiz ekspertiz ile ihtiyaçlarınıza uygun plan oluşturuyoruz.',
+    'Taşıma bilgilerini önceden değerlendirerek ihtiyaçlarınıza uygun plan oluşturuyoruz.',
+    $html
+);
+$html = str_replace(
+    'Yeni adresinizde eşyalarınızı yerleştirip montajını yapıyoruz.',
+    'Taşıma kapsamında sökülen ve yeniden kuruluma uygun mobilyalara montaj desteği sağlıyoruz.',
+    $html
+);
+
 /* CSP ile çakışan eski inline boot scriptini kaldır; ana JS zaten görsel fallback yönetiyor. */
 $html = preg_replace(
     '~\s*<!-- Eksik görsellerde.*?-->\s*<script>.*?</script>\s*~s',
