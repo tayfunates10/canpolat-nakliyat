@@ -27,6 +27,8 @@ const privacy = read('gizlilik.html');
 const notFound = read('404.html');
 const deploy = read('scripts/prepare-deploy.sh');
 const packageService = read('hizmetler/paketleme-montaj.html');
+const staticCss = read('assets/css/style.css');
+const staticJs = read('assets/js/main.js');
 
 requireToken('index.php', indexPhp, 'https://canpolatnakliyat.com/', 'canonical production alan adı non-www olmalıdır.');
 requireToken('index.php', indexPhp, 'action="/api/teklif.php"', 'fiyat teklif formu gerçek POST endpointine bağlanmalıdır.');
@@ -111,6 +113,10 @@ for (const page of serviceNavigationPages) {
   requireToken(page, html, '/hizmetler/paketleme-montaj.html', 'beşinci hizmet olan Paketleme & Montaj bağlantısı bulunmalıdır.');
   requireToken(page, html, 'alt="Canpolat Nakliyat"', 'marka logo alt metni genel marka adıyla tutarlı olmalıdır.');
 }
+
+requireToken('assets/js/main.js', staticJs, "document.documentElement.classList.add('has-js')", 'reveal animasyonu yalnız JavaScript etkin olduğunda devreye alınmalıdır.');
+requireToken('assets/css/style.css', staticCss, '.reveal{opacity:1;filter:none;transform:none}', 'JS olmadan reveal içeriği görünür kalmalıdır.');
+requireToken('assets/css/style.css', staticCss, 'html.has-js .reveal{opacity:0', 'JS etkin olduğunda reveal animasyon başlangıcı uygulanmalıdır.');
 
 if (failures.length) {
   console.error('Tamamlama denetimi başarısız:');
