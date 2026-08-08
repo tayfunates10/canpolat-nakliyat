@@ -33,11 +33,26 @@ fs.mkdirSync(outputDir, { recursive: true });
       await page.setViewport({ width, height, deviceScaleFactor: 1, isMobile: width <= 767, hasTouch: width <= 991 });
       await page.goto(baseUrl, { waitUntil: 'networkidle0', timeout: 45000 });
 
-      await page.evaluate(() => document.querySelector('#hizmetler')?.scrollIntoView({ block: 'start' }));
+      await page.evaluate(async () => {
+        const images = [...document.querySelectorAll('#hizmetler .service-card__media img')];
+        images.forEach((img) => { img.loading = 'eager'; });
+        await Promise.all(images.map((img) => typeof img.decode === 'function' ? img.decode().catch(() => undefined) : Promise.resolve()));
+      });
+
       await page.waitForFunction(() => {
         const images = [...document.querySelectorAll('#hizmetler .service-card__media img')];
         return images.length === 5 && images.every((img) => img.complete && img.naturalWidth > 0);
       }, { timeout: 10000 });
+
+      /* Mobil Chromium off-screen rasterizasyonu için her kartı bir kez viewport'a getir. */
+      const cards = await page.$$('#hizmetler .service-card');
+      for (const card of cards) {
+        await card.evaluate((node) => node.scrollIntoView({ block: 'center' }));
+        await new Promise((resolve) => setTimeout(resolve, 140));
+      }
+
+      await page.evaluate(() => document.querySelector('#hizmetler')?.scrollIntoView({ block: 'start' }));
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
       /*
        * Bu script yalnız bölüm-onay artifact'i üretir. Sticky header'ın
@@ -66,5 +81,6 @@ fs.mkdirSync(outputDir, { recursive: true });
 
   console.log('BÖLÜM 02 CLEAN VISUAL CAPTURE PASS');
   console.log('- 9 section-only artifact üretildi');
+  console.log('- Tüm hizmet görselleri decode + viewport paint sonrası yakalandı');
   console.log('- Sticky header yalnız screenshot anında gizlendi; gerçek QA/CSS değişmedi');
 })();
