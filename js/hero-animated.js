@@ -27,9 +27,20 @@
     });
   }
 
+  function removeLegacyHeroNodes(stage) {
+    var media = stage.closest('.hero__media');
+    if (!media) return;
+
+    Array.prototype.slice.call(media.querySelectorAll('picture, img:not(.hero-r8__layer)')).forEach(function (node) {
+      node.remove();
+    });
+  }
+
   function startHeroAnimation() {
     var stage = document.getElementById('heroAnimated');
     if (!stage) return;
+
+    removeLegacyHeroNodes(stage);
 
     var layers = Array.prototype.slice.call(stage.querySelectorAll('.hero-r8__layer'));
     if (layers.length !== 13) {
@@ -47,11 +58,15 @@
     });
 
     Promise.all(critical.map(function (entry) { return entry.promise; })).then(function (results) {
-      if (!results.every(Boolean)) stage.classList.add('has-error');
+      if (!results.every(Boolean)) {
+        stage.classList.add('has-error');
+        return;
+      }
 
       requestAnimationFrame(function () {
         requestAnimationFrame(function () {
           stage.classList.add('is-ready');
+          document.documentElement.classList.add('hero-r8-mounted');
         });
       });
     });
