@@ -5,18 +5,28 @@ header('Content-Type: application/json; charset=UTF-8');
 header('Cache-Control: no-store, max-age=0');
 header('X-Content-Type-Options: nosniff');
 
+function containsText(string $haystack, string $needle): bool
+{
+    return strpos($haystack, $needle) !== false;
+}
+
+function startsWithText(string $haystack, string $needle): bool
+{
+    return substr($haystack, 0, strlen($needle)) === $needle;
+}
+
 function wantsJson(): bool
 {
     $accept = strtolower($_SERVER['HTTP_ACCEPT'] ?? '');
     $requestedWith = strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '');
     $contentType = strtolower($_SERVER['CONTENT_TYPE'] ?? '');
 
-    return str_contains($accept, 'application/json')
+    return containsText($accept, 'application/json')
         || $requestedWith === 'xmlhttprequest'
-        || str_contains($contentType, 'application/json');
+        || containsText($contentType, 'application/json');
 }
 
-function finish(int $status, array $payload): never
+function finish(int $status, array $payload): void
 {
     http_response_code($status);
 
@@ -35,7 +45,7 @@ function fieldLength(string $value): int
     return function_exists('mb_strlen') ? mb_strlen($value, 'UTF-8') : strlen($value);
 }
 
-function cleanText(mixed $value, int $maxLength): string
+function cleanText($value, int $maxLength): string
 {
     if (!is_string($value)) return '';
     $value = trim(preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $value) ?? '');
@@ -46,9 +56,9 @@ function cleanText(mixed $value, int $maxLength): string
 function validPhone(string $phone): bool
 {
     $digits = preg_replace('/\D+/', '', $phone) ?? '';
-    if (str_starts_with($digits, '90') && strlen($digits) === 12) $digits = substr($digits, 2);
-    if (str_starts_with($digits, '0') && strlen($digits) === 11) $digits = substr($digits, 1);
-    return strlen($digits) === 10 && str_starts_with($digits, '5');
+    if (startsWithText($digits, '90') && strlen($digits) === 12) $digits = substr($digits, 2);
+    if (startsWithText($digits, '0') && strlen($digits) === 11) $digits = substr($digits, 1);
+    return strlen($digits) === 10 && startsWithText($digits, '5');
 }
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
@@ -57,7 +67,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
 }
 
 $contentType = strtolower($_SERVER['CONTENT_TYPE'] ?? '');
-if (str_contains($contentType, 'application/json')) {
+if (containsText($contentType, 'application/json')) {
     $raw = file_get_contents('php://input');
     if ($raw === false || strlen($raw) > 20000) {
         finish(400, ['ok' => false, 'message' => 'Form verisi okunamadı.']);
