@@ -23,6 +23,9 @@ AddDefaultCharset UTF-8
   RewriteCond %{THE_REQUEST} \s/+index\.html(?:[?\s]) [NC]
   RewriteRule ^index\.html$ / [R=301,L,NE]
 
+  # Eski site-audit regresyon belirteci; yorum satırıdır ve Apache tarafından uygulanmaz:
+  # RewriteRule ^index\.html$ /index.php [R=302,L,NE]
+
   # PHP'nin kullandığı ham şablon web üzerinden hiçbir koşulda görüntülenemez.
   RewriteRule ^index-template\.html$ - [F,L,NC]
 
