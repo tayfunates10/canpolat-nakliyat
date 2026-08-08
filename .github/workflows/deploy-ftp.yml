@@ -182,6 +182,65 @@ jobs:
           echo "old=${last_old_code}, r8=${last_r8_code}, layers=${layer_count}, version=${version_ok}, legacyBody=${legacy_body}"
           exit 1
 
+      - name: Canlı production tamamlama kontrollerini doğrula
+        id: live_completion
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          BASE_URL="https://canpolatnakliyat.com"
+          QUERY="verify=${GITHUB_SHA}"
+          HOME_BODY="${RUNNER_TEMP}/live-home.html"
+          SERVICE_BODY="${RUNNER_TEMP}/live-package-service.html"
+          PRIVACY_BODY="${RUNNER_TEMP}/live-privacy.html"
+          ROBOTS_BODY="${RUNNER_TEMP}/live-robots.txt"
+          API_GET_BODY="${RUNNER_TEMP}/live-api-get.json"
+          API_POST_BODY="${RUNNER_TEMP}/live-api-post.json"
+
+          home_code="$(curl -sS -L -o "${HOME_BODY}" -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/?${QUERY}" || true)"
+          service_code="$(curl -sS -L -o "${SERVICE_BODY}" -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/hizmetler/paketleme-montaj.html?${QUERY}" || true)"
+          privacy_code="$(curl -sS -L -o "${PRIVACY_BODY}" -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/gizlilik.html?${QUERY}" || true)"
+          robots_code="$(curl -sS -L -o "${ROBOTS_BODY}" -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/robots.txt?${QUERY}" || true)"
+          api_get_code="$(curl -sS -o "${API_GET_BODY}" -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Accept: application/json' -H 'Cache-Control: no-cache' "${BASE_URL}/api/teklif.php?${QUERY}" || true)"
+
+          # Honeypot dolu olduğundan bu istek endpoint'in POST yolunu çalıştırır fakat e-posta göndermez.
+          api_post_code="$(curl -sS -o "${API_POST_BODY}" -w '%{http_code}' --connect-timeout 10 --max-time 30 \
+            -X POST \
+            -H 'Accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -H 'X-Requested-With: XMLHttpRequest' \
+            -H 'Cache-Control: no-cache' \
+            --data '{"website":"ci-healthcheck.invalid","adSoyad":"Canpolat CI","telefon":"05359120691","nereden":"Edremit","nereye":"Balikesir","tarih":"2026-08-09","notlar":"CI healthcheck"}' \
+            "${BASE_URL}/api/teklif.php?${QUERY}" || true)"
+
+          fail=0
+          [[ "${home_code}" == "200" ]] || { echo "FAIL: ana sayfa HTTP ${home_code}"; fail=1; }
+          grep -q 'action="/api/teklif.php"' "${HOME_BODY}" || { echo 'FAIL: canlı form endpoint bağlantısı eksik'; fail=1; }
+          grep -q '/hizmetler/paketleme-montaj.html' "${HOME_BODY}" || { echo 'FAIL: canlı Paketleme & Montaj kart bağlantısı eksik'; fail=1; }
+          grep -q '<link rel="canonical" href="https://canpolatnakliyat.com/">' "${HOME_BODY}" || { echo 'FAIL: canlı canonical non-www değil'; fail=1; }
+          grep -q 'Gizlilik ve Kişisel Veriler' "${HOME_BODY}" || { echo 'FAIL: form veri bilgilendirme bağlantısı eksik'; fail=1; }
+
+          [[ "${service_code}" == "200" ]] || { echo "FAIL: Paketleme & Montaj HTTP ${service_code}"; fail=1; }
+          grep -q '<h1>Paketleme ve Montaj</h1>' "${SERVICE_BODY}" || { echo 'FAIL: Paketleme & Montaj içeriği canlıda eksik'; fail=1; }
+
+          [[ "${privacy_code}" == "200" ]] || { echo "FAIL: gizlilik HTTP ${privacy_code}"; fail=1; }
+          grep -q 'canpolat_r8_11_cache_reset' "${PRIVACY_BODY}" || { echo 'FAIL: teknik çerez açıklaması canlıda eksik'; fail=1; }
+
+          [[ "${robots_code}" == "200" ]] || { echo "FAIL: robots HTTP ${robots_code}"; fail=1; }
+          grep -q '^Disallow: /api/$' "${ROBOTS_BODY}" || { echo 'FAIL: robots API disallow canlıda eksik'; fail=1; }
+          grep -q '^Disallow: /index-template.html$' "${ROBOTS_BODY}" || { echo 'FAIL: robots private-template disallow canlıda eksik'; fail=1; }
+
+          [[ "${api_get_code}" == "405" ]] || { echo "FAIL: API GET beklenen 405, gelen ${api_get_code}"; fail=1; }
+          grep -q '"ok":false' "${API_GET_BODY}" || { echo 'FAIL: API GET JSON hata gövdesi eksik'; fail=1; }
+          [[ "${api_post_code}" == "200" ]] || { echo "FAIL: API honeypot POST beklenen 200, gelen ${api_post_code}"; fail=1; }
+          grep -q '"ok":true' "${API_POST_BODY}" || { echo 'FAIL: API POST JSON başarı gövdesi eksik'; fail=1; }
+
+          echo "home=${home_code} service=${service_code} privacy=${privacy_code} robots=${robots_code} api_get=${api_get_code} api_post=${api_post_code}"
+          if (( fail != 0 )); then
+            exit 1
+          fi
+          echo 'PASS: Canlı form, hizmet sayfası, gizlilik, robots ve canonical kontrolleri başarılı.'
+
       - name: Pipeline ve canlı doğrulama durumunu commit'e yaz
         if: always()
         env:
@@ -195,6 +254,7 @@ jobs:
           CL: ${{ steps.cleanup.outcome }}
           F: ${{ steps.ftp_deploy.outcome }}
           L: ${{ steps.live_verify.outcome }}
+          W: ${{ steps.live_completion.outcome }}
           OLD_CODE: ${{ steps.live_verify.outputs.old_code }}
           R8_CODE: ${{ steps.live_verify.outputs.r8_code }}
           LAYERS: ${{ steps.live_verify.outputs.layer_count }}
@@ -205,12 +265,12 @@ jobs:
           if [[ "${T:-}" != "success" ]]; then
             CONTEXT="test ${T:-?} ${TM:-unknown}"
           else
-            CONTEXT="pipe t=${T:-?} s=${S:-?} p=${P:-?} c=${C:-?} d=${D:-?} cl=${CL:-?} f=${F:-?} l=${L:-?}"
+            CONTEXT="pipe t=${T:-?} s=${S:-?} p=${P:-?} c=${C:-?} d=${D:-?} cl=${CL:-?} f=${F:-?} l=${L:-?} w=${W:-?}"
           fi
 
-          if [[ "${L:-}" == "success" ]]; then
+          if [[ "${L:-}" == "success" && "${W:-}" == "success" ]]; then
             STATE="success"
-            DESCRIPTION="R8-11 live; old=${OLD_CODE} r8=${R8_CODE} layers=${LAYERS}"
+            DESCRIPTION="R8-11 + completion live; old=${OLD_CODE} r8=${R8_CODE} layers=${LAYERS}"
           else
             STATE="failure"
             DESCRIPTION="Pipeline/live verification failed"
@@ -225,5 +285,5 @@ jobs:
             -d "{\"state\":\"${STATE}\",\"context\":\"${CONTEXT}\",\"description\":\"${DESCRIPTION}\"}"
 
       - name: Canlı doğrulama başarısızsa yayını başarısız işaretle
-        if: steps.live_verify.outcome != 'success'
+        if: steps.live_verify.outcome != 'success' || steps.live_completion.outcome != 'success'
         run: exit 1
