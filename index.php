@@ -87,7 +87,7 @@ $assets = <<<'HTML'
   <style id="hero-r8-critical">
     html:not(.hero-r8-mounted) .hero__media{visibility:hidden!important}
     html.hero-r8-mounted .hero__media{visibility:visible!important}
-    .hero__picture,.hero__image,.hero__media>picture,.hero__media img:not(.hero-r8__layer){display:none!important}
+    .hero__picture,.hero__image,.hero__media>picture{display:none!important}
   </style>
   <link rel="preload" as="image" href="assets/images/hero-r8/platform-p00-r8-reference-exact.png?v=20260808-r8-11" fetchpriority="high">
   <link rel="preload" as="image" href="assets/images/hero-r8/truck-t00-r6.png?v=20260808-r8-11" fetchpriority="high">
