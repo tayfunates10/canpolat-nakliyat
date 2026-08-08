@@ -31,19 +31,23 @@ jobs:
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Site denetimlerini çalıştır
+        id: audit
         run: npm test
 
       - name: Yayın betiklerini doğrula
+        id: scripts_check
         run: |
           bash -n scripts/prepare-deploy.sh scripts/deploy-cpanel.sh scripts/validate-ftp-config.sh
           node --check scripts/clean-ftp-root.js
 
       - name: FTP yayın paketini hazırla
+        id: package
         run: |
           mkdir -p "${RUNNER_TEMP}/canpolat-site"
           scripts/prepare-deploy.sh "${RUNNER_TEMP}/canpolat-site"
 
       - name: FTP ayarlarını güvenli biçimde doğrula
+        id: ftp_config
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
@@ -54,6 +58,7 @@ jobs:
         run: scripts/validate-ftp-config.sh
 
       - name: Kontrollü temizlik bağımlılığını kur
+        id: deps
         if: >-
           ${{
             (github.event_name == 'workflow_dispatch' && inputs.clean_live_root == true) ||
@@ -62,6 +67,7 @@ jobs:
         run: npm ci --ignore-scripts --omit=optional --no-audit --no-fund
 
       - name: Canlı FTP kökündeki eski dosyaları kontrollü temizle
+        id: cleanup
         if: >-
           ${{
             (github.event_name == 'workflow_dispatch' && inputs.clean_live_root == true) ||
@@ -82,6 +88,7 @@ jobs:
         run: node scripts/clean-ftp-root.js
 
       - name: Siteyi FTP ile canlıya dağıt
+        id: ftp_deploy
         uses: SamKirkland/FTP-Deploy-Action@110f9186c050f71550953127052e77650219c287 # v4.4.0
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -158,11 +165,18 @@ jobs:
           echo "old=${last_old_code}, r8=${last_r8_code}, layers=${layer_count}, version=${version_ok}, legacyBody=${legacy_body}"
           exit 1
 
-      - name: Canlı doğrulama durumunu commit'e yaz
+      - name: Pipeline ve canlı doğrulama durumunu commit'e yaz
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-          LIVE_OUTCOME: ${{ steps.live_verify.outcome }}
+          T: ${{ steps.audit.outcome }}
+          S: ${{ steps.scripts_check.outcome }}
+          P: ${{ steps.package.outcome }}
+          C: ${{ steps.ftp_config.outcome }}
+          D: ${{ steps.deps.outcome }}
+          CL: ${{ steps.cleanup.outcome }}
+          F: ${{ steps.ftp_deploy.outcome }}
+          L: ${{ steps.live_verify.outcome }}
           OLD_CODE: ${{ steps.live_verify.outputs.old_code }}
           R8_CODE: ${{ steps.live_verify.outputs.r8_code }}
           LAYERS: ${{ steps.live_verify.outputs.layer_count }}
@@ -171,13 +185,13 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          CONTEXT="prod old=${OLD_CODE:-?} r8=${R8_CODE:-?} layers=${LAYERS:-?} v=${VERSION_OK:-?} legacy=${LEGACY_BODY:-?}"
-          if [[ "${LIVE_OUTCOME}" == "success" ]]; then
+          CONTEXT="pipe t=${T:-?} s=${S:-?} p=${P:-?} c=${C:-?} d=${D:-?} cl=${CL:-?} f=${F:-?} l=${L:-?}"
+          if [[ "${L:-}" == "success" ]]; then
             STATE="success"
-            DESCRIPTION="R8-11 live; legacy hero removed"
+            DESCRIPTION="R8-11 live; old=${OLD_CODE} r8=${R8_CODE} layers=${LAYERS}"
           else
             STATE="failure"
-            DESCRIPTION="Live R8-11 verification failed"
+            DESCRIPTION="Live verify failed; old=${OLD_CODE:-?} r8=${R8_CODE:-?} v=${VERSION_OK:-?}"
           fi
 
           curl --fail-with-body -sS -L \
