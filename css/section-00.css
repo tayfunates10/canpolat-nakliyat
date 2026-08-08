@@ -1,0 +1,302 @@
+/* ========================================================================== 
+   CANPOLAT NAKLİYAT — BÖLÜM 00
+   Global tasarım sistemi, sayfa zemini, header ve navigasyon
+   Bu katman mevcut site mimarisini bozmaz; yalnız Bölüm 00 kararlarını uygular.
+   ========================================================================== */
+
+:root {
+  --color-bg: #253349;
+  --color-bg-deep: #1a2332;
+  --color-bg-secondary: #202d41;
+  --color-panel: #2a394f;
+  --color-panel-hover: #304159;
+  --color-panel-soft: #29384c;
+  --color-panel-deep: #1e2a3d;
+
+  --color-border: rgba(255, 255, 255, 0.12);
+  --color-border-strong: rgba(255, 255, 255, 0.22);
+  --color-border-orange: rgba(239, 124, 0, 0.52);
+
+  --color-orange: #ef7c00;
+  --color-orange-light: #ff9224;
+  --color-orange-dark: #d66f00;
+
+  --color-white: #ffffff;
+  --color-text: #edf1f5;
+  --color-muted: #b8c0ca;
+  --color-muted-dark: #909ba9;
+
+  --shadow-panel: 0 14px 34px rgba(10, 16, 26, 0.24);
+  --header-height: 80px;
+}
+
+html {
+  background: var(--color-bg-deep);
+  scroll-padding-top: calc(var(--header-height) + 12px);
+}
+
+body {
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+main section[id] {
+  scroll-margin-top: calc(var(--header-height) + 12px);
+}
+
+/* Görünür klavye odağı marka turuncusuyla daha belirgin tutulur. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--color-orange);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   HEADER
+   -------------------------------------------------------------------------- */
+.site-header {
+  background: var(--color-bg);
+  border-bottom-color: var(--color-border);
+}
+
+.site-header.is-scrolled {
+  box-shadow: 0 12px 28px rgba(10, 16, 26, 0.34);
+}
+
+.site-header__inner {
+  min-width: 0;
+}
+
+.brand {
+  flex: 0 0 auto;
+}
+
+.brand__img {
+  object-fit: contain;
+}
+
+.main-nav {
+  min-width: 0;
+}
+
+.main-nav__list {
+  min-width: 0;
+}
+
+.main-nav__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-text);
+}
+
+.main-nav__link:hover,
+.main-nav__link:focus-visible {
+  color: var(--color-white);
+}
+
+.main-nav__link.is-active {
+  color: var(--color-orange);
+}
+
+.main-nav__link::after {
+  background: var(--color-orange);
+}
+
+.header-actions {
+  min-width: 0;
+}
+
+.phone-box {
+  min-height: 46px;
+  color: var(--color-white);
+  background: var(--color-panel-deep);
+  border-color: var(--color-border);
+}
+
+.phone-box:hover,
+.phone-box:focus-visible {
+  border-color: var(--color-border-orange);
+}
+
+.phone-box__icon {
+  color: var(--color-orange);
+}
+
+.phone-box__label {
+  color: var(--color-muted);
+}
+
+/* #EF7C00 marka turuncusu korunur; koyu lacivert metin WCAG AA kontrastını sağlar. */
+.btn--primary {
+  color: var(--color-bg-deep);
+  background: var(--color-orange);
+}
+
+.btn--primary:hover {
+  background: var(--color-orange-light);
+}
+
+.btn--primary:active {
+  background: var(--color-orange-dark);
+}
+
+/* --------------------------------------------------------------------------
+   MOBİL / TABLET NAVİGASYONU
+   -------------------------------------------------------------------------- */
+.hamburger,
+.phone-round,
+.mobile-menu__close {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.hamburger {
+  width: 44px;
+  height: 44px;
+}
+
+.phone-round {
+  width: 44px;
+  height: 44px;
+  color: var(--color-orange);
+  border-color: var(--color-border-orange);
+}
+
+.menu-overlay {
+  background: rgba(10, 16, 26, 0.68);
+}
+
+.mobile-menu {
+  width: min(330px, 88vw);
+  background: var(--color-bg-secondary);
+  border-right-color: var(--color-border);
+}
+
+.mobile-menu__head {
+  border-bottom-color: var(--color-border);
+}
+
+.mobile-menu__title {
+  color: var(--color-orange);
+}
+
+.mobile-menu__close {
+  width: 44px;
+  height: 44px;
+  color: var(--color-white);
+  border-color: var(--color-border);
+}
+
+.mobile-menu__link {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding-top: 11px;
+  padding-bottom: 11px;
+  color: var(--color-text);
+  border-bottom-color: var(--color-border);
+}
+
+.mobile-menu__link:hover,
+.mobile-menu__link:focus-visible {
+  color: var(--color-orange);
+}
+
+.mobile-menu__phone {
+  min-height: 48px;
+  background: var(--color-panel);
+  border-color: var(--color-border);
+}
+
+.mobile-menu__phone svg {
+  color: var(--color-orange);
+}
+
+/* Header ile ilk bölüm arasındaki renk sürekliliği. Hero yerleşimi ve R8 katmanları
+   bu dosyada değiştirilmez. */
+.hero {
+  background: var(--color-bg);
+  border-bottom-color: var(--color-border);
+}
+
+@media (max-width: 1199px) {
+  :root {
+    --header-height: 74px;
+  }
+
+  .site-header__inner {
+    gap: 9px;
+  }
+
+  .main-nav__list {
+    gap: clamp(8px, 1vw, 14px);
+  }
+
+  .main-nav__link {
+    font-size: clamp(10px, 0.82vw, 11.5px);
+    letter-spacing: 0.035em;
+  }
+
+  .phone-box {
+    padding-inline: 10px;
+  }
+}
+
+@media (max-width: 991px) {
+  :root {
+    --header-height: 64px;
+  }
+
+  .site-header__inner {
+    min-height: var(--header-height);
+  }
+
+  .brand__img {
+    max-width: min(178px, 48vw);
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --header-height: 60px;
+  }
+
+  .site-header__inner {
+    gap: 6px;
+  }
+
+  .brand__img {
+    width: min(170px, 46vw);
+    height: auto;
+    max-height: 44px;
+  }
+
+  .mobile-menu {
+    width: min(320px, 90vw);
+    padding: 16px;
+  }
+}
+
+@media (max-width: 430px) {
+  .brand__img {
+    width: min(158px, 44vw);
+  }
+
+  .mobile-menu {
+    width: min(304px, 92vw);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .main-nav__link::after,
+  .phone-box,
+  .mobile-menu,
+  .menu-overlay {
+    transition: none !important;
+  }
+}
