@@ -1,5 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /index-template.html
 Disallow: /tests/
+Disallow: /scripts/
+Disallow: /tools/
+Disallow: /source-assets/
 
-Sitemap: https://canpolatnakliyat.com/sitemap.xml
+Sitemap: https://www.canpolatnakliyat.com/sitemap.xml

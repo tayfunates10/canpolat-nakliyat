@@ -38,7 +38,7 @@
 }
 
 .service-card__media {
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 793 / 496;
   margin-bottom: 13px;
   background:
     radial-gradient(circle at 50% 62%, rgba(35, 73, 92, 0.18), transparent 68%),
@@ -126,7 +126,7 @@
   .service-card__media {
     width: 72px;
     flex: 0 0 72px;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 793 / 496;
     margin: 0;
     background: transparent;
     border: 0;

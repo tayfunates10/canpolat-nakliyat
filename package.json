@@ -4,8 +4,15 @@
   "private": true,
   "description": "Canpolat Nakliyat kurumsal web sitesi",
   "scripts": {
-    "serve": "python3 -m http.server 8099",
-    "test": "node tests/site-audit.js && node tests/ftp-cleanup.js"
+    "assets:optimize": "bash scripts/optimize-images.sh",
+    "build": "bash scripts/build-check.sh",
+    "lint": "node --check js/script.js && node --check js/hero-animated.js && node --check assets/js/main.js && node --check scripts/generate-seo-pages.js && node --check scripts/preview-server.js && node --check tests/site-audit.js && node --check tests/seo-audit.js && node --check tests/http-crawl.js",
+    "pages:check": "node scripts/generate-seo-pages.js --check",
+    "pages:generate": "node scripts/generate-seo-pages.js",
+    "preview": "node scripts/preview-server.js",
+    "serve": "npm run preview",
+    "test": "npm run pages:check && npm run lint && node tests/site-audit.js && node tests/seo-audit.js && node tests/http-crawl.js && node tests/ftp-cleanup.js",
+    "type-check": "npm run lint"
   },
   "devDependencies": {
     "basic-ftp": "6.2.0"

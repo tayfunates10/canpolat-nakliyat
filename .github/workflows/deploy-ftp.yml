@@ -126,13 +126,13 @@ jobs:
             **/.well-known/**
             **/cgi-bin/**
 
-      - name: Canlı Hero R8-11 yayınını doğrula
+      - name: Canlı SEO ve Hero R8 yayınını doğrula
         id: live_verify
         continue-on-error: true
         shell: bash
         run: |
           set -Eeuo pipefail
-          BASE_URL="https://canpolatnakliyat.com"
+          BASE_URL="https://www.canpolatnakliyat.com"
           QUERY="verify=${GITHUB_SHA}"
           last_headers=""
           last_body=""
@@ -140,6 +140,7 @@ jobs:
           last_r8_code="000"
           layer_count="0"
           version_ok="no"
+          canonical_ok="no"
           legacy_body="unknown"
 
           write_outputs() {
@@ -147,6 +148,7 @@ jobs:
             echo "r8_code=${last_r8_code}" >> "${GITHUB_OUTPUT}"
             echo "layer_count=${layer_count}" >> "${GITHUB_OUTPUT}"
             echo "version_ok=${version_ok}" >> "${GITHUB_OUTPUT}"
+            echo "canonical_ok=${canonical_ok}" >> "${GITHUB_OUTPUT}"
             echo "legacy_body=${legacy_body}" >> "${GITHUB_OUTPUT}"
           }
 
@@ -155,31 +157,34 @@ jobs:
             last_headers="$(curl -sS -L -D - -o /dev/null --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/?${QUERY}" || true)"
             last_body="$(curl -sS -L --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/?${QUERY}" || true)"
             last_old_code="$(curl -sS -o /dev/null -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/assets/images/hero-canpolat.webp?${QUERY}" || true)"
-            last_r8_code="$(curl -sS -o /dev/null -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/assets/images/hero-r8/platform-p00-r8-reference-exact.png?${QUERY}" || true)"
+            last_r8_code="$(curl -sS -o /dev/null -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/assets/images/hero-r8/platform-p00-r8-reference-exact.webp?${QUERY}" || true)"
             layer_count="$( (grep -o 'hero-r8__layer' <<<"${last_body}" || true) | wc -l | tr -d ' ')"
 
-            if grep -qi '^x-hero-version:[[:space:]]*R8-11' <<<"${last_headers}"; then version_ok="yes"; else version_ok="no"; fi
+            if grep -qi '^x-hero-version:[[:space:]]*R8-SEO-01' <<<"${last_headers}"; then version_ok="yes"; else version_ok="no"; fi
+            if grep -Fq '<link rel="canonical" href="https://www.canpolatnakliyat.com/">' <<<"${last_body}"; then canonical_ok="yes"; else canonical_ok="no"; fi
             if grep -Eq 'hero-canpolat(-mobil)?\.webp' <<<"${last_body}"; then legacy_body="yes"; else legacy_body="no"; fi
 
             if [[ "${version_ok}" == "yes" ]] \
+              && [[ "${canonical_ok}" == "yes" ]] \
               && grep -q 'hero-r8__layer--p00' <<<"${last_body}" \
               && grep -q 'hero-r8__layer--t00' <<<"${last_body}" \
+              && grep -Fq 'Camivasat Mah. Akçay Cad. No: 78 Edremit / Balıkesir' <<<"${last_body}" \
               && [[ "${legacy_body}" == "no" ]] \
               && [[ "${last_old_code}" == "404" || "${last_old_code}" == "410" ]] \
               && [[ "${last_r8_code}" == "200" ]] \
               && (( layer_count >= 13 )); then
               write_outputs
-              echo "PASS: Canlı site R8-11 kullanıyor; eski hero servis edilmiyor."
+              echo "PASS: Canlı site canonical/NAP ve R8 WebP katmanlarını kullanıyor; eski hero servis edilmiyor."
               exit 0
             fi
 
-            echo "Henüz doğrulanmadı: old=${last_old_code}, r8=${last_r8_code}, layers=${layer_count}, version=${version_ok}, legacyBody=${legacy_body}"
+            echo "Henüz doğrulanmadı: old=${last_old_code}, r8=${last_r8_code}, layers=${layer_count}, version=${version_ok}, canonical=${canonical_ok}, legacyBody=${legacy_body}"
             sleep 10
           done
 
           write_outputs
-          echo "FAIL: Canlı Hero R8-11 doğrulanamadı."
-          echo "old=${last_old_code}, r8=${last_r8_code}, layers=${layer_count}, version=${version_ok}, legacyBody=${legacy_body}"
+          echo "FAIL: Canlı SEO/Hero R8 yayını doğrulanamadı."
+          echo "old=${last_old_code}, r8=${last_r8_code}, layers=${layer_count}, version=${version_ok}, canonical=${canonical_ok}, legacyBody=${legacy_body}"
           exit 1
 
       - name: Pipeline ve canlı doğrulama durumunu commit'e yaz
@@ -210,7 +215,7 @@ jobs:
 
           if [[ "${L:-}" == "success" ]]; then
             STATE="success"
-            DESCRIPTION="R8-11 live; old=${OLD_CODE} r8=${R8_CODE} layers=${LAYERS}"
+            DESCRIPTION="SEO/R8 live; old=${OLD_CODE} r8=${R8_CODE} layers=${LAYERS}"
           else
             STATE="failure"
             DESCRIPTION="Pipeline/live verification failed"

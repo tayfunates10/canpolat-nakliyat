@@ -25,6 +25,7 @@ publish_paths=(
   "index-template.html"
   "404.html"
   "hakkimizda.html"
+  "iletisim.html"
   "gizlilik.html"
   "robots.txt"
   "sitemap.xml"
@@ -48,6 +49,14 @@ required_paths=(
   "assets/images/service-ofis.webp"
   "assets/images/service-asansorlu.webp"
   "assets/images/service-paketleme.webp"
+  "assets/css/fonts.css"
+  "assets/fonts/inter-latin-ext-variable.woff2"
+  "assets/fonts/inter-latin-variable.woff2"
+  "assets/fonts/manrope-latin-ext-variable.woff2"
+  "assets/fonts/manrope-latin-variable.woff2"
+  "hizmetler/index.html"
+  "hizmetler/parca-esya-tasima.html"
+  "iletisim.html"
 )
 
 for path in "${required_paths[@]}"; do
@@ -96,7 +105,65 @@ required_output_files=(
   "assets/images/hero-r8/layer-l09-r6.png"
   "assets/images/hero-r8/layer-l10-r6.png"
   "assets/images/hero-r8/layer-l11-r6.png"
+  "assets/images/hero-r8/platform-p00-r8-reference-exact.webp"
+  "assets/images/hero-r8/truck-t00-r6.webp"
+  "assets/images/hero-r8/layer-l01-r6.webp"
+  "assets/images/hero-r8/layer-l02-r6.webp"
+  "assets/images/hero-r8/layer-l03-r6.webp"
+  "assets/images/hero-r8/layer-l04-r6.webp"
+  "assets/images/hero-r8/layer-l05-r6.webp"
+  "assets/images/hero-r8/layer-l06-r6.webp"
+  "assets/images/hero-r8/layer-l07-r6.webp"
+  "assets/images/hero-r8/layer-l08-r6.webp"
+  "assets/images/hero-r8/layer-l09-r6.webp"
+  "assets/images/hero-r8/layer-l10-r6.webp"
+  "assets/images/hero-r8/layer-l11-r6.webp"
+  "assets/images/services/service-evden-eve-480.webp"
+  "assets/images/services/service-evden-eve-800.webp"
+  "assets/images/services/service-evden-eve-1200.webp"
+  "assets/images/services/service-sehirler-arasi-480.webp"
+  "assets/images/services/service-sehirler-arasi-800.webp"
+  "assets/images/services/service-sehirler-arasi-1200.webp"
+  "assets/images/services/service-ofis-480.webp"
+  "assets/images/services/service-ofis-800.webp"
+  "assets/images/services/service-ofis-1200.webp"
+  "assets/images/services/service-asansorlu-480.webp"
+  "assets/images/services/service-asansorlu-800.webp"
+  "assets/images/services/service-asansorlu-1200.webp"
+  "assets/images/services/service-paketleme-480.webp"
+  "assets/images/services/service-paketleme-800.webp"
+  "assets/images/services/service-paketleme-1200.webp"
+  "assets/css/fonts.css"
+  "assets/fonts/inter-latin-ext-variable.woff2"
+  "assets/fonts/inter-latin-variable.woff2"
+  "assets/fonts/manrope-latin-ext-variable.woff2"
+  "assets/fonts/manrope-latin-variable.woff2"
+  "hizmetler/index.html"
+  "hizmetler/parca-esya-tasima.html"
+  "iletisim.html"
 )
+
+hero_responsive_bases=(
+  "platform-p00-r8-reference-exact"
+  "truck-t00-r6"
+  "layer-l01-r6"
+  "layer-l02-r6"
+  "layer-l03-r6"
+  "layer-l04-r6"
+  "layer-l05-r6"
+  "layer-l06-r6"
+  "layer-l07-r6"
+  "layer-l08-r6"
+  "layer-l09-r6"
+  "layer-l10-r6"
+  "layer-l11-r6"
+)
+
+for base in "${hero_responsive_bases[@]}"; do
+  for width in 768 1152; do
+    required_output_files+=("assets/images/hero-r8/${base}-${width}.webp")
+  done
+done
 
 for file in "${required_output_files[@]}"; do
   if [[ ! -s "${OUTPUT_PATH}/${file}" ]]; then

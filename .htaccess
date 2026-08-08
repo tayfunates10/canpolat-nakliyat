@@ -1,9 +1,8 @@
 Options -Indexes
-DirectoryIndex index.php
+DirectoryIndex index.php index.html
 AddDefaultCharset UTF-8
 
 <IfModule LiteSpeed>
-  # Ana sayfada eski HTML snapshot/page-cache devreye girmesin.
   CacheDisable public /
   CacheDisable private /
 </IfModule>
@@ -11,49 +10,57 @@ AddDefaultCharset UTF-8
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  # Kök istek her koşulda doğrudan PHP girişine gider; index.html DirectoryIndex değildir.
+  # Doğrudan index dosyalarını tek adımda canonical köke yönlendir.
+  RewriteCond %{THE_REQUEST} \s/+index\.(?:php|html)(?:[?\s]) [NC]
+  RewriteRule ^index\.(?:php|html)$ https://www.canpolatnakliyat.com/ [R=301,L,NE]
+
+  # Canonical host: HTTPS + www. İkincil hostlarda içerik kopyası oluşmasını engeller.
+  RewriteCond %{HTTP_HOST} !^www\.canpolatnakliyat\.com$ [NC]
+  RewriteRule ^ https://www.canpolatnakliyat.com%{REQUEST_URI} [R=301,L,NE]
+
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !^https$ [NC]
+  RewriteRule ^ https://www.canpolatnakliyat.com%{REQUEST_URI} [R=301,L,NE]
+
+  # Ana içerik PHP girişinden, görünür URL değişmeden sunulur.
   RewriteRule ^$ index.php [L]
 
-  # Eski statik index.html dışarıdan çağrılırsa doğrudan yeni PHP girişine yönlendir.
-  RewriteCond %{THE_REQUEST} \s/+index\.html(?:[?\s]) [NC]
-  RewriteRule ^index\.html$ /index.php [R=302,L,NE]
-
-  # PHP'nin kullandığı ham şablon web üzerinden hiçbir koşulda görüntülenemez.
+  # Kaynak şablon ve geliştirme klasörleri web üzerinden servis edilmez.
   RewriteRule ^index-template\.html$ - [F,L,NC]
+  RewriteRule ^(?:tests|scripts|tools|source-assets)(?:/|$) - [F,L,NC]
 
-  # Eski hero dosyaları tamamen emekli edildi. Sunucuda/browser dışında bir kopya kalsa bile servis etme.
+  # Emekli edilmiş tek-parça hero URL'leri kalıcı olarak kaldırılmıştır.
   RewriteRule ^assets/images/hero-canpolat(?:-mobil)?\.webp$ - [G,L,NC]
 </IfModule>
-
-# HTTPS yönlendirmesi, canpolatnakliyat.com için geçerli SSL sertifikası
-# doğrulandıktan sonra aşağıdaki koşul ve kural etkinleştirilmelidir.
-# <IfModule mod_rewrite.c>
-#   RewriteCond %{HTTPS} !=on
-#   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
-# </IfModule>
 
 <IfModule mod_headers.c>
   Header always set X-Content-Type-Options "nosniff"
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
-  Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+  Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
 
-  # Ana sayfanın HTML/PHP çıktısı tarayıcı veya ara cache tarafından saklanmaz.
-  <FilesMatch "^(index\.php|index\.html)$">
-    Header always set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
-    Header always set Pragma "no-cache"
-    Header always set Expires "0"
+  <FilesMatch "\.(?:css|js|svg|png|webp|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  <FilesMatch "\.(?:html|php)$">
+    Header set Cache-Control "no-cache, must-revalidate, max-age=0"
   </FilesMatch>
 </IfModule>
 
 <IfModule mod_expires.c>
   ExpiresActive On
-  ExpiresByType text/css "access plus 30 days"
-  ExpiresByType application/javascript "access plus 30 days"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
   ExpiresByType image/svg+xml "access plus 1 year"
   ExpiresByType image/png "access plus 1 year"
   ExpiresByType image/webp "access plus 1 year"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json application/ld+json application/xml image/svg+xml
 </IfModule>
 
 ErrorDocument 404 /404.html

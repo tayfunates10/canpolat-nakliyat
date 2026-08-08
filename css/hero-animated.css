@@ -82,8 +82,8 @@
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
-  opacity: 0;
-  transform: translate3d(var(--hero-x, 0), var(--hero-y, 0), 0) scale(var(--hero-scale, .98));
+  opacity: 1;
+  transform: none;
   transform-origin: center center;
   transition-property: opacity, transform;
   transition-duration: var(--hero-duration, 500ms);
@@ -94,7 +94,12 @@
   filter: none !important;
 }
 
-.hero-r8.is-ready .hero-r8__layer.is-loaded {
+.has-js .hero-r8__layer {
+  opacity: 0;
+  transform: translate3d(var(--hero-x, 0), var(--hero-y, 0), 0) scale(var(--hero-scale, .98));
+}
+
+.has-js .hero-r8.is-ready .hero-r8__layer.is-loaded {
   opacity: 1;
   transform: translate3d(0, 0, 0) scale(1);
 }
@@ -290,7 +295,7 @@
     transition: none !important;
   }
 
-  .hero-r8.is-ready .hero-r8__layer.is-loaded {
+  .has-js .hero-r8.is-ready .hero-r8__layer.is-loaded {
     opacity: 1 !important;
     transform: none !important;
   }

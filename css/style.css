@@ -45,6 +45,8 @@
   --color-orange: #ff6200;
   --color-orange-light: #ff7815;
   --color-orange-dark: #e94e00;
+  --color-orange-contrast: #c44700;
+  --color-orange-contrast-hover: #b94000;
 
   --color-white: #f5f7f8;
   --color-text: #e8edf0;
@@ -103,6 +105,8 @@ body {
   overflow-x: hidden;   /* eski tarayıcı yedeği */
   overflow-x: clip;     /* sticky header'ı bozmayan modern davranış */
 }
+
+address { font-style: normal; }
 
 h1, h2, h3, p, ul, ol, figure { margin: 0; padding: 0; }
 ul, ol { list-style: none; }
@@ -233,10 +237,10 @@ img.is-missing {
 
 .btn--primary {
   color: var(--color-white);
-  background: var(--color-orange);
+  background: var(--color-orange-contrast);
 }
-.btn--primary:hover { background: var(--color-orange-light); }
-.btn--primary:active { background: var(--color-orange-dark); }
+.btn--primary:hover { background: var(--color-orange-contrast-hover); }
+.btn--primary:active { background: #ad3b00; }
 
 .btn--ghost {
   color: var(--color-white);
@@ -1145,6 +1149,18 @@ html.is-menu-open body { overflow: hidden; }
   font-size: 13px;
   border-radius: var(--radius-small);
 }
+
+.quote__privacy {
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+.quote__privacy a {
+  color: var(--color-orange);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .form-alert {
   color: var(--color-error);
   background: rgba(255, 98, 0, 0.08);
@@ -1843,7 +1859,16 @@ html.is-menu-open body { overflow: hidden; }
     gap: 0;
     padding-bottom: 18px;
   }
-  .footer-col { display: none; }
+  .footer-col {
+    display: block;
+    margin-top: 20px;
+    padding: 18px 0 0;
+    text-align: left;
+    border-top: 1px solid var(--color-border);
+    border-left: 0;
+  }
+  .footer-col__title { margin-bottom: 10px; }
+  .footer-col__list { gap: 7px; }
 
   .footer-brand {
     display: flex;
@@ -1851,7 +1876,11 @@ html.is-menu-open body { overflow: hidden; }
     align-items: center;
     text-align: center;
   }
-  .footer-brand__text { display: none; }
+  .footer-brand__text {
+    display: block;
+    max-width: 420px;
+    margin-bottom: 0;
+  }
   .brand--footer { width: 190px; }
   .brand--footer .brand__img {
     width: 190px;

@@ -1,6 +1,8 @@
 (function () {
   'use strict';
 
+  document.documentElement.classList.add('has-js');
+
   function imageReady(image) {
     return new Promise(function (resolve) {
       if (image.complete) {
