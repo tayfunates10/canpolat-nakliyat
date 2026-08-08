@@ -45,7 +45,7 @@ required_paths=(
   "css/hero-animated.css"
   "css/services-tune.css"
   "css/section-03.css"
-  "partials/section-03-about.html"
+  "partials/section-03-about.inc"
   "js/hero-animated.js"
   "js/quote-form.js"
   "hizmetler/paketleme-montaj.html"
@@ -68,7 +68,6 @@ for path in "${publish_paths[@]}"; do
   cp -a "${REPO_ROOT}/${path}" "${OUTPUT_PATH}/"
 done
 
-# Eski hero varlıklarının production paketine hiçbir şekilde girmesine izin verme.
 rm -f \
   "${OUTPUT_PATH}/assets/images/hero-canpolat.webp" \
   "${OUTPUT_PATH}/assets/images/hero-canpolat-mobil.webp" \
@@ -85,7 +84,7 @@ required_output_files=(
   "css/hero-animated.css"
   "css/services-tune.css"
   "css/section-03.css"
-  "partials/section-03-about.html"
+  "partials/section-03-about.inc"
   "js/script.js"
   "js/hero-animated.js"
   "js/quote-form.js"
@@ -126,7 +125,6 @@ for forbidden in \
   fi
 done
 
-# Public index.html eski hero markup'ı veya eski görsel yollarını içeremez.
 if grep -Eq 'hero__picture|hero-canpolat(-mobil)?\.webp' "${OUTPUT_PATH}/index.html"; then
   echo "HATA: Public index.html içinde eski hero izi bulundu." >&2
   exit 1
