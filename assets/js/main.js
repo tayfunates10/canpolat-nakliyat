@@ -1,6 +1,8 @@
 (() => {
   'use strict';
 
+  document.documentElement.classList.add('has-js');
+
   const body = document.body;
   const header = document.querySelector('.site-header');
   const menuButton = document.querySelector('[data-menu-button]');

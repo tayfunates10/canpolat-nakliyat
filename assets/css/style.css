@@ -1,5 +1,13 @@
 @import url('/assets/css/style-base.css?v=2');
 
+/* Progressive enhancement: içerik JS olmadan görünür kalır; reveal animasyonu yalnız JS etkinleşince devreye girer. */
+.reveal{opacity:1;filter:none;transform:none}
+html.has-js .reveal{opacity:0;filter:blur(6px);transform:translateY(34px) scale(.975)}
+html.has-js .reveal.reveal-left{transform:translateX(-42px) scale(.98)}
+html.has-js .reveal.reveal-right{transform:translateX(42px) scale(.98)}
+html.has-js .reveal.reveal-zoom{transform:scale(.9)}
+html.has-js .reveal.is-visible{opacity:1;filter:none;transform:none}
+
 /* Canpolat responsive WebP hero background */
 .hero{
   background-color:#1d2027;
@@ -44,4 +52,8 @@
     background-size:cover;
     background-position:center 46%;
   }
+}
+
+@media (prefers-reduced-motion:reduce){
+  html.has-js .reveal{opacity:1;filter:none;transform:none}
 }
