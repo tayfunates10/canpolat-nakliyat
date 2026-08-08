@@ -1,156 +1,344 @@
-/* Canpolat Nakliyat — Hizmetlerimiz ince ayarı
- * Amaç: referans düzenin masaüstü 5 kart / mobil kompakt satır mantığını korumak.
- */
+/* ========================================================================== 
+   CANPOLAT NAKLİYAT — BÖLÜM 02 / HİZMETLERİMİZ
+   Onaylı tasarım: masaüstü 5 kart, tablet 3+2, mobil kompakt yatay satırlar.
+   Onaylı hizmet görselleri kırpılmadan ve dosya kimlikleri değiştirilmeden kullanılır.
+   ========================================================================== */
 
 .services {
   position: relative;
   background:
-    radial-gradient(circle at 50% 0%, rgba(31, 73, 95, 0.10) 0%, transparent 42%),
+    radial-gradient(circle at 50% 0%, rgba(55, 82, 111, 0.24) 0%, rgba(37, 51, 73, 0) 42%),
     var(--color-bg);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.services .container {
+  position: relative;
 }
 
 .services .section-label {
-  margin-bottom: 5px;
+  margin-bottom: 8px;
+  text-align: center;
+  letter-spacing: 0.13em;
 }
 
 .services .section-title {
-  margin-bottom: 24px;
+  position: relative;
+  max-width: 780px;
+  margin: 0 auto 42px;
+  text-align: center;
+}
+
+.services .section-title::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -18px;
+  width: 68px;
+  height: 4px;
+  background: var(--color-orange);
+  border-radius: 999px;
+  transform: translateX(-50%);
 }
 
 .services__grid {
-  gap: 14px;
+  counter-reset: service-card;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
   align-items: stretch;
 }
 
 .service-card {
+  counter-increment: service-card;
+  position: relative;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
-  min-height: 300px;
-  padding: 12px 12px 15px;
-  background: linear-gradient(180deg, rgba(13, 32, 43, 0.96), rgba(8, 23, 32, 0.98));
-  border-color: rgba(151, 174, 190, 0.22);
-  border-radius: 11px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.015);
+  min-height: 390px;
+  padding: 14px 14px 18px;
+  overflow: hidden;
+  color: var(--color-text);
+  background:
+    linear-gradient(180deg, rgba(27, 43, 61, 0.98), rgba(23, 37, 54, 0.99));
+  border: 1px solid rgba(196, 205, 216, 0.18);
+  border-radius: 16px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.025),
+    0 12px 28px rgba(10, 16, 26, 0.14);
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    background-color 220ms ease;
+}
+
+.service-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  height: 4px;
+  background: var(--color-orange);
+  opacity: 0.94;
 }
 
 .service-card:hover {
-  border-color: rgba(255, 98, 0, 0.36);
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22);
+  transform: translateY(-5px);
+  border-color: rgba(239, 124, 0, 0.52);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
+    0 20px 40px rgba(10, 16, 26, 0.26);
+}
+
+.service-card:focus-visible {
+  transform: translateY(-3px);
+  border-color: var(--color-orange);
 }
 
 .service-card__media {
+  display: block;
+  width: 100%;
   aspect-ratio: 793 / 496;
-  margin-bottom: 13px;
+  margin: 2px 0 17px;
+  overflow: hidden;
   background:
-    radial-gradient(circle at 50% 62%, rgba(35, 73, 92, 0.18), transparent 68%),
+    radial-gradient(circle at 50% 62%, rgba(75, 107, 132, 0.18), transparent 68%),
     var(--color-panel-deep);
-  border: 1px solid rgba(151, 174, 190, 0.08);
-  border-radius: 8px;
+  border: 1px solid rgba(196, 205, 216, 0.10);
+  border-radius: 11px;
 }
 
 .service-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   object-position: center center;
+  transition: transform 260ms ease;
+}
+
+.service-card:hover .service-card__media img {
+  transform: scale(1.025);
+}
+
+.service-card__body {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  padding-top: 31px;
+  border-top: 1px solid rgba(196, 205, 216, 0.12);
+}
+
+.service-card__body::before {
+  content: counter(service-card, decimal-leading-zero);
+  position: absolute;
+  top: 9px;
+  left: 0;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.10em;
+  color: var(--color-orange);
 }
 
 .service-card__title {
-  min-height: 40px;
-  margin-bottom: 7px;
-  font-size: 15.5px;
-  line-height: 1.28;
+  min-height: 48px;
+  margin-bottom: 10px;
+  font-size: clamp(16px, 1.1vw, 18px);
+  font-weight: 760;
+  line-height: 1.3;
+  color: var(--color-white);
 }
 
 .service-card__text {
-  margin-bottom: 13px;
-  font-size: 12.75px;
-  line-height: 1.5;
+  display: block;
+  margin-bottom: 18px;
+  font-size: 13px;
+  line-height: 1.62;
+  color: var(--color-muted);
 }
 
 .service-card__more {
-  gap: 6px;
-  font-size: 12.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 32px;
+  margin-top: auto;
+  font-size: 12.75px;
+  font-weight: 750;
+  color: var(--color-orange);
+}
+
+.service-card__more svg {
+  width: 15px;
+  height: 15px;
+  transition: transform 180ms ease;
+}
+
+.service-card:hover .service-card__more svg {
+  transform: translateX(4px);
+}
+
+.service-card__chevron {
+  display: none;
 }
 
 @media (max-width: 1199px) {
+  .services .section-title {
+    margin-bottom: 38px;
+  }
+
+  .services__grid {
+    gap: 12px;
+  }
+
   .service-card {
-    min-height: 286px;
+    min-height: 368px;
+    padding: 12px 12px 16px;
+  }
+
+  .service-card__title {
+    min-height: 44px;
+    font-size: 15px;
+  }
+
+  .service-card__text {
+    font-size: 12.5px;
   }
 }
 
 @media (max-width: 991px) and (min-width: 768px) {
   .services__grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
   }
 
   .service-card {
-    min-height: 278px;
+    min-height: 370px;
+  }
+
+  .service-card:nth-child(4) {
+    grid-column: 1 / 2;
+  }
+
+  .service-card:nth-child(5) {
+    grid-column: 2 / 3;
   }
 }
 
 @media (max-width: 767px) {
   .services {
-    padding-top: 28px;
-    padding-bottom: 30px;
-    background: var(--color-bg);
+    padding-top: 34px;
+    padding-bottom: 34px;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(55, 82, 111, 0.18) 0%, rgba(37, 51, 73, 0) 38%),
+      var(--color-bg);
   }
 
   .services .section-label {
-    margin-bottom: 11px;
+    margin-bottom: 8px;
     font-size: 10.5px;
-    letter-spacing: 0.11em;
+    text-align: left;
+    letter-spacing: 0.12em;
+  }
+
+  /* style.css içindeki eski mobil-gizleme kuralını onaylı Bölüm 02 tasarımı için geri aç. */
+  .services .section-title {
+    position: relative;
+    width: auto;
+    height: auto;
+    max-width: 350px;
+    margin: 0 0 34px;
+    padding: 0;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    white-space: normal;
+    text-align: left;
+  }
+
+  .services .section-title::after {
+    left: 0;
+    bottom: -15px;
+    width: 58px;
+    transform: none;
   }
 
   .services__grid {
     grid-template-columns: 1fr;
-    gap: 6px;
+    gap: 10px;
   }
 
   .service-card {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 132px minmax(0, 1fr) 24px;
     align-items: center;
-    gap: 10px;
-    min-height: 64px;
-    padding: 6px 10px 6px 7px;
-    background: linear-gradient(90deg, rgba(10, 26, 36, 0.98), rgba(8, 22, 31, 0.98));
-    border-color: rgba(151, 174, 190, 0.20);
-    border-radius: 8px;
-    box-shadow: none;
+    gap: 12px;
+    min-height: 112px;
+    padding: 8px 12px 8px 8px;
+    border-radius: 14px;
+    box-shadow: 0 10px 22px rgba(10, 16, 26, 0.12);
   }
 
-  .service-card:hover {
+  .service-card::before {
+    top: 12px;
+    bottom: 12px;
+    left: 0;
+    right: auto;
+    width: 3px;
+    height: auto;
+    border-radius: 0 999px 999px 0;
+  }
+
+  .service-card:hover,
+  .service-card:focus-visible {
     transform: none;
-    background: var(--color-panel-hover);
-    border-color: var(--color-border-strong);
-    box-shadow: none;
   }
 
   .service-card__media {
-    width: 72px;
-    flex: 0 0 72px;
-    aspect-ratio: 793 / 496;
+    grid-column: 1;
+    width: 132px;
+    height: 96px;
+    aspect-ratio: auto;
     margin: 0;
-    background: transparent;
     border: 0;
-    border-radius: 5px;
-    overflow: hidden;
+    border-radius: 9px;
   }
 
   .service-card__media img {
-    width: 100%;
-    height: 100%;
     object-fit: contain;
   }
 
+  .service-card:hover .service-card__media img {
+    transform: none;
+  }
+
   .service-card__body {
-    min-width: 0;
+    grid-column: 2;
     justify-content: center;
+    min-width: 0;
+    padding: 0;
+    border-top: 0;
+  }
+
+  .service-card__body::before {
+    position: static;
+    display: block;
+    margin-bottom: 8px;
+    font-size: 10.5px;
   }
 
   .service-card__title {
     min-height: 0;
     margin: 0;
-    font-size: 13.75px;
-    font-weight: 700;
-    line-height: 1.25;
+    font-size: 14.5px;
+    line-height: 1.28;
     text-align: left;
   }
 
@@ -161,43 +349,63 @@
 
   .service-card__chevron {
     display: block;
-    width: 17px;
-    height: 17px;
+    grid-column: 3;
+    width: 18px;
+    height: 18px;
     margin-left: auto;
-    color: var(--color-muted);
+    color: var(--color-orange);
   }
 }
 
 @media (max-width: 430px) {
   .services {
-    padding-top: 25px;
-    padding-bottom: 28px;
+    padding-top: 30px;
+    padding-bottom: 31px;
+  }
+
+  .services .section-title {
+    max-width: 330px;
+    margin-bottom: 31px;
+    font-size: clamp(26px, 8.2vw, 32px);
+  }
+
+  .services__grid {
+    gap: 9px;
   }
 
   .service-card {
-    min-height: 62px;
-    gap: 9px;
-    padding: 5px 9px 5px 6px;
+    grid-template-columns: 118px minmax(0, 1fr) 22px;
+    gap: 10px;
+    min-height: 104px;
+    padding-right: 10px;
   }
 
   .service-card__media {
-    width: 68px;
-    flex-basis: 68px;
+    width: 118px;
+    height: 88px;
   }
 
   .service-card__title {
-    font-size: 13.25px;
+    font-size: 13.75px;
   }
 
   .service-card__chevron {
-    width: 16px;
-    height: 16px;
+    width: 17px;
+    height: 17px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .service-card,
+  .service-card__media img,
   .service-card__more svg {
     transition: none !important;
+  }
+
+  .service-card:hover,
+  .service-card:focus-visible,
+  .service-card:hover .service-card__media img,
+  .service-card:hover .service-card__more svg {
+    transform: none !important;
   }
 }
