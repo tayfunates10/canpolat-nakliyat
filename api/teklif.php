@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+date_default_timezone_set('Europe/Istanbul');
+
 header('Content-Type: application/json; charset=UTF-8');
 header('Cache-Control: no-store, max-age=0');
 header('X-Content-Type-Options: nosniff');
@@ -53,17 +55,77 @@ function cleanText($value, int $maxLength): string
     return $value;
 }
 
-function validPhone(string $phone): bool
+function normalizePhone(string $phone): string
 {
     $digits = preg_replace('/\D+/', '', $phone) ?? '';
+    if (startsWithText($digits, '0090') && strlen($digits) === 14) $digits = substr($digits, 4);
     if (startsWithText($digits, '90') && strlen($digits) === 12) $digits = substr($digits, 2);
     if (startsWithText($digits, '0') && strlen($digits) === 11) $digits = substr($digits, 1);
-    return strlen($digits) === 10 && startsWithText($digits, '5');
+    return $digits;
+}
+
+function validPhone(string $phone): bool
+{
+    $digits = normalizePhone($phone);
+    return preg_match('/^[1-9][0-9]{9}$/', $digits) === 1;
+}
+
+function normalizeMoveDate(string $value): string
+{
+    $value = trim($value);
+    if ($value === '') return '';
+
+    $timezone = new DateTimeZone('Europe/Istanbul');
+    $formats = ['!Y-m-d', '!d.m.Y', '!d/m/Y', '!d-m-Y'];
+
+    foreach ($formats as $format) {
+        $date = DateTimeImmutable::createFromFormat($format, $value, $timezone);
+        $dateErrors = DateTimeImmutable::getLastErrors();
+        $validErrors = $dateErrors === false
+            || (($dateErrors['warning_count'] ?? 0) === 0 && ($dateErrors['error_count'] ?? 0) === 0);
+
+        if ($date instanceof DateTimeImmutable && $validErrors) {
+            $normalized = $date->format('Y-m-d');
+            $expected = $date->format(substr($format, 1));
+            if ($expected === $value) return $normalized;
+        }
+    }
+
+    return '';
+}
+
+function requestOriginIsAllowed(): bool
+{
+    $origin = trim($_SERVER['HTTP_ORIGIN'] ?? '');
+    if ($origin === '') return true;
+
+    $originHost = parse_url($origin, PHP_URL_HOST);
+    if (!is_string($originHost) || $originHost === '') return false;
+
+    $requestHost = strtolower($_SERVER['HTTP_HOST'] ?? '');
+    $requestHost = preg_replace('/:\d+$/', '', $requestHost) ?? $requestHost;
+    return strtolower($originHost) === $requestHost;
+}
+
+function safeMailbox($value, string $fallback): string
+{
+    if (!is_string($value)) return $fallback;
+    $value = trim(str_replace(["\r", "\n"], '', $value));
+    return filter_var($value, FILTER_VALIDATE_EMAIL) !== false ? $value : $fallback;
 }
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     header('Allow: POST');
     finish(405, ['ok' => false, 'message' => 'Bu endpoint yalnızca form gönderimi için kullanılır.']);
+}
+
+if (!requestOriginIsAllowed()) {
+    finish(403, ['ok' => false, 'message' => 'Form isteğinin kaynağı doğrulanamadı.']);
+}
+
+$contentLength = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0);
+if ($contentLength > 20000) {
+    finish(413, ['ok' => false, 'message' => 'Form verisi izin verilen boyutu aşıyor.']);
 }
 
 $contentType = strtolower($_SERVER['CONTENT_TYPE'] ?? '');
@@ -86,21 +148,25 @@ if ($website !== '') {
     finish(200, ['ok' => true, 'message' => 'Talebiniz alındı. En kısa sürede sizinle iletişime geçeceğiz.']);
 }
 
+$rawEmail = is_string($data['eposta'] ?? null) ? trim($data['eposta']) : '';
+$rawNotes = is_string($data['notlar'] ?? null) ? trim($data['notlar']) : '';
+
 $name = cleanText($data['adSoyad'] ?? '', 100);
 $phone = cleanText($data['telefon'] ?? '', 40);
 $email = cleanText($data['eposta'] ?? '', 160);
 $from = cleanText($data['nereden'] ?? '', 120);
 $to = cleanText($data['nereye'] ?? '', 120);
-$date = cleanText($data['tarih'] ?? '', 40);
+$date = normalizeMoveDate(cleanText($data['tarih'] ?? '', 40));
 $notes = cleanText($data['notlar'] ?? '', 1500);
 
 $errors = [];
 if (fieldLength($name) < 3) $errors[] = 'Ad Soyad';
 if (!validPhone($phone)) $errors[] = 'Telefon';
-if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL) === false) $errors[] = 'E-posta';
+if ($rawEmail !== '' && ($email === '' || filter_var($email, FILTER_VALIDATE_EMAIL) === false)) $errors[] = 'E-posta';
 if (fieldLength($from) < 2) $errors[] = 'Nereden';
 if (fieldLength($to) < 2) $errors[] = 'Nereye';
-if (fieldLength($date) < 4) $errors[] = 'Taşınma Tarihi';
+if ($date === '' || $date < date('Y-m-d')) $errors[] = 'Taşınma Tarihi';
+if ($rawNotes !== '' && $notes === '') $errors[] = 'Notlar';
 
 if ($errors !== []) {
     finish(422, [
@@ -110,12 +176,13 @@ if ($errors !== []) {
     ]);
 }
 
-/* Aynı IP’den aşırı hızlı tekrarları yalnız kısa süreli, hashlenmiş teknik anahtarla sınırla. */
+/* Aynı bağlantı + telefon kombinasyonundan aşırı hızlı tekrarları kısa süreli sınırla. */
 $remoteAddress = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+$rateIdentity = $remoteAddress . '|' . normalizePhone($phone);
 $rateFile = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR)
     . DIRECTORY_SEPARATOR
     . 'canpolat-quote-'
-    . hash('sha256', $remoteAddress)
+    . hash('sha256', $rateIdentity)
     . '.rate';
 $now = time();
 $lastSent = is_file($rateFile) ? (int) @file_get_contents($rateFile) : 0;
@@ -123,7 +190,8 @@ if ($lastSent > 0 && ($now - $lastSent) < 45) {
     finish(429, ['ok' => false, 'message' => 'Talebiniz az önce alındı. Yeni bir gönderim için lütfen kısa süre sonra tekrar deneyin.']);
 }
 
-$recipient = getenv('CANPOLAT_QUOTE_EMAIL') ?: 'info@canpolatnakliyat.com';
+$recipient = safeMailbox(getenv('CANPOLAT_QUOTE_EMAIL'), 'info@canpolatnakliyat.com');
+$fromEmail = safeMailbox(getenv('CANPOLAT_QUOTE_FROM_EMAIL'), 'info@canpolatnakliyat.com');
 $subject = 'Canpolat Nakliyat - Yeni Fiyat Teklifi Talebi';
 $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
 
@@ -143,15 +211,14 @@ $lines = [
 $body = implode("\r\n", $lines);
 
 $headers = [
-    'From: Canpolat Nakliyat Web Sitesi <website@canpolatnakliyat.com>',
+    'From: Canpolat Nakliyat Web Sitesi <' . $fromEmail . '>',
     'MIME-Version: 1.0',
     'Content-Type: text/plain; charset=UTF-8',
     'Content-Transfer-Encoding: 8bit',
     'X-Mailer: CanpolatWebsite/1.0',
 ];
 if ($email !== '') {
-    $safeReplyTo = str_replace(["\r", "\n"], '', $email);
-    $headers[] = 'Reply-To: ' . $safeReplyTo;
+    $headers[] = 'Reply-To: ' . $email;
 }
 
 $mailSent = @mail($recipient, $encodedSubject, $body, implode("\r\n", $headers));
