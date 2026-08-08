@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - work/section-01-hero-20260808
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
