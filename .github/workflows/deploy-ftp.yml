@@ -114,15 +114,14 @@ jobs:
           last_body=""
           last_old_code="000"
           last_r8_code="000"
+          layer_count="0"
 
           for attempt in $(seq 1 12); do
             echo "Canlı doğrulama denemesi ${attempt}/12"
-
             last_headers="$(curl -sS -L -D - -o /dev/null --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/?${QUERY}" || true)"
             last_body="$(curl -sS -L --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/?${QUERY}" || true)"
             last_old_code="$(curl -sS -o /dev/null -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/assets/images/hero-canpolat.webp?${QUERY}" || true)"
             last_r8_code="$(curl -sS -o /dev/null -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/assets/images/hero-r8/platform-p00-r8-reference-exact.png?${QUERY}" || true)"
-
             layer_count="$(grep -o 'hero-r8__layer' <<<"${last_body}" | wc -l | tr -d ' ')"
 
             if grep -qi '^x-hero-version:[[:space:]]*R8-11' <<<"${last_headers}" \
@@ -144,7 +143,7 @@ jobs:
           echo "FAIL: Canlı Hero R8-11 doğrulanamadı."
           echo "Eski hero HTTP: ${last_old_code}"
           echo "R8 platform HTTP: ${last_r8_code}"
-          echo "Son headerlar:"
+          echo "R8 layer sayısı: ${layer_count}"
           printf '%s\n' "${last_headers}"
           exit 1
 
@@ -158,26 +157,12 @@ jobs:
           set -Eeuo pipefail
           if [[ "${LIVE_OUTCOME}" == "success" ]]; then
             STATE="success"
-            DESCRIPTION="R8-11 canlı; eski hero kaldırıldı"
+            DESCRIPTION="R8-11 live; legacy hero removed"
           else
             STATE="failure"
-            DESCRIPTION="Canlı R8-11 doğrulaması başarısız"
+            DESCRIPTION="Live R8-11 verification failed"
           fi
 
-          python3 - <<'PY' > "${RUNNER_TEMP}/status.json"
-          import json, os
-          print(json.dumps({
-              "state": os.environ["STATE"],
-              "context": "production/canpolat-live",
-              "description": os.environ["DESCRIPTION"],
-          }, ensure_ascii=False))
-          PY
-        env:
-          GH_TOKEN: ${{ github.token }}
-          LIVE_OUTCOME: ${{ steps.live_verify.outcome }}
-          STATE: ${{ steps.live_verify.outcome == 'success' && 'success' || 'failure' }}
-          DESCRIPTION: ${{ steps.live_verify.outcome == 'success' && 'R8-11 live; legacy hero removed' || 'Live R8-11 verification failed' }}
-        run: |
           curl --fail-with-body -sS -L \
             -X POST \
             -H "Accept: application/vnd.github+json" \
