@@ -136,7 +136,7 @@ if (fs.existsSync(templatePath)) {
 if (fs.existsSync(indexPhpPath)) {
   const source = fs.readFileSync(indexPhpPath, 'utf8');
   if (!source.includes("__DIR__ . '/index-template.html'")) failures.push('index.php private index-template.html kullanmalıdır.');
-  if ((source.match(/hero-r8__layer/g) || []).length !== 13) failures.push('index.php içinde tam 13 Hero R8 katmanı bulunmalıdır.');
+  if ((source.match(/<img class="hero-r8__layer\s+hero-r8__layer--[a-z0-9]+"/g) || []).length !== 13) failures.push('index.php içinde tam 13 Hero R8 katmanı bulunmalıdır.');
   if (source.includes('hero-position-fix.css')) failures.push('index.php eski hero-position-fix.css dosyasını yüklememelidir.');
   if (source.includes('class="hero-r8__fallback"')) failures.push('index.php içinde eski hero fallback markup bulunmamalıdır.');
   if (!source.includes('$heroReplaceCount !== 1')) failures.push('index.php Hero R8 fail-closed koruması eksik.');
