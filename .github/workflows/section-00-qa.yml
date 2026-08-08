@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Node ortamını hazırla
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
           cache: npm
@@ -37,8 +37,8 @@ jobs:
       - name: Bölüm 00 statik denetimini çalıştır
         run: node tests/section00-audit.js
 
-      - name: Chromium test bağımlılığını geçici kur
-        run: npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund puppeteer-core@24.16.0
+      - name: Chromium ve erişilebilirlik bağımlılıklarını geçici kur
+        run: npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund puppeteer-core@24.16.0 axe-core@4.10.3
 
       - name: Chrome ve PHP ortamını doğrula
         shell: bash
@@ -78,7 +78,7 @@ jobs:
 
       - name: Bölüm 00 QA artifactlerini yükle
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: section-00-qa-${{ github.sha }}
           path: artifacts/section-00/
