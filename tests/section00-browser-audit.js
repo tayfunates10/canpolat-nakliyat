@@ -6,6 +6,7 @@ const baseUrl = process.env.SECTION00_BASE_URL || 'http://127.0.0.1:8099/';
 const chromePath = process.env.CHROME_PATH || '/usr/bin/google-chrome';
 const outputDir = path.resolve(process.env.SECTION00_ARTIFACT_DIR || 'artifacts/section-00');
 const knownBaselineHttpErrors = new Set(['/assets/images/about-canpolat.webp']);
+const axeSource = fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
 
 const viewports = [
   [320, 568],
@@ -23,6 +24,32 @@ fs.mkdirSync(outputDir, { recursive: true });
 
 function fail(list, viewport, message) {
   list.push(`${viewport}: ${message}`);
+}
+
+async function scanAxe(page, selector) {
+  const result = await page.evaluate(async (targetSelector) => {
+    const target = document.querySelector(targetSelector);
+    if (!target || !window.axe) return { missing: true, serious: [] };
+    const audit = await window.axe.run(target, {
+      runOnly: {
+        type: 'tag',
+        values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'],
+      },
+      resultTypes: ['violations'],
+    });
+    return {
+      missing: false,
+      serious: audit.violations
+        .filter((violation) => violation.impact === 'serious' || violation.impact === 'critical')
+        .map((violation) => ({
+          id: violation.id,
+          impact: violation.impact,
+          help: violation.help,
+          targets: violation.nodes.map((node) => node.target.join(' ')),
+        })),
+    };
+  }, selector);
+  return result;
 }
 
 (async () => {
@@ -45,6 +72,7 @@ function fail(list, viewport, message) {
       const pageErrors = [];
       const failedRequests = [];
       const httpErrors = [];
+      const accessibility = { header: null, mobileMenu: null, reducedMotion: null };
 
       page.on('console', (message) => {
         if (message.type() === 'error') consoleErrors.push(message.text());
@@ -65,6 +93,7 @@ function fail(list, viewport, message) {
       if (!response || !response.ok()) fail(failures, label, `Ana sayfa HTTP ${response ? response.status() : 'yok'}`);
 
       await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      await page.addScriptTag({ content: axeSource });
 
       const state = await page.evaluate(() => {
         const rootStyle = getComputedStyle(document.documentElement);
@@ -111,6 +140,12 @@ function fail(list, viewport, message) {
       if (state.brandAlt !== 'Canpolat Nakliyat') fail(failures, label, `Logo alt metni beklenmedik: ${state.brandAlt}`);
       if (!state.header || state.header.left < -0.5 || state.header.right > state.viewportWidth + 0.5) fail(failures, label, 'Header viewport dışına taşıyor.');
 
+      accessibility.header = await scanAxe(page, '.site-header');
+      if (accessibility.header.missing) fail(failures, label, 'Header axe erişilebilirlik taraması çalıştırılamadı.');
+      if (accessibility.header.serious.length) {
+        fail(failures, label, `Header serious/critical axe ihlali: ${accessibility.header.serious.map((item) => `${item.id}(${item.impact})`).join(', ')}`);
+      }
+
       if (width <= 991) {
         if (!state.hamburgerVisible || !state.phoneRoundVisible) fail(failures, label, 'Mobil/tablet header kontrolleri görünür değil.');
         for (const [name, target] of [['hamburger', state.hamburger], ['telefon', state.phoneRound]]) {
@@ -142,6 +177,12 @@ function fail(list, viewport, message) {
         if (menuState.rect && (menuState.rect.left < -0.5 || menuState.rect.right > state.viewportWidth + 0.5)) fail(failures, label, 'Mobil menü viewport dışına taşıyor.');
         if (menuState.undersized.length) fail(failures, label, `Mobil menüde 44px altı hedefler: ${menuState.undersized.join(', ')}`);
 
+        accessibility.mobileMenu = await scanAxe(page, '#mobile-menu');
+        if (accessibility.mobileMenu.missing) fail(failures, label, 'Mobil menü axe erişilebilirlik taraması çalıştırılamadı.');
+        if (accessibility.mobileMenu.serious.length) {
+          fail(failures, label, `Mobil menü serious/critical axe ihlali: ${accessibility.mobileMenu.serious.map((item) => `${item.id}(${item.impact})`).join(', ')}`);
+        }
+
         await page.keyboard.press('Escape');
         await new Promise((resolve) => setTimeout(resolve, 300));
         const closed = await page.evaluate(() => ({
@@ -152,6 +193,22 @@ function fail(list, viewport, message) {
         if (closed.expanded !== 'false' || closed.hidden !== 'true' || !closed.focusReturned) fail(failures, label, 'Escape sonrası mobil menü kapanma/focus dönüşü başarısız.');
       } else {
         if (!state.navVisible || !state.actionsVisible) fail(failures, label, 'Masaüstü navigasyon veya header aksiyonları görünür değil.');
+      }
+
+      if (width === 390 && height === 844) {
+        await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+        accessibility.reducedMotion = await page.evaluate(() => {
+          const header = document.querySelector('.site-header');
+          const menu = document.querySelector('#mobile-menu');
+          return {
+            matches: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+            headerTransitionDuration: header ? getComputedStyle(header).transitionDuration : null,
+            menuTransitionDuration: menu ? getComputedStyle(menu).transitionDuration : null,
+          };
+        });
+        if (!accessibility.reducedMotion.matches) fail(failures, label, 'prefers-reduced-motion emülasyonu etkinleşmedi.');
+        if (accessibility.reducedMotion.headerTransitionDuration !== '0s') fail(failures, label, `Reduced-motion header transition devam ediyor: ${accessibility.reducedMotion.headerTransitionDuration}`);
+        if (accessibility.reducedMotion.menuTransitionDuration !== '0s') fail(failures, label, `Reduced-motion mobil menü transition devam ediyor: ${accessibility.reducedMotion.menuTransitionDuration}`);
       }
 
       const unexpectedHttpErrors = httpErrors.filter((item) => !knownBaselineHttpErrors.has(item.path));
@@ -172,6 +229,7 @@ function fail(list, viewport, message) {
         label,
         screenshot: path.basename(screenshot),
         state,
+        accessibility,
         consoleErrors,
         pageErrors,
         failedRequests,
@@ -202,6 +260,8 @@ function fail(list, viewport, message) {
   console.log(`- ${viewports.length} viewport doğrulandı`);
   console.log('- Yatay taşma: 0');
   console.log('- Bölüm 00 kaynaklı console/page/network hatası: 0');
+  console.log('- Header ve mobil menü serious/critical axe ihlali: 0');
   console.log('- Mobil menü ARIA/focus/Escape kontrolleri başarılı');
+  console.log('- prefers-reduced-motion doğrulandı');
   console.log('- Bilinen baseline: /assets/images/about-canpolat.webp 404 (Bölüm 03 kapsamında ele alınacak)');
 })();
