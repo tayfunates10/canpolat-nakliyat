@@ -13,13 +13,7 @@ $mustResetClientCache = !isset($_COOKIE[$cacheResetCookie]);
 if ($mustResetClientCache) {
     header('X-LiteSpeed-Purge: *');
     header('Clear-Site-Data: "cache"');
-    setcookie($cacheResetCookie, '1', [
-        'expires' => time() + 31536000,
-        'path' => '/',
-        'secure' => true,
-        'httponly' => true,
-        'samesite' => 'Lax',
-    ]);
+    setcookie($cacheResetCookie, '1', time() + 31536000, '/', '', true, true);
 }
 
 $indexFile = __DIR__ . '/index-template.html';
