@@ -27,7 +27,6 @@ if ($html === false) {
     exit;
 }
 
-/* Tek canonical alan adı: HTTPS + non-www. */
 $html = str_replace('https://www.canpolatnakliyat.com', 'https://canpolatnakliyat.com', $html);
 $html = str_replace('assets/images/logo-canpolat.png', 'assets/images/canpolat-logo.svg?v=20260808-03', $html);
 $html = str_replace('href="css/style.css"', 'href="css/style.css?v=20260808-r8-11"', $html);
@@ -35,12 +34,7 @@ $html = str_replace('css/services-tune.css?v=20260808-svc-03', 'css/services-tun
 $html = str_replace('<meta name="theme-color" content="#06121b">', '<meta name="theme-color" content="#253349">', $html);
 $html = str_replace('7/24 Bizi Arayın', 'Bizi Arayın', $html);
 
-/* Koşulsuz ticari vaatleri production çıktısında nitelendir. */
-$html = str_replace(
-    'Eşyalarım sigortalı mı taşınıyor?',
-    'Taşıma kapsamı ve ek güvence nasıl belirleniyor?',
-    $html
-);
+$html = str_replace('Eşyalarım sigortalı mı taşınıyor?', 'Taşıma kapsamı ve ek güvence nasıl belirleniyor?', $html);
 $html = str_replace(
     'Taşıma kapsamına göre eşyalarınız sigortalı olarak taşınır. Ayrıntılar sözleşme öncesinde açıklanır.',
     'Taşıma kapsamı, sorumluluklar ve varsa ek güvence seçenekleri teklif ve sözleşme aşamasında açıkça belirtilir.',
@@ -67,7 +61,6 @@ $html = str_replace(
     $html
 );
 
-/* BÖLÜM 01 — Hero güvenli içerik dönüşümleri. */
 $html = str_replace(
     'Canpolat Nakliyat olarak eşyalarınızı özenle taşıyor, zamanında ve güvenli hizmet sunuyoruz.',
     'Canpolat Nakliyat olarak eşyalarınızı özenle taşıyor, süreci planlı ve düzenli şekilde yürütüyoruz.',
@@ -85,7 +78,6 @@ $html = str_replace(
 );
 $html = str_replace('<em>Hızlı Servis</em>', '<em>Yerel Hizmet</em>', $html);
 
-/* BÖLÜM 02 — Hizmet kartı açıklamaları. */
 $html = str_replace(
     'Eşyalarınızı özenle paketliyor, güvenle yeni adresinize ulaştırıyoruz.',
     'Eşyalarınızı özenle paketleyip planlı şekilde yeni adresinize taşıyoruz.',
@@ -112,7 +104,6 @@ $html = str_replace(
     $html
 );
 
-/* CSP ile çakışan eski inline boot scriptini kaldır. */
 $html = preg_replace(
     '~\s*<!-- Eksik görsellerde.*?-->\s*<script>.*?</script>\s*~s',
     "\n",
@@ -120,7 +111,6 @@ $html = preg_replace(
     1
 ) ?? $html;
 
-/* Teklif formunu gerçek POST endpoint'ine bağla. */
 $html = str_replace(
     '<form class="quote__form" id="quote-form" novalidate>',
     '<form class="quote__form" id="quote-request-form" action="/api/teklif.php" method="post">',
@@ -137,7 +127,6 @@ $html = str_replace(
     $html
 );
 
-/* Hizmet kartları gerçek detay sayfalarına gider. */
 $serviceUrls = [
     '/hizmetler/evden-eve-nakliyat.html',
     '/hizmetler/sehirler-arasi-nakliyat.html',
@@ -164,8 +153,7 @@ if (is_string($linkedHtml) && $serviceReplaceCount === 5) {
     $html = $linkedHtml;
 }
 
-/* BÖLÜM 03 — Onaylı Hakkımızda partial'ını eski section yerine fail-closed yerleştir. */
-$aboutFile = __DIR__ . '/partials/section-03-about.html';
+$aboutFile = __DIR__ . '/partials/section-03-about.inc';
 $aboutMarkup = @file_get_contents($aboutFile);
 if ($aboutMarkup === false) {
     http_response_code(500);
@@ -191,7 +179,6 @@ if (!is_string($aboutReplacedHtml) || $aboutReplaceCount !== 1) {
 }
 $html = $aboutReplacedHtml;
 
-/* Henüz gerçek hesap adresi olmayan sosyal ikonları ve boş şartlar linkini yayınlama. */
 $html = preg_replace('~\s*<ul class="social">.*?</ul>~s', '', $html, 1) ?? $html;
 $html = str_replace('          <li><a href="#" data-noop>Kullanım Şartları</a></li>\n', '', $html);
 
