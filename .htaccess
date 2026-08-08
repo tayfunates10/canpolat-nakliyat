@@ -29,6 +29,9 @@ AddDefaultCharset UTF-8
   # PHP'nin kullandığı ham şablon web üzerinden hiçbir koşulda görüntülenemez.
   RewriteRule ^index-template\.html$ - [F,L,NC]
 
+  # Bölüm 03: eski eksik Hakkımızda WebP isteğini üretilen kurumsal SVG illüstrasyona yönlendir.
+  RewriteRule ^assets/images/about-canpolat\.webp$ assets/images/about-canpolat-generated.svg [L,NC]
+
   # Eski hero dosyaları tamamen emekli edildi. Sunucuda/browser dışında bir kopya kalsa bile servis etme.
   RewriteRule ^assets/images/hero-canpolat(?:-mobil)?\.webp$ - [G,L,NC]
 </IfModule>
