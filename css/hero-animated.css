@@ -243,6 +243,16 @@
     background: radial-gradient(circle at 56% 52%, rgba(40, 82, 104, 0.13) 0%, transparent 66%);
   }
 
+  /* Tam 3:2 tuval korunur; yalnız tuvalin altındaki şeffaf güvenli alan layout'tan geri alınır. */
+  .hero-animated {
+    margin-bottom: -28px;
+  }
+
+  /* Gerçek carousel olmadığı için dekoratif slider noktaları mobilde gösterilmez. */
+  .hero__dots {
+    display: none !important;
+  }
+
   .hero__media::before {
     left: 7%;
     top: 5%;
