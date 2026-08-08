@@ -61,6 +61,44 @@ function sha256(buffer) {
   return crypto.createHash('sha256').update(buffer).digest('hex');
 }
 
+/* --------------------------------------------------------------------------
+ * HİZMET GÖRSELLERİ KİLİT DENETİMİ
+ * -------------------------------------------------------------------------- */
+const serviceImages = [
+  ['Evden Eve Nakliyat', 'service-evden-eve', '54c73ed6c0add793e0f82ead9b32db04e92b254688957722ee315f7dd4d045dd', '151895723f7505d687ea0062b6ce1e193d2ca45e5fbefe0102f5927da524174c'],
+  ['Şehirler Arası Nakliyat', 'service-sehirler-arasi', '0de65f313098052d472bea9e4f3d8cf8e51c429fdcd8618eb9e02f0275afbb49', '3b0b02ee0b45c9a25f0f2d0062aa69ad717650d4d22d1ecb26e13901af83048c'],
+  ['Ofis Taşıma', 'service-ofis', 'fae21c7511609bed32a0e8a307b170a8e3e2d89819130f2e94eab60c46429ec9', 'e3261117c35fcb26cbb1dd107947f03916b304371cf8d845466e363180d951af'],
+  ['Asansörlü Taşıma', 'service-asansorlu', '610960059cd339620c0245f3105350aea16f1789cf59971903f32f8b837cae27', '53158238d807769f824f6ecdaaa06de8d418457b68128f13ff7e8cec74159af8'],
+  ['Paketleme & Montaj', 'service-paketleme', 'd522eee0b7978053646461ca03a2f26edb99150a7ccb2f4bc33e0513e8b3ec1b', 'fcfa4899e63f2a31fbaa91053ccf859b584dfbef1024873cf368ebe32e58c85c'],
+];
+
+for (const [label, basename, sourceHash, webpHash] of serviceImages) {
+  const sourcePath = path.join(root, 'source-assets/services', `${basename}.png`);
+  const webpPath = path.join(root, 'assets/images', `${basename}.webp`);
+
+  if (!fs.existsSync(sourcePath)) {
+    failures.push(`${label} kaynak PNG eksik: source-assets/services/${basename}.png`);
+  } else {
+    const buffer = fs.readFileSync(sourcePath);
+    if (buffer.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a') {
+      failures.push(`${label} kaynağı geçerli PNG değil: ${basename}.png`);
+    } else if (buffer.readUInt32BE(16) !== 1586 || buffer.readUInt32BE(20) !== 992) {
+      failures.push(`${label} kaynak ölçüsü değişmiş: ${basename}.png`);
+    }
+    if (sha256(buffer) !== sourceHash) failures.push(`${label} kaynak PNG kimliği değişmiş: ${basename}.png`);
+  }
+
+  if (!fs.existsSync(webpPath)) {
+    failures.push(`${label} WebP eksik: assets/images/${basename}.webp`);
+  } else {
+    const buffer = fs.readFileSync(webpPath);
+    if (buffer.subarray(0, 4).toString('ascii') !== 'RIFF' || buffer.subarray(8, 12).toString('ascii') !== 'WEBP') {
+      failures.push(`${label} çıktısı geçerli WebP değil: ${basename}.webp`);
+    }
+    if (sha256(buffer) !== webpHash) failures.push(`${label} lossless WebP kimliği değişmiş: ${basename}.webp`);
+  }
+}
+
 for (const [id, filename, expectedHash] of heroLayers) {
   const file = path.join(heroDir, filename);
   if (!fs.existsSync(file)) {
@@ -92,12 +130,13 @@ const indexHtmlPath = path.join(root, 'index.html');
 const templatePath = path.join(root, 'index-template.html');
 const indexPhpPath = path.join(root, 'index.php');
 const siteCssPath = path.join(root, 'css/style.css');
+const serviceCssPath = path.join(root, 'css/services-tune.css');
 const heroCssPath = path.join(root, 'css/hero-animated.css');
 const heroJsPath = path.join(root, 'js/hero-animated.js');
 const deployPath = path.join(root, 'scripts/prepare-deploy.sh');
 const htaccessPath = path.join(root, '.htaccess');
 
-for (const required of [indexHtmlPath, templatePath, indexPhpPath, siteCssPath, heroCssPath, heroJsPath, deployPath, htaccessPath]) {
+for (const required of [indexHtmlPath, templatePath, indexPhpPath, siteCssPath, serviceCssPath, heroCssPath, heroJsPath, deployPath, htaccessPath]) {
   if (!fs.existsSync(required)) failures.push(`Hero R8 altyapı dosyası eksik: ${path.relative(root, required)}`);
 }
 
@@ -131,6 +170,22 @@ if (fs.existsSync(templatePath)) {
     if (current <= previous) failures.push(`index-template.html mobil Hero içerik sırası bozulmuş: ${className}`);
     previous = current;
   }
+
+  if (!source.includes('css/services-tune.css?v=20260808-svc-03')) failures.push('index-template.html güncel hizmet CSS sürümünü yüklemiyor.');
+  previous = -1;
+  for (const [, basename] of serviceImages) {
+    const expected = `src="assets/images/${basename}.webp?v=20260808-svc-03"`;
+    const current = source.indexOf(expected);
+    if (current === -1) {
+      failures.push(`index-template.html hizmet görselini çağırmıyor: ${basename}.webp`);
+      continue;
+    }
+    if (current <= previous) failures.push(`index-template.html hizmet görseli sırası bozulmuş: ${basename}.webp`);
+    const tagEnd = source.indexOf('>', current);
+    const imageTag = source.slice(current, tagEnd + 1);
+    if (!imageTag.includes('width="1586" height="992"')) failures.push(`${basename}.webp HTML ölçüleri 1586x992 olmalıdır.`);
+    previous = current;
+  }
 }
 
 if (fs.existsSync(indexPhpPath)) {
@@ -158,6 +213,15 @@ if (fs.existsSync(siteCssPath)) {
   const css = fs.readFileSync(siteCssPath, 'utf8');
   if (!/\.hero__inner\s*\{[^}]*grid-template-columns:\s*40fr\s+60fr\s*;/s.test(css)) failures.push('Masaüstü Hero 40/60 metin-sahne oranı değişmiş.');
   if (!/@media\s*\(max-width:\s*767px\)[\s\S]*?\.hero__inner\s*\{\s*display:\s*block\s*;\s*\}/.test(css)) failures.push('Mobil Hero alt alta düzen kuralı eksik.');
+  if (!/\.services__grid\s*\{[^}]*grid-template-columns:\s*repeat\(5,\s*1fr\)/s.test(css)) failures.push('Masaüstü hizmetler 5 kart sütunu kuralı eksik.');
+}
+
+if (fs.existsSync(serviceCssPath)) {
+  const css = fs.readFileSync(serviceCssPath, 'utf8');
+  if (!css.includes('aspect-ratio: 793 / 496')) failures.push('Hizmet görsellerinin 1586x992 oranı CSS içinde korunmuyor.');
+  if (!css.includes('object-fit: contain')) failures.push('Hizmet görsellerinin kırpılmama kuralı eksik.');
+  if (!/@media\s*\(max-width:\s*991px\)\s*and\s*\(min-width:\s*768px\)[\s\S]*?\.services__grid\s*\{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/.test(css)) failures.push('Tablet hizmetler 3 sütun kuralı eksik.');
+  if (!/@media\s*\(max-width:\s*767px\)[\s\S]*?\.services__grid\s*\{[^}]*grid-template-columns:\s*1fr/.test(css)) failures.push('Mobil hizmetler tek sütun kuralı eksik.');
 }
 
 if (fs.existsSync(heroCssPath)) {
@@ -204,6 +268,9 @@ if (fs.existsSync(deployPath)) {
   for (const legacy of ['hero-canpolat.webp', 'hero-canpolat-mobil.webp']) {
     if (!deploy.includes(`assets/images/${legacy}`)) failures.push(`prepare-deploy.sh eski hero temizliğini zorunlu uygulamıyor: ${legacy}`);
   }
+  for (const [, basename] of serviceImages) {
+    if (!deploy.includes(`assets/images/${basename}.webp`)) failures.push(`prepare-deploy.sh hizmet görselini zorunlu doğrulamıyor: ${basename}.webp`);
+  }
 }
 
 if (fs.existsSync(htaccessPath)) {
@@ -219,4 +286,4 @@ if (failures.length) {
   console.error(failures.join('\n'));
   process.exit(1);
 }
-console.log(`${htmlFiles.length} HTML dosyası, public index izolasyonu, responsive Hero düzeni, cache koruması ve 13/13 kilitli Hero R8 katmanı kontrol edildi.`);
+console.log(`${htmlFiles.length} HTML dosyası, 5/5 kilitli hizmet görseli, public index izolasyonu, responsive Hero düzeni, cache koruması ve 13/13 kilitli Hero R8 katmanı kontrol edildi.`);
