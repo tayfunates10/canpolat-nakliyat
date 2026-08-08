@@ -1,6 +1,5 @@
 /* Canpolat Nakliyat — Hizmetlerimiz ince ayarı
  * Amaç: referans düzenin masaüstü 5 kart / mobil kompakt satır mantığını korumak.
- * İçerik, görsel dosyaları ve bağlantılar değiştirilmez.
  */
 
 .services {
@@ -88,29 +87,29 @@
 
 @media (max-width: 767px) {
   .services {
-    padding-top: 30px;
-    padding-bottom: 34px;
+    padding-top: 28px;
+    padding-bottom: 30px;
     background: var(--color-bg);
   }
 
   .services .section-label {
-    margin-bottom: 12px;
+    margin-bottom: 11px;
     font-size: 10.5px;
     letter-spacing: 0.11em;
   }
 
   .services__grid {
     grid-template-columns: 1fr;
-    gap: 7px;
+    gap: 6px;
   }
 
   .service-card {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 12px;
-    min-height: 72px;
-    padding: 7px 11px 7px 8px;
+    gap: 10px;
+    min-height: 64px;
+    padding: 6px 10px 6px 7px;
     background: linear-gradient(90deg, rgba(10, 26, 36, 0.98), rgba(8, 22, 31, 0.98));
     border-color: rgba(151, 174, 190, 0.20);
     border-radius: 8px;
@@ -125,13 +124,14 @@
   }
 
   .service-card__media {
-    width: 76px;
-    flex: 0 0 76px;
+    width: 72px;
+    flex: 0 0 72px;
     aspect-ratio: 16 / 10;
     margin: 0;
     background: transparent;
     border: 0;
     border-radius: 5px;
+    overflow: hidden;
   }
 
   .service-card__media img {
@@ -148,9 +148,10 @@
   .service-card__title {
     min-height: 0;
     margin: 0;
-    font-size: 14px;
+    font-size: 13.75px;
     font-weight: 700;
     line-height: 1.25;
+    text-align: left;
   }
 
   .service-card__text,
@@ -160,8 +161,8 @@
 
   .service-card__chevron {
     display: block;
-    width: 18px;
-    height: 18px;
+    width: 17px;
+    height: 17px;
     margin-left: auto;
     color: var(--color-muted);
   }
@@ -169,28 +170,28 @@
 
 @media (max-width: 430px) {
   .services {
-    padding-top: 26px;
-    padding-bottom: 30px;
+    padding-top: 25px;
+    padding-bottom: 28px;
   }
 
   .service-card {
-    gap: 10px;
-    min-height: 68px;
-    padding: 6px 10px 6px 7px;
+    min-height: 62px;
+    gap: 9px;
+    padding: 5px 9px 5px 6px;
   }
 
   .service-card__media {
-    width: 70px;
-    flex-basis: 70px;
+    width: 68px;
+    flex-basis: 68px;
   }
 
   .service-card__title {
-    font-size: 13.5px;
+    font-size: 13.25px;
   }
 
   .service-card__chevron {
-    width: 17px;
-    height: 17px;
+    width: 16px;
+    height: 16px;
   }
 }
 
