@@ -31,7 +31,7 @@ const staticCss = read('assets/css/style.css');
 const staticJs = read('assets/js/main.js');
 
 requireToken('index.php', indexPhp, 'https://canpolatnakliyat.com/', 'canonical production alan adı non-www olmalıdır.');
-requireToken('index.php', indexPhp, 'action="/api/teklif.php"', 'fiyat teklif formu gerçek POST endpointine bağlanmalıdır.');
+requireToken('index.php', indexPhp, 'id="quote-request-form" action="/api/teklif.php" method="post"', 'production teklif formu legacy demo ID’sinden ayrılmalı ve gerçek POST endpointine bağlanmalıdır.');
 requireToken('index.php', indexPhp, 'js/quote-form.js', 'form teslim JavaScript dosyası yüklenmelidir.');
 requireToken('index.php', indexPhp, 'Taşıma kapsamı, sorumluluklar ve varsa ek güvence seçenekleri', 'sigorta/ek güvence kapsamı koşulsuz garanti gibi sunulmamalıdır.');
 requireToken('index.php', indexPhp, 'Taşıma kapsamında sökülen ve yeniden kuruluma uygun mobilyalara montaj desteği sağlıyoruz.', 'montaj kapsamı uygun mobilyalarla sınırlandırılmalıdır.');
@@ -46,9 +46,12 @@ for (const service of [
   requireToken('index.php', indexPhp, service, `hizmet kartı hedefi eksik: ${service}`);
 }
 
+requireToken('js/quote-form.js', quoteJs, "getElementById('quote-request-form')", 'gerçek form JS’si production form ID’sini kullanmalıdır.');
 requireToken('js/quote-form.js', quoteJs, 'fetch(endpoint', 'form gönderimi fetch ile yapılmalıdır.');
 requireToken('js/quote-form.js', quoteJs, 'form.checkValidity()', 'tarayıcı form doğrulaması korunmalıdır.');
-requireToken('js/quote-form.js', quoteJs, 'stopImmediatePropagation()', 'eski demo submit işleyicisi gerçek gönderimi engellememelidir.');
+requireToken('js/quote-form.js', quoteJs, "dateField.type === 'text') dateField.type = 'date'", 'taşınma tarihi alanı yeni form JS’sinde tarih seçiciye yükseltilmelidir.');
+if (quoteJs.includes('stopImmediatePropagation')) failures.push('js/quote-form.js: production form artık legacy handler ile çakışmadığı için stopImmediatePropagation kullanılmamalıdır.');
+if (quoteJs.includes("getElementById('quote-form')")) failures.push('js/quote-form.js: legacy demo form ID’si kullanılmamalıdır.');
 
 requireToken('api/teklif.php', quoteApi, 'REQUEST_METHOD', 'endpoint yalnız POST kabul etmelidir.');
 requireToken('api/teklif.php', quoteApi, 'finish(405', 'POST dışı istekler 405 dönmelidir.');
