@@ -78,10 +78,14 @@ $html = preg_replace(
     1
 ) ?? $html;
 
-/* Formu progressive-enhancement uyumlu gerçek POST endpoint'ine bağla. */
+/*
+ * Formu gerçek POST endpoint'ine bağla ve legacy demo handler'ın beklediği
+ * `quote-form` kimliğinden ayır. Yeni form JS'si yüklenmezse tarayıcının doğal
+ * form gönderimi devreye girer; sahte istemci-side başarı mesajı oluşmaz.
+ */
 $html = str_replace(
     '<form class="quote__form" id="quote-form" novalidate>',
-    '<form class="quote__form" id="quote-form" action="/api/teklif.php" method="post">',
+    '<form class="quote__form" id="quote-request-form" action="/api/teklif.php" method="post">',
     $html
 );
 $html = str_replace(
