@@ -14,6 +14,8 @@ const viewports = [
 const visualItemsExpected = ['Yerel Deneyim', 'Planlı Organizasyon', 'Özenli Paketleme', 'Doğrudan İletişim'];
 const serviceItemsExpected = ['Evden Eve Nakliyat', 'Şehirler Arası Taşıma', 'Asansörlü Taşıma', 'Ofis ve İşyeri Taşıma'];
 const forbiddenCopy = ['Sigortalı Taşıma', 'Zamanında Teslimat', '7/24 Destek', 'yılların deneyimi'];
+const approvedImagePath = '/assets/images/about-canpolat-approved.php';
+const expectedImageSha = '21104ece60551cfc8756097d06a5feb968f797b57086da6ad73db60e5bc6ca00';
 
 fs.mkdirSync(outputDir, { recursive: true });
 const addFailure = (failures, label, message) => failures.push(`${label}: ${message}`);
@@ -55,7 +57,15 @@ async function runAxe(page) {
       page.on('response', (r) => {
         let pathname = r.url();
         try { pathname = new URL(r.url()).pathname; } catch (_) {}
-        if (pathname === '/assets/images/about-canpolat-approved.webp') approvedResponse = { status: r.status(), contentType: (r.headers()['content-type'] || '').toLowerCase() };
+        if (pathname === approvedImagePath) {
+          const headers = r.headers();
+          approvedResponse = {
+            status: r.status(),
+            contentType: (headers['content-type'] || '').toLowerCase(),
+            cacheControl: (headers['cache-control'] || '').toLowerCase(),
+            etag: headers.etag || '',
+          };
+        }
         if (r.status() >= 400) httpErrors.push(`${r.status()} ${pathname}`);
       });
 
@@ -138,9 +148,11 @@ async function runAxe(page) {
 
       if (!state.sectionClass.includes('about-v2') || !state.sectionClass.includes('is-visible')) addFailure(failures, label, 'Hakkımızda reveal durumu oluşmadı.');
       if (state.scrollWidth > state.viewportWidth + 1) addFailure(failures, label, `Yatay taşma var (${state.scrollWidth} > ${state.viewportWidth}).`);
-      if (!approvedResponse || approvedResponse.status !== 200) addFailure(failures, label, `Onaylı WebP HTTP yanıtı geçersiz: ${JSON.stringify(approvedResponse)}`);
+      if (!approvedResponse || approvedResponse.status !== 200) addFailure(failures, label, `Onaylı WebP endpoint HTTP yanıtı geçersiz: ${JSON.stringify(approvedResponse)}`);
       if (approvedResponse && !approvedResponse.contentType.includes('image/webp')) addFailure(failures, label, `Onaylı görsel MIME tipi yanlış: ${approvedResponse.contentType}`);
-      if (state.imageSrc !== '/assets/images/about-canpolat-approved.webp') addFailure(failures, label, `Onaylı WebP doğrudan yüklenmiyor: ${state.imageSrc}`);
+      if (approvedResponse && !approvedResponse.cacheControl.includes('immutable')) addFailure(failures, label, `Onaylı görsel cache politikası yanlış: ${approvedResponse.cacheControl}`);
+      if (approvedResponse && !approvedResponse.etag.includes(expectedImageSha)) addFailure(failures, label, `Onaylı görsel ETag kilidi yanlış: ${approvedResponse.etag}`);
+      if (state.imageSrc !== approvedImagePath) addFailure(failures, label, `Onaylı WebP endpoint üzerinden yüklenmiyor: ${state.imageSrc}`);
       if (state.imageNaturalWidth !== 900 || state.imageNaturalHeight !== 675) addFailure(failures, label, `WebP decode ölçüsü yanlış (${state.imageNaturalWidth}x${state.imageNaturalHeight}).`);
       if (state.imageAttrWidth !== '900' || state.imageAttrHeight !== '675') addFailure(failures, label, 'HTML image ölçü ipucu 900x675 değil.');
       if (state.imageFit !== 'contain' || Math.abs(state.imageRatio - 4 / 3) > 0.03) addFailure(failures, label, `Görsel 4:3 contain değil (${state.imageFit}, ${state.imageRatio}).`);
@@ -163,7 +175,7 @@ async function runAxe(page) {
       if (JSON.stringify(state.serviceItems) !== JSON.stringify(serviceItemsExpected)) addFailure(failures, label, 'Paragraf altı içerikler değişmiş.');
       if (state.visualItems.some((item) => state.serviceItems.includes(item))) addFailure(failures, label, 'İki ikon grubu farklı değil.');
       for (const forbidden of forbiddenCopy) if (state.sectionText.includes(forbidden)) addFailure(failures, label, `Doğrulanmamış metin kaldı: ${forbidden}`);
-      if (requestedPaths.includes('/assets/images/about-canpolat.webp') || requestedPaths.includes('/assets/images/about-canpolat-approved.php') || requestedPaths.includes('/assets/images/about-canpolat-approved.svg')) addFailure(failures, label, 'Eski Hakkımızda görsel yolu hâlâ isteniyor.');
+      if (requestedPaths.includes('/assets/images/about-canpolat.webp') || requestedPaths.includes('/assets/images/about-canpolat-approved.webp') || requestedPaths.includes('/assets/images/about-canpolat-approved.svg')) addFailure(failures, label, 'Eski Hakkımızda görsel yolu hâlâ isteniyor.');
 
       const axe = await runAxe(page);
       if (axe.missing) addFailure(failures, label, 'Axe çalıştırılamadı.');
@@ -204,7 +216,7 @@ async function runAxe(page) {
     await browser.close();
   }
 
-  fs.writeFileSync(path.join(outputDir, 'report.json'), JSON.stringify({ baseUrl, results, failures }, null, 2));
+  fs.writeFileSync(path.join(outputDir, 'report.json'), JSON.stringify({ baseUrl, approvedImagePath, results, failures }, null, 2));
   if (failures.length) {
     console.error('BÖLÜM 03 BROWSER QA FAIL');
     failures.forEach((failure) => console.error(`- ${failure}`));
@@ -212,7 +224,7 @@ async function runAxe(page) {
   }
   console.log('BÖLÜM 03 BROWSER QA PASS');
   console.log('- 9 viewport doğrulandı');
-  console.log('- Onaylı 900x675 WebP doğrudan yüklendi ve piksel içeriği doğrulandı');
+  console.log('- Hash-kilitli endpoint 900x675 WebP olarak yüklendi ve piksel içeriği doğrulandı');
   console.log('- Gerçek logo/açıklama + CSS Edremit/Balıkesir pini doğrulandı');
   console.log('- İki farklı ikon grubu, 0 yatay taşma, Axe ve reduced-motion başarılı');
   console.log('- Bölüm 03 kaynaklı console/page/network hatası: 0');
