@@ -1,6 +1,6 @@
 # Canpolat Nakliyat — Kurumsal Web Sitesi
 
-Canpolat Nakliyat'ın production web sitesi; ana sayfada PHP ile oluşturulan HTML, Vanilla JavaScript, iki mevcut CSS katmanı ve FTP tabanlı otomatik dağıtım kullanır. Framework veya build zorunluluğu yoktur.
+Canpolat Nakliyat'ın production web sitesi; PHP ile sunulan ana sayfa şablonu, statik iç sayfalar, Vanilla JavaScript, ortak responsive CSS ve FTP tabanlı otomatik dağıtım kullanır. Framework veya build zorunluluğu yoktur.
 
 ## Yerel çalıştırma
 
@@ -18,6 +18,8 @@ Production kalite kontrolleri:
 npm test
 ```
 
+PHP bulunmayan bir inceleme ortamında yalnız statik denetimler `npm run test:static` komutuyla çalıştırılabilir; production kapısı her zaman tam `npm test` paketini kullanır.
+
 Test paketi; HTML bağlantılarını, Hero R8 katmanlarını ve görsel kimliklerini, responsive kuralları, form/backend bütünlüğünü, SEO ve güvenlik ayarlarını ve FTP temizleme davranışını denetler.
 
 ## Production mimarisi
@@ -26,7 +28,7 @@ Ana sayfa doğrudan statik `index.html` değildir:
 
 1. Apache `.htaccess`, kök isteğini dahili olarak `index.php` dosyasına yönlendirir.
 2. `index.php`, özel şablon olan `index-template.html` dosyasını okur.
-3. Runtime aşamasında canonical alan adı, logo, Hero R8 katmanları, hizmet detay bağlantıları ve fiyat teklif formunun endpoint bağlantısı uygulanır.
+3. `index.php` şablonu metin dönüşümü yapmadan doğrudan sunar; production içeriği kaynakta açık ve test edilebilir durumdadır.
 4. `index-template.html` dışarıdan doğrudan erişime kapalıdır.
 5. Eski `index.html`, yalnız eski ortamlardaki güvenli yönlendirme stub'ı olarak tutulur; normal production isteğinde servis edilmez.
 
@@ -37,14 +39,14 @@ Ana sayfa doğrudan statik `index.html` değildir:
 | `index.php` | Production ana sayfa renderer'ı |
 | `index-template.html` | Ana sayfanın özel HTML şablonu |
 | `index.html` | Eski uyumluluk/yönlendirme stub'ı |
-| `css/style.css` | Ana sayfa temel stilleri |
-| `css/services-tune.css` | Hizmet kartlarının responsive ayarları |
+| `css/style.css` | Ana sayfa ve tüm iç sayfaların ortak responsive tasarımı |
+| `css/services-tune.css` | Eski sürümle uyumluluk için korunan hizmet stili |
 | `css/hero-animated.css` | Onaylı Hero R8 katman düzeni ve animasyonları |
-| `js/script.js` | Menü, SSS, scroll, genel etkileşimler ve istemci doğrulama |
+| `js/script.js` | Menü, SSS, yumuşak kaydırma ve genel etkileşimler |
 | `js/quote-form.js` | Gerçek fiyat teklifi gönderimini `/api/teklif.php` endpoint'ine bağlar |
 | `js/hero-animated.js` | Hero R8 katmanlarının yükleme/animasyon yönetimi |
 | `api/teklif.php` | Sunucu tarafı teklif doğrulama, spam sınırı ve e-posta teslimi |
-| `.htaccess` | HTTPS/non-www canonical, güvenlik başlıkları ve yönlendirmeler |
+| `.htaccess` | HTTPS/www canonical, güvenlik başlıkları ve yönlendirmeler |
 | `scripts/prepare-deploy.sh` | Production FTP paketini oluşturur ve zorunlu dosyaları doğrular |
 | `tests/site-audit.js` | Görsel/HTML/Hero regresyon denetimi |
 | `tests/completion-audit.js` | Form, SEO, güvenlik ve production tamamlama denetimi |
@@ -91,10 +93,10 @@ Mevcut Hero R8 ve hizmet görselleri testlerde hash/ölçü ile kilitlidir. Gör
 Production için tek tercih edilen origin:
 
 ```text
-https://canpolatnakliyat.com
+https://www.canpolatnakliyat.com
 ```
 
-`.htaccess` HTTP isteklerini HTTPS'e ve `www` hostunu non-www hosta 301 yönlendirir. Sitemap ve robots dosyaları da aynı origin'i kullanır. `404.html` indekslemeye kapalıdır; API ve özel template robots taramasından hariç tutulur.
+`.htaccess` HTTP isteklerini HTTPS'e ve non-www hostunu `www` hostuna 301 yönlendirir. Sitemap ve robots dosyaları da aynı origin'i kullanır. `404.html` indekslemeye kapalıdır; API ve özel template robots taramasından hariç tutulur.
 
 ## Güvenlik
 
@@ -111,9 +113,9 @@ Form endpoint'i ayrıca POST zorlaması, sunucu tarafı doğrulama, honeypot, gi
 
 ## Gizlilik
 
-`gizlilik.html`, web formunda toplanabilecek alanları, işleme amaçlarını, aktarım kapsamını, saklama yaklaşımını, teknik cache çerezini ve KVKK kapsamındaki ilgili kişi haklarını açıklar.
+`gizlilik.html`, web formunda toplanabilecek alanları, işleme amaçlarını, aktarım kapsamını, saklama yaklaşımını, standart sunucu/güvenlik kayıtlarını ve KVKK kapsamındaki ilgili kişi haklarını açıklar.
 
-Form verileri reklam hedefleme amacıyla kullanılmaz. Ana sayfadaki `canpolat_r8_11_cache_reset` çerezi yalnız eski istemci önbelleğinin bir kez temizlendiğini işaretleyen teknik bir çerezdir.
+Form verileri reklam hedefleme amacıyla kullanılmaz. Site, üçüncü taraf reklam veya analiz çerezi kullanmaz.
 
 ## Otomatik FTP dağıtımı
 
@@ -150,7 +152,11 @@ Mevcut ana iletişim değerleri:
 - Telefon URI: `tel:+905359120691`
 - WhatsApp: `https://wa.me/905359120691`
 - E-posta: `info@canpolatnakliyat.com`
-- Alan adı: `https://canpolatnakliyat.com`
+- Adres: `Camivasat Mah. Akçay Cad. No: 78, Edremit / Balıkesir`
+- Alan adı: `https://www.canpolatnakliyat.com`
+- Hafta içi: `08:00–20:00`
+- Cumartesi: `08:00–18:00`
+- Pazar: `09:00–17:00`
 
 ## Production kontrol listesi
 

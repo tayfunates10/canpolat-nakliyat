@@ -4,4 +4,4 @@ Disallow: /api/
 Disallow: /tests/
 Disallow: /index-template.html
 
-Sitemap: https://canpolatnakliyat.com/sitemap.xml
+Sitemap: https://www.canpolatnakliyat.com/sitemap.xml

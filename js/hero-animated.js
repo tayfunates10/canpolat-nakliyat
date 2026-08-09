@@ -40,10 +40,12 @@
     var stage = document.getElementById('heroAnimated');
     if (!stage) return;
 
+    stage.classList.add('is-loading');
     removeLegacyHeroNodes(stage);
 
     var layers = Array.prototype.slice.call(stage.querySelectorAll('.hero-r8__layer'));
     if (layers.length !== 13) {
+      stage.classList.remove('is-loading');
       stage.classList.add('has-error');
       return;
     }
@@ -59,6 +61,7 @@
 
     Promise.all(critical.map(function (entry) { return entry.promise; })).then(function (results) {
       if (!results.every(Boolean)) {
+        stage.classList.remove('is-loading');
         stage.classList.add('has-error');
         return;
       }
@@ -72,6 +75,7 @@
     });
 
     Promise.all(readiness.map(function (entry) { return entry.promise; })).then(function (results) {
+      stage.classList.remove('is-loading');
       if (results.every(Boolean)) {
         stage.classList.remove('has-error');
       } else {

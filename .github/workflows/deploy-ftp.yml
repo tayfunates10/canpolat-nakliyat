@@ -132,7 +132,7 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          BASE_URL="https://canpolatnakliyat.com"
+          BASE_URL="https://www.canpolatnakliyat.com"
           QUERY="verify=${GITHUB_SHA}"
           last_headers=""
           last_body=""
@@ -188,7 +188,7 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          BASE_URL="https://canpolatnakliyat.com"
+          BASE_URL="https://www.canpolatnakliyat.com"
           QUERY="verify=${GITHUB_SHA}"
           HOME_BODY="${RUNNER_TEMP}/live-home.html"
           SERVICE_BODY="${RUNNER_TEMP}/live-package-service.html"
@@ -217,14 +217,15 @@ jobs:
           [[ "${home_code}" == "200" ]] || { echo "FAIL: ana sayfa HTTP ${home_code}"; fail=1; }
           grep -q 'action="/api/teklif.php"' "${HOME_BODY}" || { echo 'FAIL: canlı form endpoint bağlantısı eksik'; fail=1; }
           grep -q '/hizmetler/paketleme-montaj.html' "${HOME_BODY}" || { echo 'FAIL: canlı Paketleme & Montaj kart bağlantısı eksik'; fail=1; }
-          grep -q '<link rel="canonical" href="https://canpolatnakliyat.com/">' "${HOME_BODY}" || { echo 'FAIL: canlı canonical non-www değil'; fail=1; }
+          grep -q '<link rel="canonical" href="https://www.canpolatnakliyat.com/">' "${HOME_BODY}" || { echo 'FAIL: canlı canonical www değil'; fail=1; }
           grep -q 'Gizlilik ve Kişisel Veriler' "${HOME_BODY}" || { echo 'FAIL: form veri bilgilendirme bağlantısı eksik'; fail=1; }
 
           [[ "${service_code}" == "200" ]] || { echo "FAIL: Paketleme & Montaj HTTP ${service_code}"; fail=1; }
-          grep -q '<h1>Paketleme ve Montaj</h1>' "${SERVICE_BODY}" || { echo 'FAIL: Paketleme & Montaj içeriği canlıda eksik'; fail=1; }
+          grep -q '<h1>Edremit Paketleme ve Montaj</h1>' "${SERVICE_BODY}" || { echo 'FAIL: Paketleme & Montaj içeriği canlıda eksik'; fail=1; }
 
           [[ "${privacy_code}" == "200" ]] || { echo "FAIL: gizlilik HTTP ${privacy_code}"; fail=1; }
-          grep -q 'canpolat_r8_11_cache_reset' "${PRIVACY_BODY}" || { echo 'FAIL: teknik çerez açıklaması canlıda eksik'; fail=1; }
+          grep -q 'Camivasat Mah. Akçay Cad. No: 78' "${PRIVACY_BODY}" || { echo 'FAIL: güncel iletişim adresi gizlilik sayfasında eksik'; fail=1; }
+          grep -q 'üçüncü taraf analiz amacıyla çerez kullanmaz' "${PRIVACY_BODY}" || { echo 'FAIL: güncel çerez açıklaması canlıda eksik'; fail=1; }
 
           [[ "${robots_code}" == "200" ]] || { echo "FAIL: robots HTTP ${robots_code}"; fail=1; }
           grep -q '^Disallow: /api/$' "${ROBOTS_BODY}" || { echo 'FAIL: robots API disallow canlıda eksik'; fail=1; }

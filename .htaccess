@@ -1,9 +1,8 @@
-Options -Indexes
+Options -Indexes -MultiViews
 DirectoryIndex index.php
 AddDefaultCharset UTF-8
 
 <IfModule LiteSpeed>
-  # Ana sayfada eski HTML snapshot/page-cache devreye girmesin.
   CacheDisable public /
   CacheDisable private /
 </IfModule>
@@ -11,49 +10,51 @@ AddDefaultCharset UTF-8
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  # Tek production adresi: HTTPS + non-www.
+  # Tek canonical adres: HTTPS + www alan adı.
   RewriteCond %{HTTPS} !=on [OR]
-  RewriteCond %{HTTP_HOST} ^www\.canpolatnakliyat\.com$ [NC]
-  RewriteRule ^ https://canpolatnakliyat.com%{REQUEST_URI} [R=301,L,NE]
+  RewriteCond %{HTTP_HOST} !^www\.canpolatnakliyat\.com$ [NC]
+  RewriteRule ^ https://www.canpolatnakliyat.com%{REQUEST_URI} [R=301,L,NE]
 
-  # Kök istek her koşulda doğrudan PHP girişine gider; index.html DirectoryIndex değildir.
+  # Açık index dosyalarını temiz kök adrese yönlendir.
+  RewriteCond %{THE_REQUEST} \s/+index\.(?:php|html)(?:[?\s]) [NC]
+  RewriteRule ^index\.(?:php|html)$ / [R=301,L,NE]
+
+  # Kök isteği production PHP girişine gider.
   RewriteRule ^$ index.php [L]
 
-  # Eski statik index.html dışarıdan çağrılırsa kalıcı olarak temiz kök URL'ye yönlendir.
-  RewriteCond %{THE_REQUEST} \s/+index\.html(?:[?\s]) [NC]
-  RewriteRule ^index\.html$ / [R=301,L,NE]
-
-  # Eski site-audit regresyon belirteci; yorum satırıdır ve Apache tarafından uygulanmaz:
-  # RewriteRule ^index\.html$ /index.php [R=302,L,NE]
-
-  # PHP'nin kullandığı ham şablon web üzerinden hiçbir koşulda görüntülenemez.
+  # PHP tarafından okunan ham şablon web üzerinden görüntülenemez.
   RewriteRule ^index-template\.html$ - [F,L,NC]
 
-  # Eski hero dosyaları tamamen emekli edildi. Sunucuda/browser dışında bir kopya kalsa bile servis etme.
+  # Eski hero URL'leri kalıcı olarak emekli edilmiştir.
   RewriteRule ^assets/images/hero-canpolat(?:-mobil)?\.webp$ - [G,L,NC]
 </IfModule>
 
 <IfModule mod_headers.c>
+  Header always unset X-Okur-Htaccess
+  Header always set X-Hero-Version "R8-11"
   Header always set X-Content-Type-Options "nosniff"
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
-  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
-  Header always set Strict-Transport-Security "max-age=31536000"
-  Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-hashes' 'sha256-MhtPZXr7+LpJUY5qtMutB+qWfQtMaPccfe7QXtCcEYc='; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; connect-src 'self'; media-src 'self'; worker-src 'none'; upgrade-insecure-requests"
 
-  # 404 içeriği hiçbir koşulda arama indeksine girmesin.
   <Files "404.html">
     Header always set X-Robots-Tag "noindex, follow"
   </Files>
 
-  # Ana sayfanın HTML/PHP çıktısı her ziyarette güncellik kontrolünden geçsin.
-  <FilesMatch "^(index\.php|index\.html)$">
+  <FilesMatch "^(index\.php|index\.html|index-template\.html)$">
     Header always set Cache-Control "no-cache, max-age=0, must-revalidate"
   </FilesMatch>
 </IfModule>
 
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json application/xml image/svg+xml
+</IfModule>
+
 <IfModule mod_expires.c>
   ExpiresActive On
+  ExpiresByType text/html "access plus 0 seconds"
   ExpiresByType text/css "access plus 30 days"
   ExpiresByType application/javascript "access plus 30 days"
   ExpiresByType image/svg+xml "access plus 1 year"

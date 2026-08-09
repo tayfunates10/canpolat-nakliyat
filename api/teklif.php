@@ -34,7 +34,7 @@ function finish(int $status, array $payload): void
 
     if (!wantsJson()) {
         $result = $status >= 200 && $status < 300 ? 'basarili' : 'hata';
-        header('Location: /?teklif=' . $result . '#iletisim', true, 303);
+        header('Location: /?teklif=' . $result . '#teklif', true, 303);
         exit;
     }
 
