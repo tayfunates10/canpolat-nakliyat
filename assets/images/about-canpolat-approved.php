@@ -8,12 +8,29 @@ if (!is_file($source) || !is_readable($source)) {
 }
 
 $svg = file_get_contents($source);
-if ($svg === false || !preg_match('~data:image/webp;base64,([A-Za-z0-9+/=]+)~', $svg, $match)) {
+if ($svg === false) {
     http_response_code(500);
     exit;
 }
 
-$image = base64_decode($match[1], true);
+$marker = 'data:image/webp;base64,';
+$start = strpos($svg, $marker);
+if ($start === false) {
+    http_response_code(500);
+    exit;
+}
+$start += strlen($marker);
+
+$end = strpos($svg, '"', $start);
+if ($end === false || $end <= $start) {
+    http_response_code(500);
+    exit;
+}
+
+$encoded = substr($svg, $start, $end - $start);
+$encoded = str_replace(["\r", "\n", "\t", " "], '', $encoded);
+$image = base64_decode($encoded, true);
+
 if ($image === false || strlen($image) < 1024 || substr($image, 0, 4) !== 'RIFF' || substr($image, 8, 4) !== 'WEBP') {
     http_response_code(500);
     exit;
