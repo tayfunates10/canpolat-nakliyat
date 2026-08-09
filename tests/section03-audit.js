@@ -8,6 +8,7 @@ const cssPath = path.join(root, 'css', 'section-03.css');
 const deployPath = path.join(root, 'scripts', 'prepare-deploy.sh');
 const htaccessPath = path.join(root, '.htaccess');
 const approvedAssetPath = path.join(root, 'assets', 'images', 'about-canpolat-approved.svg');
+const approvedEndpointPath = path.join(root, 'assets', 'images', 'about-canpolat-approved.php');
 const obsoleteSvgPath = path.join(root, 'assets', 'images', 'about-canpolat-generated.svg');
 const obsoleteJsPath = path.join(root, 'js', 'section-03.js');
 const obsoleteHtmlPartialPath = path.join(root, 'partials', 'section-03-about.html');
@@ -17,7 +18,7 @@ function expect(condition, message) {
   if (!condition) failures.push(message);
 }
 
-for (const required of [phpPath, partialPath, cssPath, deployPath, htaccessPath, approvedAssetPath]) {
+for (const required of [phpPath, partialPath, cssPath, deployPath, htaccessPath, approvedAssetPath, approvedEndpointPath]) {
   expect(fs.existsSync(required), `Bölüm 03 dosyası eksik: ${path.relative(root, required)}`);
 }
 
@@ -27,6 +28,7 @@ const css = fs.existsSync(cssPath) ? fs.readFileSync(cssPath, 'utf8') : '';
 const deploy = fs.existsSync(deployPath) ? fs.readFileSync(deployPath, 'utf8') : '';
 const htaccess = fs.existsSync(htaccessPath) ? fs.readFileSync(htaccessPath, 'utf8') : '';
 const approvedAsset = fs.existsSync(approvedAssetPath) ? fs.readFileSync(approvedAssetPath, 'utf8') : '';
+const approvedEndpoint = fs.existsSync(approvedEndpointPath) ? fs.readFileSync(approvedEndpointPath, 'utf8') : '';
 
 expect(php.includes("__DIR__ . '/partials/section-03-about.inc'"), 'index.php Bölüm 03 partial dosyasını okumuyor.');
 expect(php.includes('$aboutReplaceCount !== 1'), 'Bölüm 03 fail-closed replace koruması eksik.');
@@ -34,7 +36,7 @@ expect(php.includes('css/section-03.css?v=20260809-01'), 'Bölüm 03 CSS yüklem
 expect(php.includes('~<section class="about section" id="hakkimizda">.*?</section>~s'), 'Eski Hakkımızda section replacement deseni eksik.');
 
 expect(partial.includes('class="about-v2 section" id="hakkimizda"'), 'Yeni Hakkımızda root markup eksik.');
-expect(partial.includes('assets/images/about-canpolat-approved.svg?v=20260809-02'), 'Kullanıcı onaylı Hakkımızda görseli kullanılmıyor.');
+expect(partial.includes('assets/images/about-canpolat-approved.php?v=20260809-03'), 'Kullanıcı onaylı Hakkımızda görsel endpointi kullanılmıyor.');
 expect(partial.includes('assets/images/canpolat-logo.svg?v=20260808-03'), 'Gerçek Canpolat logo asseti overlay olarak kullanılmıyor.');
 expect(!partial.includes('about-v2__r8-layer') && !partial.includes('/hero-r8/truck-t00-r6.png'), 'Eski R8 Hakkımızda kompozisyonu kaldırılmadı.');
 expect(partial.includes('data-about-brand') && partial.includes('data-about-pin'), 'Logo/açıklama veya Edremit pin overlay katmanı eksik.');
@@ -42,9 +44,14 @@ expect(partial.includes('EDREMİT VE ÇEVRESİNDE') && partial.includes('PLANLI 
 expect(partial.includes('aria-label="Edremit, Balıkesir"'), 'CSS konum işaretinin Edremit/Balıkesir erişilebilir etiketi eksik.');
 
 expect(approvedAsset.includes('viewBox="0 0 1200 900"'), 'Onaylı görsel 4:3 / 1200x900 tuvalini korumuyor.');
-expect(approvedAsset.includes('data:image/webp;base64,'), 'Onaylı görsel self-contained WebP içermiyor.');
+expect(approvedAsset.includes('data:image/webp;base64,'), 'Onaylı görsel kaynak WebP verisini içermiyor.');
 expect(!approvedAsset.includes('<script'), 'Onaylı görsel asseti script içeremez.');
 expect(!approvedAsset.includes('<foreignObject'), 'Onaylı görsel asseti foreignObject içeremez.');
+expect(approvedEndpoint.includes("header('Content-Type: image/webp')"), 'Onaylı görsel endpointi image/webp sunmuyor.');
+expect(approvedEndpoint.includes("base64_decode($match[1], true)"), 'Onaylı görsel endpointi kaynak WebP verisini strict decode etmiyor.');
+expect(approvedEndpoint.includes("substr($image, 0, 4) !== 'RIFF'") && approvedEndpoint.includes("substr($image, 8, 4) !== 'WEBP'"), 'WebP magic-byte doğrulaması eksik.');
+expect(approvedEndpoint.includes('Cache-Control: public, max-age=31536000, immutable'), 'Onaylı görsel endpointi uzun süreli cache başlığı kullanmıyor.');
+expect(approvedEndpoint.includes("X-Content-Type-Options: nosniff"), 'Onaylı görsel endpointinde nosniff eksik.');
 
 const visualItems = ['Yerel Deneyim', 'Planlı Organizasyon', 'Özenli Paketleme', 'Doğrudan İletişim'];
 const serviceItems = ['Evden Eve Nakliyat', 'Şehirler Arası Taşıma', 'Asansörlü Taşıma', 'Ofis ve İşyeri Taşıma'];
@@ -69,6 +76,8 @@ expect(css.includes('grid-template-columns: repeat(2, minmax(0,1fr));'), 'İki s
 expect(deploy.includes('"partials"'), 'Deploy paketine partials klasörü dahil değil.');
 expect(deploy.includes('"partials/section-03-about.inc"'), 'Deploy doğrulamasında Bölüm 03 partial eksik.');
 expect(deploy.includes('"css/section-03.css"'), 'Deploy doğrulamasında Bölüm 03 CSS eksik.');
+expect(deploy.includes('"assets/images/about-canpolat-approved.svg"'), 'Deploy doğrulamasında onaylı görsel kaynak SVG eksik.');
+expect(deploy.includes('"assets/images/about-canpolat-approved.php"'), 'Deploy doğrulamasında direct WebP endpoint eksik.');
 expect(htaccess.includes('RewriteRule ^partials/ - [F,L,NC]'), 'Partial dosyaları web erişimine karşı korunmuyor.');
 expect(!fs.existsSync(obsoleteSvgPath), 'Eski deneme about SVG dosyası hâlâ repoda.');
 expect(!fs.existsSync(obsoleteJsPath), 'Gereksiz section-03.js hâlâ repoda.');
@@ -81,7 +90,7 @@ if (failures.length) {
 }
 
 console.log('BÖLÜM 03 STATIC AUDIT PASS');
-console.log('- Kullanıcı onaylı 4:3 Hakkımızda görsel asseti doğrulandı');
+console.log('- Kullanıcı onaylı 4:3 Hakkımızda görsel kaynağı ve direct WebP endpoint doğrulandı');
 console.log('- Gerçek logo/açıklama overlay ve CSS Edremit/Balıkesir pini doğrulandı');
 console.log('- Eski R8 Hakkımızda kompozisyonunun kaldırıldığı doğrulandı');
 console.log('- Görsel altı ve paragraf altı iki farklı ikon grubu doğrulandı');
