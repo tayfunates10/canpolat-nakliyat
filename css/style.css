@@ -139,6 +139,11 @@ address { font-style: normal; }
 .button--cream:active { background: var(--cream-2); box-shadow: 0 5px 12px rgba(12, 20, 33, .16); }
 .button--cream:focus-visible { outline-color: var(--orange-dark); }
 
+.button--ghost { color: #fff; border-color: rgba(239,124,0,.75); background: transparent; }
+.button--ghost:link, .button--ghost:visited { color: #fff; }
+.button--ghost:hover { border-color: var(--orange); background: rgba(239,124,0,.14); }
+.button--ghost:active { background: rgba(239,124,0,.22); }
+
 .button--header { min-height: 45px; padding: 0 20px; }
 .button--full { width: 100%; }
 
@@ -337,12 +342,45 @@ address { font-style: normal; }
 .form-status--success { border-color: rgba(98, 218, 149, .55); color: #d9ffe9; background: rgba(14, 114, 62, .22); }
 .quote-form button[disabled] { cursor: wait; opacity: .72; transform: none; }
 
-.final-cta { color: var(--navy-3); background: var(--orange); }
-.final-cta__inner { min-height: 190px; display: flex; align-items: center; justify-content: space-between; gap: 42px; }
-.final-cta p { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; }
-.final-cta h2 { margin-top: 6px; font-size: clamp(30px, 3.3vw, 46px); letter-spacing: -.035em; }
-.final-cta__inner > div:last-child { display: flex; align-items: center; gap: 24px; }
-.final-cta__wa { font-size: 13px; font-weight: 850; }
+/* ---------------------------------------------------------------------------
+   Kapanış CTA bandı. Koyu lacivert zemin, sağda silüet ve kamyon; solda
+   logo, başlık, iki aksiyon ve üç hizmet kısayolu.
+--------------------------------------------------------------------------- */
+.final-cta { position: relative; overflow: hidden; color: #f4f7fb; background: radial-gradient(120% 150% at 82% 40%, rgba(239,124,0,.16), transparent 55%), linear-gradient(105deg, #0c1523 0%, #16243a 52%, #1b2c46 100%); }
+.final-cta__scene { position: absolute; inset: 0; pointer-events: none; }
+.final-cta__skyline { position: absolute; right: -2%; bottom: 0; width: min(78%, 1240px); height: 74%; fill: rgba(150,180,220,.055); stroke: none; }
+.final-cta__arc { position: absolute; right: 3%; top: 8%; width: min(38%, 540px); height: 42%; }
+.final-cta__arc-line { fill: none; stroke: rgba(239,124,0,.55); stroke-width: 2; stroke-dasharray: 9 11; stroke-linecap: round; }
+.final-cta__pin { position: absolute; right: 40.5%; top: 4.5%; width: 28px; height: 28px; color: var(--orange); }
+.final-cta__pin svg { width: 30px; height: 30px; fill: var(--orange); stroke: none; }
+
+.final-cta__inner { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); align-items: center; gap: 34px; padding: 44px 0 48px; }
+.final-cta__content { min-width: 0; }
+.cta__logo { display: block; width: 208px; height: auto; overflow: visible; }
+.cta__logo [fill="#253349"] { fill: #ffffff; }
+.final-cta h2 { margin-top: 22px; font-size: clamp(34px, 4.4vw, 62px); line-height: 1.02; letter-spacing: -.045em; font-weight: 850; }
+.final-cta h2 em { color: var(--orange); font-style: normal; }
+.final-cta__lead { max-width: 620px; margin-top: 20px; padding-left: 16px; border-left: 3px solid var(--orange); color: #cdd6e2; font-size: 16px; line-height: 1.7; }
+.final-cta__actions { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 12px; }
+.final-cta__actions .button svg { width: 21px; height: 21px; }
+.final-cta__actions .button--primary svg { color: var(--navy-3); }
+.final-cta__actions .button--ghost svg { color: var(--orange); }
+
+.final-cta__features { margin-top: 26px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; }
+.final-cta__features li { display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 750; }
+.final-cta__features li + li { padding-left: 22px; border-left: 1px solid rgba(255,255,255,.18); }
+.final-cta__features svg { flex: 0 0 22px; width: 22px; height: 22px; color: var(--orange); stroke-width: 1.7; }
+
+.final-cta__visual { position: relative; min-width: 0; display: grid; justify-items: end; gap: 18px; }
+.final-cta__truck { width: 100%; max-width: 470px; height: auto; filter: drop-shadow(0 24px 30px rgba(0,0,0,.42)); }
+.final-cta__phone { display: inline-flex; align-items: center; gap: 13px; }
+.final-cta__phone-icon { flex: 0 0 46px; width: 46px; height: 46px; display: grid; place-items: center; border: 2px solid rgba(239,124,0,.7); border-radius: 50%; color: var(--orange); transition: background-color .18s ease, border-color .18s ease; }
+.final-cta__phone-icon svg { width: 21px; height: 21px; }
+.final-cta__phone-text { display: grid; }
+.final-cta__phone strong { font-size: 26px; font-weight: 850; letter-spacing: -.02em; }
+.final-cta__phone small { color: var(--orange); font-size: 12px; font-weight: 700; }
+.final-cta__phone:hover .final-cta__phone-icon { border-color: var(--orange); background: rgba(239,124,0,.16); }
+.final-cta__phone:focus-visible { outline: 3px solid var(--orange); outline-offset: 4px; border-radius: 8px; }
 
 .site-footer { padding: 72px 0 26px; color: #c0c8d3; background: #0d1623; }
 .footer-grid { display: grid; grid-template-columns: 1.35fr .85fr .85fr 1.05fr 1fr; gap: 38px; }
@@ -424,6 +462,10 @@ address { font-style: normal; }
   /* Tek sayida kart iki kolonluk dizilimde son satirda delik birakir; sonuncusu tam genislige oturur. */
   .service-card:last-child { grid-column: span 6; }
   .about__grid, .why-us__grid, .regions__grid, .faq__grid, .quote__grid { grid-template-columns: 1fr; gap: 48px; }
+  .final-cta__inner { grid-template-columns: 1fr; gap: 34px; }
+  .final-cta__visual { justify-items: start; }
+  .final-cta__truck { max-width: 520px; }
+  .final-cta__arc, .final-cta__pin { display: none; }
   .about__grid { gap: 54px; }
   .why-us__intro { max-width: 680px; }
   .regions__visual { min-height: 0; }
@@ -490,9 +532,12 @@ address { font-style: normal; }
   .quote-form__head { align-items: start; flex-direction: column; gap: 4px; }
   .form-grid { grid-template-columns: 1fr; }
   .form-grid__full { grid-column: auto; }
-  .final-cta__inner { padding: 42px 0; align-items: start; flex-direction: column; gap: 26px; }
-  .final-cta__inner > div:last-child { width: 100%; align-items: start; flex-direction: column; }
+  .final-cta__inner { padding: 42px 0 46px; }
+  .final-cta__actions { display: grid; }
   .final-cta .button { width: 100%; }
+  .final-cta__features { gap: 12px 16px; }
+  .final-cta__features li + li { padding-left: 16px; }
+  .final-cta__phone strong { font-size: 22px; }
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px 24px; }
   .footer-brand { grid-column: 1 / -1; }
   .footer-bottom { align-items: start; flex-direction: column; }
