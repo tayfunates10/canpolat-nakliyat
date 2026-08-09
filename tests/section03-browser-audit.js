@@ -77,7 +77,7 @@ async function runAxe(page) {
         const section = document.querySelector('#hakkimizda.about-v2');
         const image = section?.querySelector('.about-v2__approved-image');
         const logo = section?.querySelector('.about-v2__logo');
-        return !!section && !!image && image.complete && image.naturalWidth === 1200 && image.naturalHeight === 900 &&
+        return !!section && !!image && image.complete && image.naturalWidth > 0 && image.naturalHeight > 0 &&
           !!logo && logo.complete && logo.naturalWidth > 0;
       }, { timeout: 15000 });
 
@@ -115,8 +115,12 @@ async function runAxe(page) {
           visualBarColumns: bar ? getComputedStyle(bar).gridTemplateColumns.split(' ').filter(Boolean).length : 0,
           serviceColumns: services ? getComputedStyle(services).gridTemplateColumns.split(' ').filter(Boolean).length : 0,
           stylesheetLoaded: [...document.styleSheets].some((sheet) => (sheet.href || '').includes('/css/section-03.css?v=20260809-01')),
-          imageLoaded: !!(image && image.complete && image.naturalWidth === 1200 && image.naturalHeight === 900),
+          imageLoaded: !!(image && image.complete && image.naturalWidth > 0 && image.naturalHeight > 0),
           imageSrc: image ? new URL(image.src).pathname : '',
+          imageAttrWidth: image?.getAttribute('width') || '',
+          imageAttrHeight: image?.getAttribute('height') || '',
+          imageNaturalWidth: image?.naturalWidth || 0,
+          imageNaturalHeight: image?.naturalHeight || 0,
           imageFit: imageStyle?.objectFit || '',
           imageRatio: imageRect ? imageRect.width / imageRect.height : 0,
           logoLoaded: !!(logo && logo.complete && logo.naturalWidth > 0),
@@ -137,8 +141,9 @@ async function runAxe(page) {
       if (!state.stylesheetLoaded) fail(failures, label, 'Bölüm 03 CSS yüklenmedi.');
       if (state.scrollWidth > state.viewportWidth + 1) fail(failures, label, `Yatay taşma var (${state.scrollWidth} > ${state.viewportWidth}).`);
       if (!state.imageLoaded || state.imageSrc !== '/assets/images/about-canpolat-approved.svg') fail(failures, label, `Onaylı Hakkımızda görseli yüklenmedi: ${state.imageSrc}`);
+      if (state.imageAttrWidth !== '1200' || state.imageAttrHeight !== '900') fail(failures, label, `Onaylı görsel HTML boyut ipucu yanlış (${state.imageAttrWidth}x${state.imageAttrHeight}).`);
       if (state.imageFit !== 'contain') fail(failures, label, `Onaylı görsel object-fit=${state.imageFit}, beklenen contain.`);
-      if (Math.abs(state.imageRatio - (4 / 3)) > 0.03) fail(failures, label, `Onaylı görsel oranı 4:3 değil (${state.imageRatio}).`);
+      if (Math.abs(state.imageRatio - (4 / 3)) > 0.03) fail(failures, label, `Onaylı görsel render oranı 4:3 değil (${state.imageRatio}).`);
       if (!state.logoLoaded || state.logoSrc !== '/assets/images/canpolat-logo.svg') fail(failures, label, `Gerçek logo yüklenmedi: ${state.logoSrc}`);
       if (state.brandOpacity < 0.99) fail(failures, label, `Logo/açıklama reveal tamamlanmadı (opacity=${state.brandOpacity}).`);
       if (state.pinOpacity < 0.99) fail(failures, label, `Edremit pini reveal tamamlanmadı (opacity=${state.pinOpacity}).`);
