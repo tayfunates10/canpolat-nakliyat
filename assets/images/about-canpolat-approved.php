@@ -28,7 +28,13 @@ foreach ($parts as $part) {
         exit;
     }
 
-    $encoded .= trim($chunk);
+    $chunk = preg_replace('/\s+/', '', $chunk);
+    if (!is_string($chunk)) {
+        http_response_code(500);
+        exit;
+    }
+
+    $encoded .= $chunk;
 }
 
 if (strlen($encoded) !== 52684) {
