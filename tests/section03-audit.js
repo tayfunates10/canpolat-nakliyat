@@ -47,7 +47,7 @@ expect(!partial.includes('about-v2__r8-layer'), 'Eski R8 Hakkımızda kompozisyo
 let encoded = '';
 for (const part of partNames) {
   const file = path.join(partsDir, part);
-  if (fs.existsSync(file)) encoded += fs.readFileSync(file, 'utf8').trim();
+  if (fs.existsSync(file)) encoded += fs.readFileSync(file, 'utf8').replace(/\s+/g, '');
 }
 expect(encoded.length === 52684, `Onaylı Hakkımızda base64 uzunluğu değişti: ${encoded.length}`);
 let webp = Buffer.alloc(0);
@@ -59,6 +59,7 @@ expect(webp.subarray(0, 4).toString('ascii') === 'RIFF' && webp.subarray(8, 12).
 
 expect(endpoint.includes("$expectedSize = 39512;"), 'WebP endpoint boyut kilidi eksik.');
 expect(endpoint.includes(expectedSha), 'WebP endpoint SHA256 kilidi eksik.');
+expect(endpoint.includes("preg_replace('/\\s+/', '', $chunk)"), 'WebP endpoint base64 whitespace normalizasyonu yapmıyor.');
 expect(endpoint.includes("header('Content-Type: image/webp')"), 'WebP endpoint MIME başlığı eksik.');
 expect(endpoint.includes("Cache-Control: public, max-age=31536000, immutable"), 'WebP endpoint immutable cache başlığı eksik.');
 expect(endpoint.includes("X-Content-Type-Options: nosniff"), 'WebP endpoint nosniff başlığı eksik.');
