@@ -77,4 +77,26 @@
   document.querySelectorAll('[data-year]').forEach(function (node) {
     node.textContent = String(new Date().getFullYear());
   });
+
+  /*
+   * Güven şeridi görünür alana girdiğinde ikonlar ve metinler sırayla yerine
+   * oturur. is-armed yalnız JS ve gözlemci varken eklenir; aksi hâlde şerit
+   * animasyonsuz ama tam görünür kalır.
+   */
+  (function animateTrustBar() {
+    var bar = document.querySelector('.trust-bar');
+    if (!bar || typeof IntersectionObserver !== 'function') return;
+
+    bar.classList.add('is-armed');
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        bar.classList.add('is-visible');
+        observer.disconnect();
+      });
+    }, { threshold: 0.25, rootMargin: '0px 0px -6% 0px' });
+
+    observer.observe(bar);
+  })();
 })();

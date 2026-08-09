@@ -67,7 +67,7 @@ for (const relative of publicPages.concat(['404.html'])) {
     'id="ana-icerik"',
     'rel="icon" href="/assets/images/favicon-canpolat.svg"',
     'rel="manifest" href="/manifest.webmanifest"',
-    'href="/css/style.css?v=20260809-03"',
+    'href="/css/style.css?v=20260809-07"',
     'href="tel:+905359120691"',
     'https://wa.me/905359120691',
     'Camivasat Mah. Akçay Cad. No: 78',
@@ -242,6 +242,7 @@ const heroLayers = [
   ['l11', 'layer-l11-r6.png', 'fba52d10cde807a49856c6e1b9e7f3489bd26f12d79c3b28b82c75e6a3a7db30'],
   ['l07', 'layer-l07-r6.png', 'b8a08d6dd1e033c381580865d388fdeffce7b91c1100ca7527c1d89aa89fd77c'],
   ['l08', 'layer-l08-r6.png', 'd5d6c239a42eb13c06f306e7ca5b3c47c32707de26e4c9a031d3c03eaa47d5fc'],
+  ['l12', 'layer-l12-r6.png', '969a4cdd9ca6c0e461b7de28310d0f38c8c93875e195be1cc58b943e02ae6c83'],
 ];
 
 previous = -1;
@@ -259,7 +260,7 @@ for (const [id, filename, expectedHash] of heroLayers) {
   if (current !== -1 && current <= previous) failures.push(`index-template.html: Hero R8 DOM sırası bozuk: ${id}`);
   if (current !== -1) previous = current;
 }
-if ((template.match(/hero-r8__layer--[a-z0-9]+/g) || []).length !== 13) failures.push('index-template.html: tam 13 Hero R8 katmanı bulunmalıdır.');
+if ((template.match(/hero-r8__layer--[a-z0-9]+/g) || []).length !== 14) failures.push('index-template.html: tam 14 Hero R8 katmanı bulunmalıdır.');
 
 const indexPhp = read('index.php');
 for (const token of ["__DIR__ . '/index-template.html'", "__DIR__ . '/404.html'", 'http_response_code(404)', "header('X-Robots-Tag: noindex, follow')", 'is_readable($templatePath)', 'readfile($templatePath)', "header('Content-Type: text/html; charset=UTF-8')"]) requireToken('index.php', indexPhp, token, `sade renderer/404 öğesi eksik: ${token}`);
@@ -275,7 +276,7 @@ for (const token of ['.hero__inner', 'grid-template-columns: .82fr 1.18fr', '.se
 const heroCss = read('css/hero-animated.css');
 const heroJs = read('js/hero-animated.js');
 for (const token of ['object-fit: contain', '.hero-r8.is-loading .hero-r8__layer', '.hero-r8.is-ready .hero-r8__layer.is-loaded', '@media (prefers-reduced-motion: reduce)']) requireToken('css/hero-animated.css', heroCss, token, `Hero kuralı eksik: ${token}`);
-for (const token of ["stage.classList.add('is-loading')", 'layers.length !== 13', "stage.classList.add('is-ready')"]) requireToken('js/hero-animated.js', heroJs, token, `Hero kontrolü eksik: ${token}`);
+for (const token of ["stage.classList.add('is-loading')", 'layers.length !== 14', "stage.classList.add('is-ready')"]) requireToken('js/hero-animated.js', heroJs, token, `Hero kontrolü eksik: ${token}`);
 heroLayers.forEach(([id], index) => {
   const z = index + 1;
   if (!new RegExp(`\\.hero-r8__layer--${id}\\s*\\{\\s*z-index:\\s*${z};\\s*\\}`).test(heroCss)) failures.push(`css/hero-animated.css: ${id.toUpperCase()} z-index ${z} olmalıdır.`);
@@ -294,4 +295,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log('PASS: 9 indekslenebilir sayfa, 5 hizmet içeriği, SEO/bağlantı yapısı, NAP, güvenlik, 5/5 hizmet görseli ve 13/13 kilitli Hero R8 katmanı doğrulandı.');
+console.log('PASS: 9 indekslenebilir sayfa, 5 hizmet içeriği, SEO/bağlantı yapısı, NAP, güvenlik, 5/5 hizmet görseli ve 14/14 kilitli Hero R8 katmanı doğrulandı.');
