@@ -205,6 +205,25 @@ if (!is_string($processReplacedHtml) || $processReplaceCount !== 1) {
 }
 $html = $processReplacedHtml;
 
+$whyUsFile = __DIR__ . '/partials/section-05-why-us.inc';
+$whyUsMarkup = @file_get_contents($whyUsFile);
+if ($whyUsMarkup === false) {
+    http_response_code(500);
+    header('Content-Type: text/plain; charset=UTF-8');
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    echo 'Neden Biz bölümü okunamadı.';
+    exit;
+}
+$whyUsAnchor = '<section class="faq-form section" id="sss">';
+if (substr_count($html, $whyUsAnchor) !== 1 || strpos($html, 'id="neden-biz"') !== false) {
+    http_response_code(500);
+    header('Content-Type: text/plain; charset=UTF-8');
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    echo 'Neden Biz bölümü ekleme noktası doğrulanamadı.';
+    exit;
+}
+$html = str_replace($whyUsAnchor, $whyUsMarkup . "\n\n  " . $whyUsAnchor, $html);
+
 $html = preg_replace('~\s*<ul class="social">.*?</ul>~s', '', $html, 1) ?? $html;
 $html = str_replace('          <li><a href="#" data-noop>Kullanım Şartları</a></li>\n', '', $html);
 
@@ -280,9 +299,11 @@ $assets = <<<'HTML'
   <link rel="stylesheet" href="css/section-00.css?v=20260808-01">
   <link rel="stylesheet" href="css/section-03.css?v=20260809-01">
   <link rel="stylesheet" href="css/section-04.css?v=20260809-01">
+  <link rel="stylesheet" href="css/section-05.css?v=20260809-01">
   <script src="js/quote-form.js?v=20260808-01" defer></script>
   <script src="js/hero-animated.js?v=20260808-r8-11" defer></script>
   <script src="js/section-04.js?v=20260809-01" defer></script>
+  <script src="js/section-05.js?v=20260809-01" defer></script>
 HTML;
 
 if (strpos($html, '</head>') !== false) {
