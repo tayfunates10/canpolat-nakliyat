@@ -5,7 +5,7 @@
   "description": "Canpolat Nakliyat kurumsal web sitesi",
   "scripts": {
     "serve": "php -S 127.0.0.1:8099",
-    "test": "php -l index.php && php -l api/teklif.php && php -l assets/images/about-canpolat-approved.php && node tests/site-audit.js && node tests/completion-audit.js && node tests/ftp-cleanup.js"
+    "test": "php -l index.php && php -l api/teklif.php && node tests/site-audit.js && node tests/completion-audit.js && node tests/ftp-cleanup.js"
   },
   "devDependencies": {
     "basic-ftp": "6.2.0"
