@@ -462,7 +462,10 @@ address { font-style: normal; }
   .section-heading { align-items: start; flex-direction: column; gap: 16px; margin-bottom: 34px; }
   .section-heading h2, .about h2, .why-us h2, .regions h2, .faq h2, .quote h2 { font-size: 36px; }
   .service-grid { grid-template-columns: 1fr; gap: 14px; }
-  .service-card, .service-card--wide { grid-column: auto; }
+  /* 960px kuralındaki .service-card:last-child { span 6 } bu kırılımda da geçerli
+     kalır; tek kolonlu ızgarada span 6 örtük kolonlar açıp diğer kartları aynı
+     satıra sıkıştırdığı için aynı özgüllükte geri alınır. */
+  .service-card, .service-card--wide, .service-card:last-child { grid-column: auto; }
   .service-card a { grid-template-columns: 128px 1fr; grid-template-rows: auto; }
   .service-card__media { height: 100%; min-height: 174px; aspect-ratio: auto; }
   .service-card__body { padding: 20px 17px; }
