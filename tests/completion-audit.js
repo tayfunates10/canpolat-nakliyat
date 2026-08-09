@@ -95,7 +95,7 @@ requireToken('robots.txt', robots, 'Disallow: /index-template.html', 'private ş
 requireToken('robots.txt', robots, 'Sitemap: https://www.canpolatnakliyat.com/sitemap.xml', 'sitemap adresi canonical origin kullanmalıdır.');
 
 const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);
-if (sitemapUrls.length !== 9) failures.push(`sitemap.xml: 9 public URL bekleniyor, bulunan ${sitemapUrls.length}.`);
+if (sitemapUrls.length !== 10) failures.push(`sitemap.xml: 10 public URL bekleniyor, bulunan ${sitemapUrls.length}.`);
 if (new Set(sitemapUrls).size !== sitemapUrls.length) failures.push('sitemap.xml: yinelenen URL bulundu.');
 const expectedSitemapUrls = [
   'https://www.canpolatnakliyat.com/',
@@ -105,6 +105,7 @@ const expectedSitemapUrls = [
   'https://www.canpolatnakliyat.com/hizmetler/ofis-isyeri-tasima.html',
   'https://www.canpolatnakliyat.com/hizmetler/asansorlu-tasima.html',
   'https://www.canpolatnakliyat.com/hizmetler/paketleme-montaj.html',
+  'https://www.canpolatnakliyat.com/hizmetler/parca-esya-tasimaciligi.html',
   'https://www.canpolatnakliyat.com/bolgeler/edremit-nakliyat.html',
   'https://www.canpolatnakliyat.com/gizlilik.html',
 ];
@@ -112,7 +113,7 @@ for (const url of expectedSitemapUrls) if (!sitemapUrls.includes(url)) failures.
 for (const url of sitemapUrls) {
   if (!url.startsWith('https://www.canpolatnakliyat.com/')) failures.push(`sitemap.xml: canonical olmayan URL: ${url}`);
 }
-if ((sitemap.match(/<lastmod>2026-08-09<\/lastmod>/g) || []).length !== 9) failures.push('sitemap.xml: tüm URL’lerde güncel lastmod bulunmalıdır.');
+if ((sitemap.match(/<lastmod>2026-08-09<\/lastmod>/g) || []).length !== 10) failures.push('sitemap.xml: tüm URL’lerde güncel lastmod bulunmalıdır.');
 
 for (const token of [
   'Fiyat teklif formunu kullandığınızda',
