@@ -100,7 +100,7 @@ jobs:
           CHROME_PATH: /usr/bin/google-chrome
           SECTION03_BASE_URL: http://127.0.0.1:8099/
           SECTION03_ARTIFACT_DIR: artifacts/regression-section-03
-        run: node tests/section03-browser-audit.js
+        run: node tests/section03-browser-regression.js
 
       - name: Bölüm 04 responsive browser QA ve ekran görüntüleri
         env:
