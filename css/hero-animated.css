@@ -113,7 +113,7 @@
   display: none;
 }
 
-/* Kesin Z sırası: P00 → L09 → T00 → L01 → L02 → L04 → L03 → L05 → L06 → L10 → L11 → L07 → L08 */
+/* Kesin Z sırası: P00 → L09 → T00 → L01 → L02 → L04 → L03 → L05 → L06 → L10 → L11 → L07 → L08 → L12 */
 .hero-r8__layer--p00 { z-index: 1; }
 .hero-r8__layer--l09 { z-index: 2; }
 .hero-r8__layer--t00 { z-index: 3; }
@@ -127,6 +127,7 @@
 .hero-r8__layer--l11 { z-index: 11; }
 .hero-r8__layer--l07 { z-index: 12; }
 .hero-r8__layer--l08 { z-index: 13; }
+.hero-r8__layer--l12 { z-index: 14; }
 
 /* Kilitli masaüstü giriş animasyonları. */
 .hero-r8__layer--p00 {
@@ -234,6 +235,15 @@
   --hero-ease: ease-out;
 }
 
+.hero-r8__layer--l12 {
+  --hero-x: -2%;
+  --hero-y: 3%;
+  --hero-scale: .98;
+  --hero-delay: 1700ms;
+  --hero-duration: 500ms;
+  --hero-ease: ease-out;
+}
+
 /* Eski tek-parça hero görseli yerine yalnız R8 kullanılır. */
 .hero__picture,
 .hero__image {
@@ -292,6 +302,7 @@
   .hero-r8__layer--l11 { --hero-delay: 780ms; --hero-duration: 340ms; }
   .hero-r8__layer--l07 { --hero-delay: 840ms; --hero-duration: 340ms; }
   .hero-r8__layer--l08 { --hero-delay: 900ms; --hero-duration: 320ms; }
+  .hero-r8__layer--l12 { --hero-delay: 960ms; --hero-duration: 340ms; }
 }
 
 @media (prefers-reduced-motion: reduce) {

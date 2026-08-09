@@ -104,6 +104,7 @@ required_output_files=(
   "assets/images/hero-r8/layer-l06-r6.png"
   "assets/images/hero-r8/layer-l07-r6.png"
   "assets/images/hero-r8/layer-l08-r6.png"
+  "assets/images/hero-r8/layer-l12-r6.png"
   "assets/images/hero-r8/layer-l09-r6.png"
   "assets/images/hero-r8/layer-l10-r6.png"
   "assets/images/hero-r8/layer-l11-r6.png"

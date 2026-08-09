@@ -80,7 +80,7 @@
     removeLegacyHeroNodes(stage);
 
     var layers = Array.prototype.slice.call(stage.querySelectorAll('.hero-r8__layer'));
-    if (layers.length !== 13) {
+    if (layers.length !== 14) {
       stage.classList.remove('is-loading');
       stage.classList.add('has-error');
       return;
