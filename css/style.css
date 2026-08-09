@@ -273,8 +273,27 @@ address { font-style: normal; }
 .regions__content > p:not(.eyebrow) { max-width: 620px; margin-top: 23px; color: var(--muted); }
 .region-tags { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 9px; }
 .region-tags span { padding: 9px 13px; border: 1px solid rgba(37,51,73,.16); border-radius: 999px; color: var(--navy); background: rgba(255,255,255,.6); font-size: 12px; font-weight: 750; }
-.regions__visual { position: relative; min-height: 440px; overflow: hidden; border-radius: var(--radius-lg); background: var(--navy-3); box-shadow: var(--shadow); }
-.regions__visual img { width: 100%; height: 100%; min-height: inherit; object-fit: cover; object-position: center center; }
+.regions__visual { position: relative; min-height: 240px; display: grid; place-items: center; overflow: hidden; padding: 18px; border-radius: var(--radius-lg); background: linear-gradient(160deg, #16243a 0%, var(--navy-3) 100%); box-shadow: var(--shadow); }
+/* Gerçek il sınırlarından üretilmiş harita. Global svg kuralı fill:none/stroke:currentColor
+   dayattığı için her katman kendi boyasını burada açıkça tanımlar. */
+.regions-map { width: 100%; height: auto; max-height: 100%; overflow: visible; }
+.regions-map .il path { fill: #1b2c45; stroke: rgba(255,255,255,.13); stroke-width: 2; }
+.regions-map .vurgu { fill: rgba(239,124,0,.24); stroke: var(--orange); stroke-width: 4; }
+.regions-map .rt { fill: none; stroke: rgba(239,124,0,.62); stroke-width: 3; }
+.regions-map .cd { fill: rgba(255,255,255,.52); stroke: none; }
+.regions-map .merkez-halka { fill: none; stroke: rgba(239,124,0,.5); stroke-width: 3; }
+.regions-map .merkez { fill: var(--orange); stroke: #fff; stroke-width: 4; }
+.regions-map .etiket { fill: #f2f5f9; stroke: none; font-size: 34px; font-weight: 800; letter-spacing: -.01em; }
+
+/* Rotalar sahne görünür alana girince Edremit'ten dışa doğru çizilir. Çizgi
+   JS'li ve JS'siz durumda aynı görünsün diye taban kuralda kesik kullanılmaz. */
+.regions__visual.is-armed .regions-map .rt { stroke-dasharray: 1400; stroke-dashoffset: 1400; }
+.regions__visual.is-armed.is-visible .regions-map .rt { stroke-dashoffset: 0; transition: stroke-dashoffset 1.5s cubic-bezier(.3,.9,.4,1); }
+.regions__visual.is-armed .regions-map .rt:nth-child(2) { transition-delay: 120ms; }
+.regions__visual.is-armed .regions-map .rt:nth-child(3) { transition-delay: 240ms; }
+.regions__visual.is-armed .regions-map .rt:nth-child(4) { transition-delay: 360ms; }
+.regions__visual.is-armed .regions-map .rt:nth-child(5) { transition-delay: 480ms; }
+.regions__visual.is-armed .regions-map .rt:nth-child(6) { transition-delay: 600ms; }
 
 .faq { background: #fff; }
 .faq__grid { display: grid; grid-template-columns: .7fr 1.3fr; gap: 72px; }
@@ -407,7 +426,7 @@ address { font-style: normal; }
   .about__grid, .why-us__grid, .regions__grid, .faq__grid, .quote__grid { grid-template-columns: 1fr; gap: 48px; }
   .about__grid { gap: 54px; }
   .why-us__intro { max-width: 680px; }
-  .regions__visual { min-height: 400px; }
+  .regions__visual { min-height: 0; }
   .faq__intro { position: static; }
   .footer-grid { grid-template-columns: 1.2fr 1fr 1fr; }
 }
@@ -461,7 +480,7 @@ address { font-style: normal; }
   .process-icon { width: 72px; height: 72px; }
   .process-no { left: calc(50% - 42px); }
   .why-us__cards article { min-height: 180px; padding: 24px; }
-  .regions__visual { min-height: 330px; }
+  .regions__visual { min-height: 0; padding: 14px; }
   .accordion h3 { font-size: 15px; }
   .accordion button { padding: 21px 0; }
   .quote-form { padding: 24px 18px; }
@@ -504,7 +523,7 @@ address { font-style: normal; }
   .process-grid { gap: 38px 10px; }
   .process-grid h3 { font-size: 15px; }
   .process-grid p { font-size: 11px; }
-  .regions__visual { min-height: 290px; }
+  .regions__visual { padding: 12px; }
   .footer-grid { grid-template-columns: 1fr; }
   .footer-brand { grid-column: auto; }
 }
@@ -634,4 +653,9 @@ address { font-style: normal; }
 @media (prefers-reduced-motion: reduce) {
   .floating-actions a::before, .mobile-contact-bar a::before { animation: none; opacity: 0; }
   .floating-actions__tip { max-width: 120px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .regions__visual.is-armed .regions-map .rt,
+  .regions__visual.is-armed.is-visible .regions-map .rt { stroke-dasharray: none; stroke-dashoffset: 0; transition: none; }
 }

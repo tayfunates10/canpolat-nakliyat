@@ -79,24 +79,27 @@
   });
 
   /*
-   * Güven şeridi görünür alana girdiğinde ikonlar ve metinler sırayla yerine
-   * oturur. is-armed yalnız JS ve gözlemci varken eklenir; aksi hâlde şerit
-   * animasyonsuz ama tam görünür kalır.
+   * Bir bölüm görünür alana girdiğinde açılış animasyonunu tetikler. is-armed
+   * yalnız JS ve gözlemci varken eklenir; aksi hâlde bölüm animasyonsuz ama
+   * tam görünür kalır, yani JS'siz tarayıcıda hiçbir şey gizli kalmaz.
    */
-  (function animateTrustBar() {
-    var bar = document.querySelector('.trust-bar');
-    if (!bar || typeof IntersectionObserver !== 'function') return;
+  function revealOnView(selector, threshold) {
+    var node = document.querySelector(selector);
+    if (!node || typeof IntersectionObserver !== 'function') return;
 
-    bar.classList.add('is-armed');
+    node.classList.add('is-armed');
 
     var observer = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
-        bar.classList.add('is-visible');
+        node.classList.add('is-visible');
         observer.disconnect();
       });
-    }, { threshold: 0.25, rootMargin: '0px 0px -6% 0px' });
+    }, { threshold: threshold, rootMargin: '0px 0px -6% 0px' });
 
-    observer.observe(bar);
-  })();
+    observer.observe(node);
+  }
+
+  revealOnView('.trust-bar', 0.25);
+  revealOnView('.regions__visual', 0.3);
 })();
