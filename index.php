@@ -179,6 +179,32 @@ if (!is_string($aboutReplacedHtml) || $aboutReplaceCount !== 1) {
 }
 $html = $aboutReplacedHtml;
 
+$processFile = __DIR__ . '/partials/section-04-process.inc';
+$processMarkup = @file_get_contents($processFile);
+if ($processMarkup === false) {
+    http_response_code(500);
+    header('Content-Type: text/plain; charset=UTF-8');
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    echo 'Taşıma süreci bölümü okunamadı.';
+    exit;
+}
+$processReplaceCount = 0;
+$processReplacedHtml = preg_replace(
+    '~<section class="process section" id="tasima-sureci">.*?</section>~s',
+    $processMarkup,
+    $html,
+    1,
+    $processReplaceCount
+);
+if (!is_string($processReplacedHtml) || $processReplaceCount !== 1) {
+    http_response_code(500);
+    header('Content-Type: text/plain; charset=UTF-8');
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    echo 'Taşıma süreci bölümü doğrulanamadı.';
+    exit;
+}
+$html = $processReplacedHtml;
+
 $html = preg_replace('~\s*<ul class="social">.*?</ul>~s', '', $html, 1) ?? $html;
 $html = str_replace('          <li><a href="#" data-noop>Kullanım Şartları</a></li>\n', '', $html);
 
@@ -253,8 +279,10 @@ $assets = <<<'HTML'
   <link rel="stylesheet" href="css/hero-animated.css?v=20260808-r8-13">
   <link rel="stylesheet" href="css/section-00.css?v=20260808-01">
   <link rel="stylesheet" href="css/section-03.css?v=20260809-01">
+  <link rel="stylesheet" href="css/section-04.css?v=20260809-01">
   <script src="js/quote-form.js?v=20260808-01" defer></script>
   <script src="js/hero-animated.js?v=20260808-r8-11" defer></script>
+  <script src="js/section-04.js?v=20260809-01" defer></script>
 HTML;
 
 if (strpos($html, '</head>') !== false) {
