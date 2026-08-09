@@ -42,7 +42,7 @@ for (const token of [
   'Camivasat Mah. Akçay Cad. No: 78',
   '0535&nbsp;912&nbsp;06&nbsp;91',
   '08:00–20:00', '08:00–18:00', '09:00–17:00',
-  '/js/script.js?v=20260809-03', '/js/hero-animated.js?v=20260809-02', '/js/quote-form.js?v=20260809-01',
+  '/js/script.js?v=20260809-04', '/js/hero-animated.js?v=20260809-02', '/js/quote-form.js?v=20260809-01',
 ]) requireToken('index-template.html', template, token, `production ana sayfa öğesi eksik: ${token}`);
 
 for (const service of [

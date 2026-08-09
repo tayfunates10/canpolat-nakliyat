@@ -352,7 +352,8 @@ address { font-style: normal; }
 .final-cta__arc { position: absolute; right: 3%; top: 8%; width: min(38%, 540px); height: 42%; }
 .final-cta__arc-line { fill: none; stroke: rgba(239,124,0,.55); stroke-width: 2; stroke-dasharray: 9 11; stroke-linecap: round; }
 .final-cta__pin { position: absolute; right: 40.5%; top: 4.5%; width: 28px; height: 28px; color: var(--orange); }
-.final-cta__pin svg { width: 30px; height: 30px; fill: var(--orange); stroke: none; }
+.final-cta__pin svg { position: relative; z-index: 1; width: 28px; height: 28px; fill: var(--orange); stroke: none; }
+.final-cta__pin-ring { position: absolute; z-index: 0; left: 50%; top: 34%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border: 2px solid rgba(239,124,0,.85); border-radius: 50%; opacity: 0; }
 
 .final-cta__inner { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); align-items: center; gap: 34px; padding: 44px 0 48px; }
 .final-cta__content { min-width: 0; }
@@ -360,6 +361,8 @@ address { font-style: normal; }
 .cta__logo [fill="#253349"] { fill: #ffffff; }
 .final-cta h2 { margin-top: 22px; font-size: clamp(34px, 4.4vw, 62px); line-height: 1.02; letter-spacing: -.045em; font-weight: 850; }
 .final-cta h2 em { color: var(--orange); font-style: normal; }
+/* clip-path satır içi ögede güvenilir çalışmaz; parçalar inline-block olur. */
+.final-cta__title-part { display: inline-block; }
 .final-cta__lead { max-width: 620px; margin-top: 20px; padding-left: 16px; border-left: 3px solid var(--orange); color: #cdd6e2; font-size: 16px; line-height: 1.7; }
 .final-cta__actions { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 12px; }
 .final-cta__actions .button svg { width: 21px; height: 21px; }
@@ -372,7 +375,19 @@ address { font-style: normal; }
 .final-cta__features svg { flex: 0 0 22px; width: 22px; height: 22px; color: var(--orange); stroke-width: 1.7; }
 
 .final-cta__visual { position: relative; min-width: 0; display: grid; justify-items: end; gap: 18px; }
-.final-cta__truck { width: 100%; max-width: 470px; height: auto; filter: drop-shadow(0 24px 30px rgba(0,0,0,.42)); }
+
+/* Kamyon sahnesi. Zemin gölgesi ve yansıma ayrı katmanlar; kamyon kendi
+   içinde salındığı için gölge yerinde kalır, aksi hâlde havada sallanır. */
+.final-cta__stage { position: relative; width: 100%; max-width: 470px; }
+/* Neredeyse siyah zeminde koyu gölge görünmez; bu yüzden zemin ters kurulur:
+   altta yansıtıcı zemini temsil eden soluk bir ışık havuzu, üstünde tekerlek
+   temas çizgisinde dar ve koyu bir çekirdek. Ellipsin merkezi tekerlek
+   hizasına oturur; gövdenin arkasında kalırsa kamyon havada durur. */
+.final-cta__ground { position: absolute; z-index: 0; left: -2%; right: -6%; bottom: -9%; height: 24%; border-radius: 50%; background: radial-gradient(ellipse at 50% 50%, rgba(158,190,235,.17) 0%, rgba(158,190,235,.06) 44%, transparent 72%); filter: blur(11px); }
+.final-cta__ground::after { content: ""; position: absolute; left: 16%; right: 12%; top: 40%; height: 26%; border-radius: 50%; background: radial-gradient(ellipse at 50% 50%, rgba(2,5,11,.9) 0%, rgba(2,5,11,.5) 48%, transparent 76%); filter: blur(5px); }
+.final-cta__truck-wrap { position: relative; z-index: 1; }
+.final-cta__truck { width: 100%; height: auto; filter: saturate(.86) brightness(.94) contrast(1.02); }
+.final-cta__boxes { position: absolute; z-index: 2; left: -3%; bottom: 0; width: 30%; height: auto; filter: saturate(.9) brightness(.95) drop-shadow(0 10px 12px rgba(4,9,17,.5)); }
 .final-cta__phone { display: inline-flex; align-items: center; gap: 13px; }
 .final-cta__phone-icon { flex: 0 0 46px; width: 46px; height: 46px; display: grid; place-items: center; border: 2px solid rgba(239,124,0,.7); border-radius: 50%; color: var(--orange); transition: background-color .18s ease, border-color .18s ease; }
 .final-cta__phone-icon svg { width: 21px; height: 21px; }
@@ -464,7 +479,7 @@ address { font-style: normal; }
   .about__grid, .why-us__grid, .regions__grid, .faq__grid, .quote__grid { grid-template-columns: 1fr; gap: 48px; }
   .final-cta__inner { grid-template-columns: 1fr; gap: 34px; }
   .final-cta__visual { justify-items: start; }
-  .final-cta__truck { max-width: 520px; }
+  .final-cta__stage { max-width: 520px; }
   .final-cta__arc, .final-cta__pin { display: none; }
   .about__grid { gap: 54px; }
   .why-us__intro { max-width: 680px; }
@@ -706,4 +721,61 @@ address { font-style: normal; }
 @media (prefers-reduced-motion: reduce) {
   .regions__visual.is-armed .regions-map .rt,
   .regions__visual.is-armed.is-visible .regions-map .rt { stroke-dasharray: none; stroke-dashoffset: 0; transition: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   CTA hareketi.
+   Giriş: bant görünür alana girdiğinde bir kez oynar (revealOnView).
+   Döngü: yay akışı, kamyon salınımı ve pin halkası; süreler birbirine
+   bölünmediği için asla senkron atmaz.
+   Kamyonun giriş dönüşümü sarmalayıcıda, salınımı görselin kendisinde durur;
+   ikisi aynı transform üzerinde çakışmasın diye ayrıldı.
+--------------------------------------------------------------------------- */
+.final-cta.is-armed .cta__logo,
+.final-cta.is-armed .final-cta__actions .button,
+.final-cta.is-armed .final-cta__truck-wrap,
+.final-cta.is-armed .final-cta__boxes { opacity: 0; }
+.final-cta.is-armed .final-cta__title-part { clip-path: inset(0 100% 0 0); }
+
+.final-cta.is-armed.is-visible .cta__logo { animation: cta-drop .6s cubic-bezier(.22,1,.36,1) 40ms both; }
+.final-cta.is-armed.is-visible .final-cta__title-part { animation: cta-wipe .75s cubic-bezier(.22,1,.36,1) both; }
+.final-cta.is-armed.is-visible .final-cta__title-part--1 { animation-delay: 160ms; }
+.final-cta.is-armed.is-visible .final-cta__title-part--2 { animation-delay: 280ms; }
+.final-cta.is-armed.is-visible .final-cta__actions .button { animation: cta-rise .55s cubic-bezier(.22,1,.36,1) both; }
+.final-cta.is-armed.is-visible .final-cta__actions .button:nth-child(1) { animation-delay: 520ms; }
+.final-cta.is-armed.is-visible .final-cta__actions .button:nth-child(2) { animation-delay: 610ms; }
+.final-cta.is-armed.is-visible .final-cta__truck-wrap { animation: cta-arrive 1.05s cubic-bezier(.16,.84,.3,1) 180ms both; }
+.final-cta.is-armed.is-visible .final-cta__boxes { animation: cta-settle .7s cubic-bezier(.3,1.5,.5,1) 1.15s both; }
+
+/* Döngüler */
+.final-cta.is-visible .final-cta__arc-line { animation: cta-flow 3.5s linear infinite; }
+.final-cta.is-visible .final-cta__truck { animation: cta-idle 5.2s ease-in-out 1.4s infinite; }
+.final-cta.is-visible .final-cta__ground { animation: cta-ground 5.2s ease-in-out 1.4s infinite; }
+.final-cta.is-visible .final-cta__pin-ring { animation: cta-ping 8.3s cubic-bezier(.2,.7,.4,1) 2.2s infinite; }
+
+@keyframes cta-drop { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
+@keyframes cta-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 -2% 0 0); } }
+@keyframes cta-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes cta-arrive { from { opacity: 0; transform: translateX(64px); } to { opacity: 1; transform: none; } }
+@keyframes cta-settle { 0% { opacity: 0; transform: translateY(-30px); } 60% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+@keyframes cta-flow { to { stroke-dashoffset: -40; } }
+@keyframes cta-idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes cta-ground { 0%, 100% { transform: scaleX(1); opacity: 1; } 50% { transform: scaleX(.97); opacity: .82; } }
+@keyframes cta-ping { 0%, 88% { transform: scale(.7); opacity: 0; } 91% { opacity: .9; } 100% { transform: scale(2.4); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .final-cta.is-armed .cta__logo,
+  .final-cta.is-armed .final-cta__actions .button,
+  .final-cta.is-armed .final-cta__truck-wrap,
+  .final-cta.is-armed .final-cta__boxes { opacity: 1; }
+  .final-cta.is-armed .final-cta__title-part { clip-path: none; }
+  .final-cta.is-armed.is-visible .cta__logo,
+  .final-cta.is-armed.is-visible .final-cta__title-part,
+  .final-cta.is-armed.is-visible .final-cta__actions .button,
+  .final-cta.is-armed.is-visible .final-cta__truck-wrap,
+  .final-cta.is-armed.is-visible .final-cta__boxes,
+  .final-cta.is-visible .final-cta__arc-line,
+  .final-cta.is-visible .final-cta__truck,
+  .final-cta.is-visible .final-cta__ground,
+  .final-cta.is-visible .final-cta__pin-ring { animation: none; }
 }
