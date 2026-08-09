@@ -56,17 +56,24 @@ async function runAxe(page) {
       const failedRequests = [];
       const httpErrors = [];
       const requestedPaths = [];
+      let approvedImageResponse = null;
 
       page.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text()); });
       page.on('pageerror', (e) => pageErrors.push(e.message));
       page.on('request', (request) => { try { requestedPaths.push(new URL(request.url()).pathname); } catch (_) {} });
       page.on('requestfailed', (request) => failedRequests.push(`${request.url()} :: ${request.failure()?.errorText || 'unknown'}`));
       page.on('response', (response) => {
-        if (response.status() >= 400) {
-          let pathname = response.url();
-          try { pathname = new URL(response.url()).pathname; } catch (_) {}
-          httpErrors.push(`${response.status()} ${pathname}`);
+        let pathname = response.url();
+        try { pathname = new URL(response.url()).pathname; } catch (_) {}
+        if (pathname === '/assets/images/about-canpolat-approved.php') {
+          approvedImageResponse = {
+            status: response.status(),
+            contentType: (response.headers()['content-type'] || '').toLowerCase(),
+            cacheControl: (response.headers()['cache-control'] || '').toLowerCase(),
+            nosniff: (response.headers()['x-content-type-options'] || '').toLowerCase(),
+          };
         }
+        if (response.status() >= 400) httpErrors.push(`${response.status()} ${pathname}`);
       });
 
       const response = await page.goto(baseUrl, { waitUntil: 'networkidle0', timeout: 45000 });
@@ -140,7 +147,12 @@ async function runAxe(page) {
       if (!state.sectionClass.includes('about-v2') || !state.sectionClass.includes('is-visible')) fail(failures, label, 'Yeni Hakkımızda bölümü/reveal durumu oluşmadı.');
       if (!state.stylesheetLoaded) fail(failures, label, 'Bölüm 03 CSS yüklenmedi.');
       if (state.scrollWidth > state.viewportWidth + 1) fail(failures, label, `Yatay taşma var (${state.scrollWidth} > ${state.viewportWidth}).`);
-      if (!state.imageLoaded || state.imageSrc !== '/assets/images/about-canpolat-approved.svg') fail(failures, label, `Onaylı Hakkımızda görseli yüklenmedi: ${state.imageSrc}`);
+      if (!state.imageLoaded || state.imageSrc !== '/assets/images/about-canpolat-approved.php') fail(failures, label, `Onaylı Hakkımızda WebP endpointi yüklenmedi: ${state.imageSrc}`);
+      if (!approvedImageResponse || approvedImageResponse.status !== 200) fail(failures, label, `Onaylı görsel HTTP yanıtı geçersiz: ${JSON.stringify(approvedImageResponse)}`);
+      if (!approvedImageResponse?.contentType.startsWith('image/webp')) fail(failures, label, `Onaylı görsel MIME tipi yanlış: ${approvedImageResponse?.contentType || 'yok'}`);
+      if (!approvedImageResponse?.cacheControl.includes('immutable')) fail(failures, label, 'Onaylı görsel immutable cache başlığı taşımıyor.');
+      if (approvedImageResponse?.nosniff !== 'nosniff') fail(failures, label, 'Onaylı görsel nosniff başlığı taşımıyor.');
+      if (state.imageNaturalWidth !== 1200 || state.imageNaturalHeight !== 900) fail(failures, label, `Onaylı WebP decode ölçüsü yanlış (${state.imageNaturalWidth}x${state.imageNaturalHeight}).`);
       if (state.imageAttrWidth !== '1200' || state.imageAttrHeight !== '900') fail(failures, label, `Onaylı görsel HTML boyut ipucu yanlış (${state.imageAttrWidth}x${state.imageAttrHeight}).`);
       if (state.imageFit !== 'contain') fail(failures, label, `Onaylı görsel object-fit=${state.imageFit}, beklenen contain.`);
       if (Math.abs(state.imageRatio - (4 / 3)) > 0.03) fail(failures, label, `Onaylı görsel render oranı 4:3 değil (${state.imageRatio}).`);
@@ -213,7 +225,7 @@ async function runAxe(page) {
       if (sectionHandle) await sectionHandle.screenshot({ path: screenshot });
       else fail(failures, label, 'Hakkımızda screenshot için bulunamadı.');
 
-      results.push({ label, screenshot: path.basename(screenshot), state, axe, reducedMotion, httpErrors, consoleErrors, pageErrors, failedRequests });
+      results.push({ label, screenshot: path.basename(screenshot), state, approvedImageResponse, axe, reducedMotion, httpErrors, consoleErrors, pageErrors, failedRequests });
       await page.close();
     }
   } finally {
@@ -229,7 +241,7 @@ async function runAxe(page) {
 
   console.log('BÖLÜM 03 BROWSER QA PASS');
   console.log('- 9 viewport doğrulandı');
-  console.log('- Kullanıcı onaylı 4:3 Hakkımızda görseli yüklendi');
+  console.log('- Kullanıcı onaylı 1200x900 WebP doğrudan image/webp olarak doğrulandı');
   console.log('- Gerçek logo/açıklama ve CSS Edremit/Balıkesir pini efektleri doğrulandı');
   console.log('- Görsel altı ve paragraf altı iki farklı ikon grubu doğrulandı');
   console.log('- Eski about-canpolat.webp isteği: 0');
