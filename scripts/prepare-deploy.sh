@@ -54,6 +54,7 @@ required_paths=(
   "assets/images/service-ofis.webp"
   "assets/images/service-asansorlu.webp"
   "assets/images/service-paketleme.webp"
+  "assets/images/regions-kapsam.webp"
 )
 
 for path in "${required_paths[@]}"; do
@@ -94,6 +95,7 @@ required_output_files=(
   "assets/images/service-ofis.webp"
   "assets/images/service-asansorlu.webp"
   "assets/images/service-paketleme.webp"
+  "assets/images/regions-kapsam.webp"
   "assets/images/hero-r8/platform-p00-r8-reference-exact.png"
   "assets/images/hero-r8/truck-t00-r6.png"
   "assets/images/hero-r8/layer-l01-r6.png"
