@@ -1,0 +1,307 @@
+/* Canpolat Nakliyat — BÖLÜM 04 / Taşıma Süreci */
+.process-v2 {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 10%, rgba(239,124,0,.09), transparent 32%),
+    radial-gradient(circle at 88% 0%, rgba(255,255,255,.035), transparent 30%),
+    var(--color-bg);
+}
+
+.process-v2::before,
+.process-v2::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  border: 1px solid rgba(255,255,255,.035);
+  border-radius: 50%;
+}
+.process-v2::before { width: 640px; height: 640px; left: -260px; top: -360px; }
+.process-v2::after { width: 520px; height: 520px; right: -220px; top: -300px; }
+
+.process-v2__inner { position: relative; z-index: 1; }
+
+.process-v2__header {
+  max-width: 880px;
+  margin: 0 auto clamp(38px, 4.5vw, 64px);
+  text-align: center;
+}
+.process-v2__eyebrow {
+  margin: 0 0 9px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .16em;
+  color: var(--color-orange);
+}
+.process-v2__kicker {
+  margin: 0 0 10px;
+  font-size: clamp(14px, 1.2vw, 18px);
+  color: var(--color-muted);
+}
+.process-v2__title {
+  margin: 0;
+  font-size: clamp(34px, 4vw, 52px);
+  line-height: 1.03;
+  letter-spacing: -.035em;
+  color: #fff;
+}
+.process-v2__lead {
+  max-width: 780px;
+  margin: 18px auto 0;
+  font-size: clamp(14px, 1.15vw, 16px);
+  line-height: 1.7;
+  color: var(--color-muted);
+}
+
+.process-v2__list {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.process-v2__list::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 82px;
+  left: calc(12.5% - 4px);
+  right: calc(12.5% - 4px);
+  height: 3px;
+  background: linear-gradient(90deg, rgba(239,124,0,.32), var(--color-orange), rgba(239,124,0,.32));
+  border-radius: 999px;
+  box-shadow: 0 0 18px rgba(239,124,0,.12);
+}
+
+.process-v2__card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 365px;
+  padding: 22px 22px 20px;
+  background: linear-gradient(180deg, rgba(30,45,68,.98), rgba(22,37,59,.98));
+  border: 1px solid rgba(139,161,190,.22);
+  border-radius: 24px;
+  box-shadow: 0 22px 55px rgba(2,12,24,.16), inset 0 1px 0 rgba(255,255,255,.025);
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    transform .72s cubic-bezier(.22,1,.36,1) calc(var(--process-order) * .08s),
+    opacity .52s ease calc(var(--process-order) * .08s),
+    border-color .25s ease,
+    box-shadow .25s ease;
+}
+.process-v2.is-visible .process-v2__card { opacity: 1; transform: translateY(0); }
+.process-v2__card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(239,124,0,.58);
+  box-shadow: 0 26px 64px rgba(2,12,24,.24), 0 0 0 1px rgba(239,124,0,.06);
+}
+
+.process-v2__node {
+  position: absolute;
+  top: 74px;
+  left: 50%;
+  z-index: 3;
+  width: 16px;
+  height: 16px;
+  background: var(--color-orange);
+  border: 4px solid #1b2d47;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(239,124,0,.32), 0 0 18px rgba(239,124,0,.25);
+  transform: translateX(-50%);
+}
+
+.process-v2__step-label {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 84px;
+  min-height: 34px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .03em;
+  color: #152236;
+  background: var(--color-orange);
+  border-radius: 999px;
+}
+
+.process-v2__icon {
+  display: grid;
+  place-items: center;
+  width: 82px;
+  height: 82px;
+  margin-top: 12px;
+  color: var(--color-orange);
+  background: radial-gradient(circle at 35% 25%, rgba(255,255,255,.055), transparent 56%), #1b2d47;
+  border: 1px solid rgba(139,161,190,.22);
+  border-radius: 50%;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+}
+.process-v2__icon svg { display: block; width: 42px; height: 42px; }
+
+.process-v2__card-title {
+  margin: 22px 0 0;
+  font-size: clamp(18px, 1.55vw, 22px);
+  line-height: 1.18;
+  color: #fff;
+}
+.process-v2__card-text {
+  margin: 12px 0 18px;
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--color-muted);
+}
+.process-v2__meta {
+  align-self: flex-start;
+  margin-top: auto;
+  padding: 7px 11px;
+  font-size: 11px;
+  font-weight: 850;
+  line-height: 1;
+  color: var(--color-orange);
+  background: #13243a;
+  border: 1px solid rgba(139,161,190,.12);
+  border-radius: 10px;
+}
+.process-v2__accent {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: 28px;
+  height: 28px;
+  background: radial-gradient(circle, #ff9b2f 0 31%, #29435e 33% 100%);
+  border-radius: 50%;
+}
+
+.process-v2__cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 44px;
+  padding: 20px 24px;
+  background: rgba(20,37,58,.92);
+  border: 1px solid rgba(139,161,190,.22);
+  border-radius: 20px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+}
+.process-v2__cta p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #f4f6fa;
+}
+.process-v2__cta-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  flex: 0 0 auto;
+  min-height: 48px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 900;
+  color: #142239;
+  background: var(--color-orange);
+  border-radius: 14px;
+  transition: transform .22s ease, filter .22s ease, box-shadow .22s ease;
+}
+.process-v2__cta-link svg { width: 20px; height: 20px; }
+.process-v2__cta-link:hover { transform: translateY(-2px); filter: brightness(1.05); box-shadow: 0 12px 26px rgba(239,124,0,.2); }
+.process-v2__cta-link:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+@media (max-width: 1100px) {
+  .process-v2__list { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; }
+  .process-v2__list::before { display: none; }
+  .process-v2__node { display: none; }
+  .process-v2__card { min-height: 330px; }
+}
+
+@media (max-width: 767px) {
+  .process-v2__header { margin-bottom: 30px; text-align: left; }
+  .process-v2__eyebrow { font-size: 11px; }
+  .process-v2__kicker { display: none; }
+  .process-v2__title { font-size: clamp(30px, 9vw, 38px); }
+  .process-v2__title::first-line { color: #fff; }
+  .process-v2__lead { margin-top: 12px; font-size: 13px; line-height: 1.62; }
+
+  .process-v2__list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding-left: 54px;
+  }
+  .process-v2__list::before {
+    display: block;
+    top: 18px;
+    bottom: 18px;
+    left: 25px;
+    right: auto;
+    width: 3px;
+    height: auto;
+    background: linear-gradient(180deg, rgba(239,124,0,.35), var(--color-orange), rgba(239,124,0,.35));
+  }
+  .process-v2__card {
+    min-height: 0;
+    padding: 16px 16px 15px;
+    border-radius: 17px;
+  }
+  .process-v2__card:hover { transform: none; }
+  .process-v2__node {
+    display: block;
+    top: 24px;
+    left: -29px;
+    width: 16px;
+    height: 16px;
+    transform: none;
+  }
+  .process-v2__step-label {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    min-width: 74px;
+    min-height: 28px;
+    padding: 5px 10px;
+    font-size: 10px;
+  }
+  .process-v2__icon { width: 52px; height: 52px; margin: 0 0 10px; }
+  .process-v2__icon svg { width: 28px; height: 28px; }
+  .process-v2__card-title { margin: 0; padding-right: 78px; font-size: 16px; }
+  .process-v2__card-text { margin: 8px 0 12px; padding-right: 2px; font-size: 12px; line-height: 1.55; }
+  .process-v2__meta { padding: 6px 9px; font-size: 10px; }
+  .process-v2__accent { right: 14px; bottom: 14px; width: 24px; height: 24px; }
+
+  .process-v2__cta {
+    display: grid;
+    gap: 14px;
+    margin-top: 28px;
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .process-v2__cta p { font-size: 12px; }
+  .process-v2__cta-link { width: 100%; min-height: 46px; }
+}
+
+@media (max-width: 430px) {
+  .process-v2__list { padding-left: 48px; }
+  .process-v2__node { left: -26px; }
+  .process-v2__card { padding: 15px 14px 14px; }
+  .process-v2__step-label { right: 10px; }
+  .process-v2__card-title { padding-right: 72px; font-size: 15px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .process-v2__card,
+  .process-v2__cta-link {
+    transition: none !important;
+    transform: none !important;
+  }
+  .process-v2__card { opacity: 1 !important; }
+}
