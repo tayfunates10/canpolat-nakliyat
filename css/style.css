@@ -31,6 +31,11 @@ body {
 body.menu-open { overflow: hidden; }
 img { display: block; max-width: 100%; }
 svg { display: block; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+/* Tek ızgarada çizilmiş dolu ikon seti. Hepsi 24x24 tuvalde, çizim 2..22
+   kutusuna yazılı ve merkezi (12,12); global svg kuralının çizgi davranışı
+   burada kapatılır. */
+.icon { fill: currentColor; stroke: none; }
+.icon-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
 a { color: inherit; text-decoration: none; }
 button, input, textarea { font: inherit; }
 button { color: inherit; }
@@ -161,7 +166,8 @@ address { font-style: normal; }
 .hero__actions { margin-top: 34px; display: flex; flex-wrap: wrap; gap: 12px; }
 .hero__facts { margin-top: 38px; display: flex; flex-wrap: wrap; gap: 18px 28px; color: #d7dde5; font-size: 12px; font-weight: 650; }
 .hero__facts li { display: flex; align-items: center; gap: 8px; }
-.hero__facts span { width: 25px; height: 25px; display: grid; place-items: center; border: 1px solid rgba(239,124,0,.65); border-radius: 50%; color: #ffb25b; font-size: 9px; }
+.hero__facts-icon { flex: 0 0 27px; width: 27px; height: 27px; display: grid; place-items: center; border: 1px solid rgba(239,124,0,.5); border-radius: 9px; background: rgba(239,124,0,.1); color: var(--orange); }
+.hero__facts-icon .icon { width: 15px; height: 15px; }
 .hero__visual { position: relative; min-width: 0; align-self: stretch; display: flex; align-items: flex-end; }
 /* Tuvalin alt %16.7'si şeffaf; bant kolon genişliğinin ~%13'üne denk gelir ve layout'tan geri alınır. */
 .hero-scene { position: relative; width: 118%; aspect-ratio: 3 / 2; margin-left: -10%; margin-bottom: -10%; filter: drop-shadow(0 26px 22px rgba(0,0,0,.34)); }
@@ -187,17 +193,13 @@ address { font-style: normal; }
 .trust-bar.is-armed.is-visible .trust-bar__item:nth-child(3) { transition-delay: 180ms; }
 .trust-bar.is-armed.is-visible .trust-bar__item:nth-child(4) { transition-delay: 270ms; }
 
-/* İkonun kendi hareketi: kutu hafifçe yükselip iner, saat ibresi bir tur döner, onay işareti çizilir. */
+/* İkonun kendi hareketi: kutular sırayla hafifçe yükselip iner. */
 .trust-bar.is-visible .trust-bar__icon { animation: trust-float 4.6s ease-in-out 900ms infinite; }
 .trust-bar.is-visible .trust-bar__item:nth-child(2) .trust-bar__icon { animation-delay: 1200ms; }
 .trust-bar.is-visible .trust-bar__item:nth-child(3) .trust-bar__icon { animation-delay: 1500ms; }
 .trust-bar.is-visible .trust-bar__item:nth-child(4) .trust-bar__icon { animation-delay: 1800ms; }
 .trust-bar__item:hover .trust-bar__icon { border-color: rgba(37,51,73,.5); background: rgba(255,255,255,.3); }
-.trust-bar__tick { stroke-dasharray: 12; stroke-dashoffset: 12; }
-.trust-bar.is-visible .trust-bar__tick { animation: trust-draw .5s ease-out 700ms forwards; }
-.trust-bar__hand { transform-origin: 12px 12px; }
-.trust-bar.is-visible .trust-bar__hand { animation: trust-sweep 1.1s cubic-bezier(.5,0,.2,1) 900ms 1; }
-
+.trust-bar.is-visible .trust-bar.is-visible 
 @keyframes trust-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 @keyframes trust-draw { to { stroke-dashoffset: 0; } }
 @keyframes trust-sweep { from { transform: rotate(-330deg); } to { transform: rotate(0deg); } }
@@ -216,7 +218,9 @@ address { font-style: normal; }
 .service-card--wide { grid-column: span 3; }
 .service-card:hover { transform: translateY(-6px); border-color: rgba(239,124,0,.55); box-shadow: var(--shadow); }
 .service-card a { height: 100%; display: grid; grid-template-rows: auto 1fr; }
-.service-card__media { aspect-ratio: 16 / 9; overflow: hidden; background: var(--cream-2); }
+/* Kaynak görseller 1586x992, yani 16/10. Kutu 16/9 iken cover üstten alttan
+   kırpıyordu; oran kaynakla eşitlenince görsel tam oturuyor. */
+.service-card__media { aspect-ratio: 16 / 10; overflow: hidden; background: var(--cream-2); }
 .service-card__media img { width: 100%; height: 100%; object-fit: cover; transition: transform .45s ease; }
 .service-card:hover img { transform: scale(1.035); }
 .service-card__body { position: relative; padding: 25px 26px 28px; }
@@ -523,8 +527,10 @@ address { font-style: normal; }
      kalır; tek kolonlu ızgarada span 6 örtük kolonlar açıp diğer kartları aynı
      satıra sıkıştırdığı için aynı özgüllükte geri alınır. */
   .service-card, .service-card--wide, .service-card:last-child { grid-column: auto; }
-  .service-card a { grid-template-columns: 128px 1fr; grid-template-rows: auto; }
-  .service-card__media { height: 100%; min-height: 174px; aspect-ratio: auto; }
+  /* Yan yana düzende medya kutusu 0.70 orana düşüp 16/10 fotoğrafın yalnız
+     orta üçte birini gösteriyordu; kart mobilde dikey yığılır. */
+  .service-card a { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .service-card__media { height: auto; min-height: 0; aspect-ratio: 16 / 10; }
   .service-card__body { padding: 20px 17px; }
   .service-card__body > span { display: none; }
   .service-card h3 { padding-right: 0; font-size: 16px; }
@@ -580,9 +586,7 @@ address { font-style: normal; }
   .hero__facts li:last-child { grid-column: 1 / -1; justify-self: center; }
   .hero__visual { min-height: 285px; }
   .hero-scene { width: calc(100% + 30px); margin: -30px -15px -8%; }
-  .service-card a { grid-template-columns: 112px 1fr; }
   .service-card__body { padding: 16px 14px; }
-  .service-card__media { min-height: 160px; }
   .process-grid { gap: 38px 10px; }
   .process-grid h3 { font-size: 15px; }
   .process-grid p { font-size: 11px; }
@@ -704,9 +708,7 @@ address { font-style: normal; }
   .trust-bar.is-armed.is-visible .trust-bar__item { opacity: 1; transform: none; transition: none; }
   .trust-bar.is-visible .trust-bar__icon,
   .trust-bar.is-visible .trust-bar__tick,
-  .trust-bar.is-visible .trust-bar__hand { animation: none; }
-  .trust-bar__tick { stroke-dashoffset: 0; }
-}
+  .trust-bar.is-visible   }
 
 @media (prefers-reduced-motion: reduce) {
   .utility-bar__item, .utility-bar__phone { animation: none; }
