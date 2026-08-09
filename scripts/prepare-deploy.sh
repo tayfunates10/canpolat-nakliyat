@@ -30,7 +30,8 @@ required_paths=(
   "partials/section-03-about.inc" "partials/section-04-process.inc"
   "js/hero-animated.js" "js/quote-form.js" "js/section-04.js"
   "hizmetler/paketleme-montaj.html"
-  "assets/images/about-canpolat-approved.webp"
+  "assets/images/about-canpolat-approved.php"
+  "assets/images/about-canpolat-approved-parts"
   "assets/images/hero-r8/ASSET-MANIFEST.md"
   "assets/images/service-evden-eve.webp" "assets/images/service-sehirler-arasi.webp"
   "assets/images/service-ofis.webp" "assets/images/service-asansorlu.webp" "assets/images/service-paketleme.webp"
@@ -46,8 +47,7 @@ rm -f \
   "${OUTPUT_PATH}/assets/images/hero-canpolat-mobil.webp" \
   "${OUTPUT_PATH}/assets/images/hero-canpolat-final.webp" \
   "${OUTPUT_PATH}/assets/images/hero-layout.webp" \
-  "${OUTPUT_PATH}/assets/images/about-canpolat-approved.svg" \
-  "${OUTPUT_PATH}/assets/images/about-canpolat-approved.php"
+  "${OUTPUT_PATH}/assets/images/about-canpolat-approved.svg"
 rm -rf "${OUTPUT_PATH}/assets/images/hero-parts"
 
 required_output_files=(
@@ -56,7 +56,16 @@ required_output_files=(
   "partials/section-03-about.inc" "partials/section-04-process.inc"
   "js/script.js" "js/hero-animated.js" "js/quote-form.js" "js/section-04.js"
   "hizmetler/paketleme-montaj.html"
-  "assets/images/about-canpolat-approved.webp"
+  "assets/images/about-canpolat-approved.php"
+  "assets/images/about-canpolat-approved-parts/part-01.b64"
+  "assets/images/about-canpolat-approved-parts/part-02.b64"
+  "assets/images/about-canpolat-approved-parts/part-03.b64"
+  "assets/images/about-canpolat-approved-parts/part-04.b64"
+  "assets/images/about-canpolat-approved-parts/part-05.b64"
+  "assets/images/about-canpolat-approved-parts/part-06.b64"
+  "assets/images/about-canpolat-approved-parts/part-07a.b64"
+  "assets/images/about-canpolat-approved-parts/part-07b.b64"
+  "assets/images/about-canpolat-approved-parts/part-08.b64"
   "assets/images/service-evden-eve.webp" "assets/images/service-sehirler-arasi.webp"
   "assets/images/service-ofis.webp" "assets/images/service-asansorlu.webp" "assets/images/service-paketleme.webp"
   "assets/images/hero-r8/platform-p00-r8-reference-exact.png" "assets/images/hero-r8/truck-t00-r6.png"
@@ -74,8 +83,7 @@ done
 for forbidden in \
   "assets/images/hero-canpolat.webp" \
   "assets/images/hero-canpolat-mobil.webp" \
-  "assets/images/about-canpolat-approved.svg" \
-  "assets/images/about-canpolat-approved.php"; do
+  "assets/images/about-canpolat-approved.svg"; do
   if [[ -e "${OUTPUT_PATH}/${forbidden}" ]]; then
     echo "HATA: Yasak/eski asset production paketinde bulunmamalı: ${forbidden}" >&2
     exit 1
