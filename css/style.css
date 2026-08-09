@@ -15,7 +15,6 @@
   --radius-sm: 10px;
   --radius-md: 18px;
   --radius-lg: 30px;
-  --container: 1220px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -38,7 +37,8 @@ button { color: inherit; }
 h1, h2, h3, p, ul, ol, figure, address { margin: 0; }
 ul, ol { padding: 0; list-style: none; }
 address { font-style: normal; }
-.container { width: min(calc(100% - 48px), var(--container)); margin-inline: auto; }
+/* Tam genişlik: içerik üst sınır olmadan ekranın tamamını kullanır, yalnız kenar boşluğu bırakılır. */
+.container { width: calc(100% - 48px); margin-inline: auto; }
 .section { padding: 104px 0; }
 
 :focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
@@ -311,7 +311,7 @@ address { font-style: normal; }
 }
 
 @media (max-width: 720px) {
-  .container { width: min(calc(100% - 30px), var(--container)); }
+  .container { width: calc(100% - 30px); }
   .section { padding: 68px 0; }
   .utility-bar p { display: none; }
   .utility-bar__inner { justify-content: center; }
