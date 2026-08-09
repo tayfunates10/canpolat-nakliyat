@@ -27,6 +27,11 @@ AddDefaultCharset UTF-8
 
   # Eski hero URL'leri kalıcı olarak emekli edilmiştir.
   RewriteRule ^assets/images/hero-canpolat(?:-mobil)?\.webp$ - [G,L,NC]
+
+  # Hosting varsayılan hata gövdesini atlayarak markalı 404 sayfasını doğru durum koduyla sun.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ index.php [L]
 </IfModule>
 
 <IfModule mod_headers.c>

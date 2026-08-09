@@ -196,12 +196,15 @@ jobs:
           ROBOTS_BODY="${RUNNER_TEMP}/live-robots.txt"
           API_GET_BODY="${RUNNER_TEMP}/live-api-get.json"
           API_POST_BODY="${RUNNER_TEMP}/live-api-post.json"
+          NOT_FOUND_BODY="${RUNNER_TEMP}/live-404.html"
+          NOT_FOUND_HEADERS="${RUNNER_TEMP}/live-404.headers"
 
           home_code="$(curl -sS -L -o "${HOME_BODY}" -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/?${QUERY}" || true)"
           service_code="$(curl -sS -L -o "${SERVICE_BODY}" -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/hizmetler/paketleme-montaj.html?${QUERY}" || true)"
           privacy_code="$(curl -sS -L -o "${PRIVACY_BODY}" -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/gizlilik.html?${QUERY}" || true)"
           robots_code="$(curl -sS -L -o "${ROBOTS_BODY}" -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/robots.txt?${QUERY}" || true)"
           api_get_code="$(curl -sS -o "${API_GET_BODY}" -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Accept: application/json' -H 'Cache-Control: no-cache' "${BASE_URL}/api/teklif.php?${QUERY}" || true)"
+          not_found_code="$(curl -sS -D "${NOT_FOUND_HEADERS}" -o "${NOT_FOUND_BODY}" -w '%{http_code}' --connect-timeout 10 --max-time 30 -H 'Cache-Control: no-cache' "${BASE_URL}/yayinda-olmayan-sayfa-${GITHUB_SHA}?${QUERY}" || true)"
 
           # Honeypot dolu olduğundan bu istek endpoint'in POST yolunu çalıştırır fakat e-posta göndermez.
           api_post_code="$(curl -sS -o "${API_POST_BODY}" -w '%{http_code}' --connect-timeout 10 --max-time 30 \
@@ -236,7 +239,11 @@ jobs:
           [[ "${api_post_code}" == "200" ]] || { echo "FAIL: API honeypot POST beklenen 200, gelen ${api_post_code}"; fail=1; }
           grep -q '"ok":true' "${API_POST_BODY}" || { echo 'FAIL: API POST JSON başarı gövdesi eksik'; fail=1; }
 
-          echo "home=${home_code} service=${service_code} privacy=${privacy_code} robots=${robots_code} api_get=${api_get_code} api_post=${api_post_code}"
+          [[ "${not_found_code}" == "404" ]] || { echo "FAIL: bilinmeyen URL beklenen 404, gelen ${not_found_code}"; fail=1; }
+          grep -qi '^x-robots-tag:[[:space:]]*noindex, follow' "${NOT_FOUND_HEADERS}" || { echo 'FAIL: 404 X-Robots-Tag eksik'; fail=1; }
+          grep -q '<title>Sayfa Bulunamadı | Canpolat Nakliyat</title>' "${NOT_FOUND_BODY}" || { echo 'FAIL: markalı 404 gövdesi eksik'; fail=1; }
+
+          echo "home=${home_code} service=${service_code} privacy=${privacy_code} robots=${robots_code} api_get=${api_get_code} api_post=${api_post_code} not_found=${not_found_code}"
           if (( fail != 0 )); then
             exit 1
           fi

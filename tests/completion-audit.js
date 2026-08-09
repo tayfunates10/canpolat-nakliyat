@@ -56,6 +56,9 @@ for (const service of [
 requireToken('index.php', indexPhp, "__DIR__ . '/index-template.html'", 'private şablon kullanılmalıdır.');
 requireToken('index.php', indexPhp, 'readfile($templatePath)', 'şablon doğrudan ve dönüştürülmeden sunulmalıdır.');
 requireToken('index.php', indexPhp, "header('X-Hero-Version: R8-11')", 'Hero sürüm başlığı PHP fallback olarak bulunmalıdır.');
+requireToken('index.php', indexPhp, "__DIR__ . '/404.html'", 'markalı 404 şablonu kullanılmalıdır.');
+requireToken('index.php', indexPhp, 'http_response_code(404)', 'bilinmeyen URL için gerçek 404 durumu verilmelidir.');
+requireToken('index.php', indexPhp, "header('X-Robots-Tag: noindex, follow')", '404 yanıtı indekslemeye kapalı olmalıdır.');
 if (/str_replace|preg_replace|\\\\n/.test(indexPhp)) failures.push('index.php: kırılgan runtime metin dönüşümü bulunmamalıdır.');
 
 for (const token of [

@@ -262,7 +262,7 @@ for (const [id, filename, expectedHash] of heroLayers) {
 if ((template.match(/hero-r8__layer--[a-z0-9]+/g) || []).length !== 13) failures.push('index-template.html: tam 13 Hero R8 katmanı bulunmalıdır.');
 
 const indexPhp = read('index.php');
-for (const token of ["__DIR__ . '/index-template.html'", 'is_readable($templatePath)', 'readfile($templatePath)', "header('Content-Type: text/html; charset=UTF-8')"]) requireToken('index.php', indexPhp, token, `sade renderer öğesi eksik: ${token}`);
+for (const token of ["__DIR__ . '/index-template.html'", "__DIR__ . '/404.html'", 'http_response_code(404)', "header('X-Robots-Tag: noindex, follow')", 'is_readable($templatePath)', 'readfile($templatePath)', "header('Content-Type: text/html; charset=UTF-8')"]) requireToken('index.php', indexPhp, token, `sade renderer/404 öğesi eksik: ${token}`);
 for (const forbiddenToken of ['str_replace(', 'preg_replace(', 'X-LiteSpeed-Purge', 'Clear-Site-Data']) if (indexPhp.includes(forbiddenToken)) failures.push(`index.php: kırılgan runtime dönüşümü bulunmamalı: ${forbiddenToken}`);
 
 const indexStub = read('index.html');
@@ -282,7 +282,7 @@ heroLayers.forEach(([id], index) => {
 });
 
 const htaccess = read('.htaccess');
-for (const token of ['DirectoryIndex index.php', '!^www\\.canpolatnakliyat\\.com$', 'RewriteRule ^$ index.php [L]', 'Header always unset X-Okur-Htaccess', 'Content-Security-Policy', "script-src 'self'", 'Strict-Transport-Security']) requireToken('.htaccess', htaccess, token, `production kuralı eksik: ${token}`);
+for (const token of ['DirectoryIndex index.php', '!^www\\.canpolatnakliyat\\.com$', 'RewriteRule ^$ index.php [L]', 'RewriteCond %{REQUEST_FILENAME} !-f', 'RewriteCond %{REQUEST_FILENAME} !-d', 'Header always unset X-Okur-Htaccess', 'Content-Security-Policy', "script-src 'self'", 'Strict-Transport-Security']) requireToken('.htaccess', htaccess, token, `production kuralı eksik: ${token}`);
 
 const deploy = read('scripts/prepare-deploy.sh');
 for (const token of ['"index-template.html"', '"api"', '"css"', '"js"', '"hizmetler"', '"bolgeler"']) requireToken('scripts/prepare-deploy.sh', deploy, token, `yayın yolu eksik: ${token}`);
