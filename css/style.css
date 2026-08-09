@@ -319,10 +319,6 @@ address { font-style: normal; }
 .quote { color: #edf2f7; background: var(--navy); }
 .quote__grid { display: grid; grid-template-columns: .72fr 1.28fr; gap: 72px; align-items: start; }
 .quote__intro > p:not(.eyebrow) { margin-top: 22px; color: #bbc5d1; }
-.quote__contact { margin-top: 38px; display: grid; gap: 12px; }
-.quote__contact a { display: grid; padding: 17px 18px; border: 1px solid rgba(255,255,255,.13); border-radius: 12px; background: rgba(255,255,255,.035); }
-.quote__contact small { color: #9eabba; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
-.quote__contact strong { margin-top: 4px; color: #fff; font-size: 15px; overflow-wrap: anywhere; }
 .quote-form { padding: 34px; border: 1px solid rgba(255,255,255,.16); border-radius: 22px; background: rgba(11, 20, 33, .36); box-shadow: 0 22px 60px rgba(0,0,0,.18); }
 .quote-form__head { margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .quote-form__head h3 { font-size: 24px; }
@@ -503,8 +499,10 @@ address { font-style: normal; }
   .site-header__inner { min-height: 68px; }
   .brand, .brand img { width: 198px; flex-basis: 198px; }
   .menu-toggle { width: 42px; height: 42px; }
-  /* Telefon genişliğinde arka plan görseli kırpıldığında düz lacivertten ayırt edilemiyor; indirmeye değmediği için yalnız gradient bırakılır (preload da media ile kapalı). */
-  .hero { background-image: radial-gradient(circle at 80% 10%, rgba(239, 124, 0, .09), transparent 36%), linear-gradient(125deg, #111c2d 0%, #253349 58%, #1c2b41 100%); background-size: auto; background-position: center center; }
+  /* Telefonda gorselin tek yuksek kontrastli bolgesi sag kenardaki sehir
+     kumesi ve turuncu ufuk parlamasi; kirpim oraya sabitlenir ve overlay
+     metin kontrastini korumak icin ustte koyu, altta acik tutulur. */
+  .hero { background-image: radial-gradient(circle at 82% 16%, rgba(239, 124, 0, .12), transparent 38%), linear-gradient(180deg, rgba(15, 25, 41, .95) 0%, rgba(15, 25, 41, .88) 40%, rgba(17, 28, 45, .55) 68%, rgba(20, 33, 52, .3) 100%), url('/assets/images/hero/canpolat-hero-bg-2026.webp?v=20260809-02'); background-size: auto 132%; background-position: center center, center center, 88% 58%; }
   .hero__content { padding-top: 42px; }
   .hero h1 { margin-top: 17px; font-size: clamp(44px, 13vw, 62px); }
   .hero__lead { margin-top: 22px; font-size: 15px; }
@@ -556,8 +554,10 @@ address { font-style: normal; }
   .final-cta__inner { padding: 42px 0 46px; }
   .final-cta__actions { display: grid; }
   .final-cta .button { width: 100%; }
-  .final-cta__features { gap: 12px 16px; }
-  .final-cta__features li + li { padding-left: 16px; }
+  /* Uc oge 360px kapsayiciya sigmiyor ve ucuncusu alt satira dusuyordu;
+     bu genislikte kasitli olarak dikey listeye alinir. */
+  .final-cta__features { display: grid; justify-items: start; gap: 11px; }
+  .final-cta__features li + li { padding-left: 0; border-left: 0; }
   .final-cta__phone strong { font-size: 22px; }
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px 24px; }
   .footer-brand { grid-column: 1 / -1; }
@@ -780,4 +780,26 @@ address { font-style: normal; }
   .final-cta.is-visible .final-cta__truck,
   .final-cta.is-visible .final-cta__ground,
   .final-cta.is-visible .final-cta__pin-ring { animation: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   Galeri. Ana sayfada bir seçki, /galeri.html sayfasında tamamı; ikisi de
+   aynı ızgarayı kullanır. Görseller 16/10 kaynak oranında kırpılmadan durur.
+--------------------------------------------------------------------------- */
+.gallery { background: var(--cream-2); }
+.gallery__grid { margin-top: 8px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.gallery__item { margin: 0; overflow: hidden; border: 1px solid rgba(37,51,73,.1); border-radius: var(--radius-md); background: var(--cream); box-shadow: 0 8px 24px rgba(23,32,51,.06); }
+.gallery__item img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; transition: transform .45s ease; }
+.gallery__item:hover img { transform: scale(1.04); }
+.gallery__all { margin-top: 34px; }
+.gallery--page { background: var(--cream); }
+.gallery--page .gallery__grid { margin-top: 0; }
+
+@media (max-width: 960px) {
+  .gallery__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+}
+
+@media (max-width: 560px) {
+  .gallery__grid { grid-template-columns: minmax(0, 1fr); }
+  .gallery__all { width: 100%; }
 }

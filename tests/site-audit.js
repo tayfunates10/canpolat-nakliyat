@@ -45,6 +45,7 @@ function validateSchemaUrls(value, relative, trail = 'schema') {
 const publicPages = [
   'index-template.html',
   'hakkimizda.html',
+  'galeri.html',
   'gizlilik.html',
   'bolgeler/edremit-nakliyat.html',
   'hizmetler/evden-eve-nakliyat.html',
@@ -67,7 +68,7 @@ for (const relative of publicPages.concat(['404.html'])) {
     'id="ana-icerik"',
     'rel="icon" href="/assets/images/favicon-canpolat.svg"',
     'rel="manifest" href="/manifest.webmanifest"',
-    'href="/css/style.css?v=20260809-12"',
+    'href="/css/style.css?v=20260809-13"',
     'href="tel:+905359120691"',
     'https://wa.me/905359120691',
     'Camivasat Mah. Akçay Cad. No: 78',
@@ -295,4 +296,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log('PASS: 9 indekslenebilir sayfa, 5 hizmet içeriği, SEO/bağlantı yapısı, NAP, güvenlik, 5/5 hizmet görseli ve 14/14 kilitli Hero R8 katmanı doğrulandı.');
+console.log('PASS: 10 indekslenebilir sayfa, 5 hizmet içeriği, SEO/bağlantı yapısı, NAP, güvenlik, 5/5 hizmet görseli ve 14/14 kilitli Hero R8 katmanı doğrulandı.');
