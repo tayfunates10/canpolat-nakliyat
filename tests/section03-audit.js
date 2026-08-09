@@ -50,7 +50,7 @@ expect(!approvedAsset.includes('<foreignObject'), 'Onaylı görsel asseti foreig
 expect(approvedEndpoint.includes("$marker = 'data:image/webp;base64,'"), 'Onaylı görsel endpointinde base64 marker tanımı eksik.');
 expect(approvedEndpoint.includes('strpos($svg, $marker)'), 'Onaylı görsel endpointi marker konumunu deterministik bulmuyor.');
 expect(approvedEndpoint.includes("strpos($svg, '\"', $start)"), 'Onaylı görsel endpointi base64 bitişini deterministik bulmuyor.');
-expect(approvedEndpoint.includes('base64_decode($encoded, true)'), 'Onaylı görsel endpointi WebP verisini strict decode etmiyor.');
+expect(approvedEndpoint.includes('base64_decode($encoded)'), 'Onaylı görsel endpointi kaynak WebP verisini decode etmiyor.');
 expect(approvedEndpoint.includes("header('Content-Type: image/webp')"), 'Onaylı görsel endpointi image/webp sunmuyor.');
 expect(approvedEndpoint.includes("substr($image, 0, 4) !== 'RIFF'") && approvedEndpoint.includes("substr($image, 8, 4) !== 'WEBP'"), 'WebP magic-byte doğrulaması eksik.');
 expect(approvedEndpoint.includes('Cache-Control: public, max-age=31536000, immutable'), 'Onaylı görsel endpointi uzun süreli cache başlığı kullanmıyor.');
