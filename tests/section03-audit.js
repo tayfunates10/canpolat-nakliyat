@@ -47,8 +47,11 @@ expect(approvedAsset.includes('viewBox="0 0 1200 900"'), 'Onaylı görsel 4:3 / 
 expect(approvedAsset.includes('data:image/webp;base64,'), 'Onaylı görsel kaynak WebP verisini içermiyor.');
 expect(!approvedAsset.includes('<script'), 'Onaylı görsel asseti script içeremez.');
 expect(!approvedAsset.includes('<foreignObject'), 'Onaylı görsel asseti foreignObject içeremez.');
+expect(approvedEndpoint.includes("$marker = 'data:image/webp;base64,'"), 'Onaylı görsel endpointinde base64 marker tanımı eksik.');
+expect(approvedEndpoint.includes('strpos($svg, $marker)'), 'Onaylı görsel endpointi marker konumunu deterministik bulmuyor.');
+expect(approvedEndpoint.includes("strpos($svg, '\"', $start)"), 'Onaylı görsel endpointi base64 bitişini deterministik bulmuyor.');
+expect(approvedEndpoint.includes('base64_decode($encoded, true)'), 'Onaylı görsel endpointi WebP verisini strict decode etmiyor.');
 expect(approvedEndpoint.includes("header('Content-Type: image/webp')"), 'Onaylı görsel endpointi image/webp sunmuyor.');
-expect(approvedEndpoint.includes("base64_decode($match[1], true)"), 'Onaylı görsel endpointi kaynak WebP verisini strict decode etmiyor.');
 expect(approvedEndpoint.includes("substr($image, 0, 4) !== 'RIFF'") && approvedEndpoint.includes("substr($image, 8, 4) !== 'WEBP'"), 'WebP magic-byte doğrulaması eksik.');
 expect(approvedEndpoint.includes('Cache-Control: public, max-age=31536000, immutable'), 'Onaylı görsel endpointi uzun süreli cache başlığı kullanmıyor.');
 expect(approvedEndpoint.includes("X-Content-Type-Options: nosniff"), 'Onaylı görsel endpointinde nosniff eksik.');
@@ -91,6 +94,7 @@ if (failures.length) {
 
 console.log('BÖLÜM 03 STATIC AUDIT PASS');
 console.log('- Kullanıcı onaylı 4:3 Hakkımızda görsel kaynağı ve direct WebP endpoint doğrulandı');
+console.log('- Regexsiz, deterministik WebP decode yolu doğrulandı');
 console.log('- Gerçek logo/açıklama overlay ve CSS Edremit/Balıkesir pini doğrulandı');
 console.log('- Eski R8 Hakkımızda kompozisyonunun kaldırıldığı doğrulandı');
 console.log('- Görsel altı ve paragraf altı iki farklı ikon grubu doğrulandı');
