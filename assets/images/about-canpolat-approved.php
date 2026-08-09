@@ -29,9 +29,9 @@ if ($end === false || $end <= $start) {
 
 $encoded = substr($svg, $start, $end - $start);
 $encoded = str_replace(["\r", "\n", "\t", " "], '', $encoded);
-$image = base64_decode($encoded, true);
+$image = base64_decode($encoded);
 
-if ($image === false || strlen($image) < 1024 || substr($image, 0, 4) !== 'RIFF' || substr($image, 8, 4) !== 'WEBP') {
+if (!is_string($image) || strlen($image) < 1024 || substr($image, 0, 4) !== 'RIFF' || substr($image, 8, 4) !== 'WEBP') {
     http_response_code(500);
     exit;
 }
