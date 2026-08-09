@@ -2,7 +2,7 @@
   <div class="container about-v2__inner">
     <figure class="about-v2__visual" data-about-visual>
       <div class="about-v2__scene">
-        <img class="about-v2__approved-image" src="assets/images/about-canpolat-approved.webp?v=20260809-05" alt="Türkiye haritası arka planında Balıkesir bölgesi vurgulu, ön planda Canpolat Nakliyat kamyonu ve taşınma eşyaları" width="900" height="675" loading="lazy" decoding="async">
+        <img class="about-v2__approved-image" src="assets/images/about-canpolat-approved.php?v=20260809-06" alt="Türkiye haritası arka planında Balıkesir bölgesi vurgulu, ön planda Canpolat Nakliyat kamyonu ve taşınma eşyaları" width="900" height="675" loading="lazy" decoding="async">
 
         <div class="about-v2__brand-overlay" data-about-brand>
           <img class="about-v2__logo" src="assets/images/canpolat-logo.svg?v=20260808-03" alt="" width="597" height="151" loading="lazy" decoding="async">
