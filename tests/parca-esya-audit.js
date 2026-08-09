@@ -4,6 +4,7 @@ const path = require('path');
 const root = path.resolve(__dirname, '..');
 const pagePath = path.join(root, 'hizmetler/parca-esya-tasimaciligi.html');
 const sitemapPath = path.join(root, 'sitemap.xml');
+const deployPath = path.join(root, 'scripts/prepare-deploy.sh');
 const failures = [];
 
 if (!fs.existsSync(pagePath)) {
@@ -57,10 +58,18 @@ if (!fs.existsSync(sitemapPath)) {
   if (!sitemap.includes('<loc>https://www.canpolatnakliyat.com/hizmetler/parca-esya-tasimaciligi.html</loc>')) failures.push('Parça eşya URL sitemap içinde eksik.');
 }
 
+if (!fs.existsSync(deployPath)) {
+  failures.push('scripts/prepare-deploy.sh eksik.');
+} else {
+  const deploy = fs.readFileSync(deployPath, 'utf8');
+  const matches = deploy.match(/"hizmetler\/parca-esya-tasimaciligi\.html"/g) || [];
+  if (matches.length < 2) failures.push('Parça eşya sayfası deploy giriş ve çıktı doğrulamasında zorunlu değil.');
+}
+
 if (failures.length) {
   console.error('Parça eşya denetimi başarısız:');
   failures.forEach(failure => console.error(`- ${failure}`));
   process.exit(1);
 }
 
-console.log('PASS: Parça eşya hizmet sayfası, SEO, yerel kapsam, içerik ve sitemap doğrulandı.');
+console.log('PASS: Parça eşya hizmet sayfası, SEO, yerel kapsam, içerik, sitemap ve deploy paketi doğrulandı.');
