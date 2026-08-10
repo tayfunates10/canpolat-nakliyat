@@ -19,6 +19,12 @@ AddDefaultCharset UTF-8
   RewriteCond %{THE_REQUEST} \s/+index\.(?:php|html)(?:[?\s]) [NC]
   RewriteRule ^index\.(?:php|html)$ / [R=301,L,NE]
 
+  # Ortak CSS/JS dosyalarını mevcut ana dosyanın sonuna kontrollü canlı
+  # düzeltmeleri ekleyen PHP katmanından sun. URL değişmez; tüm sayfalar aynı
+  # anda güncellenir ve R8 kaynak dosyalarına dokunulmaz.
+  RewriteRule ^css/style\.css$ css/style-live.php [L]
+  RewriteRule ^js/script\.js$ js/script-live.php [L]
+
   # Kök isteği production PHP girişine gider.
   RewriteRule ^$ index.php [L]
 
@@ -60,8 +66,8 @@ AddDefaultCharset UTF-8
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType text/html "access plus 0 seconds"
-  ExpiresByType text/css "access plus 30 days"
-  ExpiresByType application/javascript "access plus 30 days"
+  ExpiresByType text/css "access plus 0 seconds"
+  ExpiresByType application/javascript "access plus 0 seconds"
   ExpiresByType image/svg+xml "access plus 1 year"
   ExpiresByType image/png "access plus 1 year"
   ExpiresByType image/webp "access plus 1 year"
