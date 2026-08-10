@@ -1,62 +1,59 @@
 /* Desktop-only hero facts placement — 2026-08-11
-   R8 layer geometry is untouched. The three existing hero facts are moved
-   visually into the empty strip beneath the R8 stage and aligned with the
-   hero action row. Tablet/mobile keeps the existing layout unchanged. */
+   Keep the approved R8 stage in its existing desktop position. Only move the
+   three existing fact items into the open strip beneath the R8 scene. Their
+   original icon + text styling is preserved; tablet/mobile stays unchanged. */
 @media (min-width: 961px) {
-  .hero,
-  .hero__inner {
-    min-height: 628px !important;
-  }
-
   .hero__facts {
     position: absolute;
     z-index: 4;
     left: calc(41% + 10px);
     right: 0;
-    bottom: 88px;
+    bottom: 34px;
     width: auto;
     margin: 0 !important;
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px !important;
-    align-items: stretch;
+    align-items: center;
   }
 
+  /* Restore the original desktop visual language: no cards, no panel fill,
+     no added border or blur. Only the placement changes. */
   .hero__facts li {
     min-width: 0;
-    min-height: 54px;
-    padding: 10px 12px;
+    min-height: 0;
+    padding: 0;
     display: flex !important;
     align-items: center !important;
     justify-content: center;
-    gap: 9px !important;
-    border: 1px solid rgba(239,124,0,.26);
-    border-radius: 12px;
-    background: rgba(255,255,255,.065);
-    color: #eef2f6;
-    line-height: 1.25;
+    gap: 8px !important;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: #d7dde5;
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.55;
     text-align: center;
-    backdrop-filter: blur(5px);
+    backdrop-filter: none;
   }
 
   .hero__facts-icon {
-    flex: 0 0 30px;
-    width: 30px;
-    height: 30px;
+    flex: 0 0 27px;
+    width: 27px;
+    height: 27px;
   }
 }
 
-/* The desktop grid changes from .82/.1.18 to .9/1.1 below 1160px, so the
-   visual column begins slightly farther right. Keep the three cards inside
-   the R8 column at that breakpoint without touching tablet/mobile. */
+/* At the narrower desktop grid the R8 column starts farther right. Adjust only
+   the fact-row anchor; the scene itself and its geometry remain untouched. */
 @media (min-width: 961px) and (max-width: 1160px) {
   .hero__facts {
     left: calc(45% + 9px);
-    gap: 10px !important;
+    gap: 8px !important;
   }
 
   .hero__facts li {
-    padding-inline: 9px;
     font-size: 11px;
   }
 }
