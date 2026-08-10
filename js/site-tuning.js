@@ -38,6 +38,84 @@
     if (children.length > 1) children[children.length - 1].remove();
   });
 
+  /*
+   * Mobile entrance gates. The generic section observer intentionally remains
+   * untouched for the rest of the site, but R8 and the final CTA are held in
+   * their true starting states until their own visual area crosses a fixed
+   * lower-middle viewport line. This prevents an animation from being spent
+   * before the user is actually looking at the content.
+   */
+  (function armMobileEntranceGates() {
+    if (!window.matchMedia || !window.matchMedia('(max-width: 720px)').matches) return;
+
+    var r8 = document.getElementById('heroAnimated');
+    var cta = document.querySelector('.final-cta');
+    if (!r8 && !cta) return;
+
+    var frame = 0;
+    var initialScroll = window.scrollY || window.pageYOffset || 0;
+    var userMoved = initialScroll > 8;
+
+    function usableViewportHeight() {
+      var height = window.innerHeight || document.documentElement.clientHeight;
+      var bar = document.querySelector('.mobile-contact-bar');
+      if (!bar || window.getComputedStyle(bar).display === 'none') return height;
+      var rect = bar.getBoundingClientRect();
+      return rect.height ? Math.min(height, Math.max(0, rect.top)) : height;
+    }
+
+    function done() {
+      return (!r8 || r8.classList.contains('is-r8-viewport-ready')) &&
+             (!cta || cta.classList.contains('is-cta-viewport-ready'));
+    }
+
+    function check() {
+      frame = 0;
+      var currentScroll = window.scrollY || window.pageYOffset || 0;
+      if (Math.abs(currentScroll - initialScroll) > 4) userMoved = true;
+      if (!userMoved) return;
+
+      var viewport = usableViewportHeight();
+
+      if (r8 && !r8.classList.contains('is-r8-viewport-ready')) {
+        var r8Rect = r8.getBoundingClientRect();
+        /* R8 starts only when its TOP reaches 62% of the usable viewport.
+           At that point the scene is visibly entering the lower-middle area. */
+        if (r8Rect.bottom > 0 && r8Rect.top <= viewport * 0.62) {
+          r8.classList.add('is-r8-viewport-ready');
+        }
+      }
+
+      if (cta && !cta.classList.contains('is-cta-viewport-ready')) {
+        var ctaRect = cta.getBoundingClientRect();
+        /* CTA gets a little more room: its top must reach 68% of the usable
+           viewport before any of its staged entrance is allowed to play. */
+        if (ctaRect.bottom > 0 && ctaRect.top <= viewport * 0.68) {
+          cta.classList.add('is-cta-viewport-ready');
+        }
+      }
+
+      if (done()) cleanup();
+    }
+
+    function queue() {
+      if (!frame) frame = requestAnimationFrame(check);
+    }
+
+    function cleanup() {
+      window.removeEventListener('scroll', queue);
+      window.removeEventListener('resize', queue);
+      window.removeEventListener('orientationchange', queue);
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+    }
+
+    window.addEventListener('scroll', queue, { passive: true });
+    window.addEventListener('resize', queue, { passive: true });
+    window.addEventListener('orientationchange', queue, { passive: true });
+    queue();
+  })();
+
   if (typeof IntersectionObserver !== 'function') {
     document.querySelectorAll('main > section .reveal').forEach(function (node) {
       node.classList.add('is-content-visible');
