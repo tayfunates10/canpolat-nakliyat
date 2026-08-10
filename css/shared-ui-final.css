@@ -1,0 +1,49 @@
+/* Final shared UI consistency — 2026-08-11. Loaded last on every public page. */
+
+/* Self-contained service-strip icons for compact inner pages. */
+.utility-bar .utility-service-icon {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  display: block;
+  color: var(--orange);
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.8 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* The region group is deliberately two columns so long local-page labels do
+   not build one tall/overflowing stack. This overrides the generic footer-nav
+   phone rule while leaving the other footer groups unchanged. */
+.site-footer .footer-regions {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px 16px !important;
+  width: 100% !important;
+  min-width: 0;
+}
+.site-footer .footer-regions__title {
+  margin-top: 28px !important;
+  margin-bottom: 14px !important;
+}
+.site-footer .footer-regions a {
+  width: auto !important;
+  min-width: 0;
+  padding: 0 !important;
+  line-height: 1.4 !important;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 720px) {
+  .site-footer .footer-regions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 9px 12px !important;
+  }
+  .site-footer .footer-regions a {
+    width: auto !important;
+    padding: 2px 0 !important;
+    font-size: 12px;
+  }
+}
