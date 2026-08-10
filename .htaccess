@@ -54,8 +54,9 @@ AddDefaultCharset UTF-8
     Header always set X-Robots-Tag "noindex, follow"
   </Files>
 
-  <FilesMatch "^(index\.php|index\.html|index-template\.html)$">
+  <FilesMatch "^(index\.php|index\.html|index-template\.html|style-live\.php|script-live\.php)$">
     Header always set Cache-Control "no-cache, max-age=0, must-revalidate"
+    Header always set Expires "Thu, 01 Jan 1970 00:00:00 GMT"
   </FilesMatch>
 </IfModule>
 
@@ -66,8 +67,8 @@ AddDefaultCharset UTF-8
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType text/html "access plus 0 seconds"
-  ExpiresByType text/css "access plus 0 seconds"
-  ExpiresByType application/javascript "access plus 0 seconds"
+  ExpiresByType text/css "access plus 30 days"
+  ExpiresByType application/javascript "access plus 30 days"
   ExpiresByType image/svg+xml "access plus 1 year"
   ExpiresByType image/png "access plus 1 year"
   ExpiresByType image/webp "access plus 1 year"
