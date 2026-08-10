@@ -4,13 +4,23 @@ on:
   push:
     branches:
       - seo-local-2026-08-11
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'bolgeler/**'
+      - 'sitemap.xml'
+      - 'tests/**'
+      - 'scripts/prepare-deploy.sh'
+      - 'package.json'
+      - '.github/workflows/seo-branch-check.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: canpolat-seo-branch-check
+  group: canpolat-seo-branch-check-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
