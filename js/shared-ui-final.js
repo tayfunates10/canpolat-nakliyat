@@ -35,6 +35,24 @@
     });
   })();
 
+  /* Compact SEO templates historically omitted Paketleme ve Montaj. Make both
+     scrolling tracks match the six-service strip used by the complete pages. */
+  document.querySelectorAll('.utility-bar .marquee__track').forEach(function (track) {
+    if (track.querySelector('a[href*="paketleme-montaj"]')) return;
+    var item = document.createElement('li');
+    var link = document.createElement('a');
+    link.href = '/hizmetler/paketleme-montaj.html';
+    link.textContent = 'Paketleme ve Montaj';
+    if (track.getAttribute('aria-hidden') === 'true') link.tabIndex = -1;
+    item.appendChild(link);
+    var elevator = track.querySelector('a[href*="asansorlu-tasima"]');
+    if (elevator && elevator.parentNode && elevator.parentNode.nextSibling) {
+      track.insertBefore(item, elevator.parentNode.nextSibling);
+    } else {
+      track.appendChild(item);
+    }
+  });
+
   /* Compact SEO templates build the utility strip in JS and historically
      omitted icons. Use self-contained SVGs so these do not depend on a sprite. */
   var serviceIcons = {
