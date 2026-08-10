@@ -7,3 +7,5 @@ echo "\n";
 readfile(__DIR__ . '/site-overrides.css');
 echo "\n";
 readfile(__DIR__ . '/shared-chrome-fixes.css');
+echo "\n";
+readfile(__DIR__ . '/hero-desktop-facts.css');
