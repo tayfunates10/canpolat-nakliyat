@@ -362,7 +362,15 @@ address { font-style: normal; }
 .final-cta__ground::after { content: ""; position: absolute; left: 16%; right: 12%; top: 40%; height: 26%; border-radius: 50%; background: radial-gradient(ellipse at 50% 50%, rgba(2,5,11,.9) 0%, rgba(2,5,11,.5) 48%, transparent 76%); filter: blur(5px); }
 .final-cta__truck-wrap { position: relative; z-index: 1; }
 .final-cta__truck { width: 100%; height: auto; filter: saturate(.86) brightness(.94) contrast(1.02); }
-.final-cta__boxes { position: absolute; z-index: 2; left: -3%; bottom: 0; width: 30%; height: auto; filter: saturate(.9) brightness(.95) drop-shadow(0 10px 12px rgba(4,9,17,.5)); }
+/* Koliler kamyonun önünde, zemin üzerinde durmalı. Eski ölçüde (%30)
+   koliler kamyonun tekerleğinden büyük görünüyor ve tampona basmış gibi
+   duruyordu; gerçek oranda bir koli, aracın tekerleği kadardır. Ölçü %20'ye
+   indirildi, taban kamyonun zemin çizgisinin biraz altına alındı (üç çeyrek
+   perspektifte kameraya yakın olan nesne karede daha aşağıda durur) ve
+   altına temas gölgesi konuldu. */
+.final-cta__boxes { position: absolute; z-index: 2; left: -1%; bottom: -2%; width: 20%; }
+.final-cta__boxes::before { content: ""; position: absolute; z-index: 0; left: -8%; right: -8%; bottom: 1%; height: 15%; border-radius: 50%; background: radial-gradient(ellipse at 50% 50%, rgba(2,5,11,.85) 0%, rgba(2,5,11,.45) 46%, transparent 74%); filter: blur(6px); }
+.final-cta__boxes-img { position: relative; z-index: 1; display: block; width: 100%; height: auto; filter: saturate(.9) brightness(.95) drop-shadow(0 6px 8px rgba(4,9,17,.45)); }
 .final-cta__phone { display: inline-flex; align-items: center; gap: 13px; }
 .final-cta__phone-icon { flex: 0 0 46px; width: 46px; height: 46px; display: grid; place-items: center; border: 2px solid rgba(239,124,0,.7); border-radius: 50%; color: var(--orange); transition: background-color .18s ease, border-color .18s ease; }
 .final-cta__phone-icon svg { width: 21px; height: 21px; }
