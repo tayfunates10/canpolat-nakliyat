@@ -36,13 +36,14 @@
     logo.replaceWith(image);
   });
 
-  /* Upgrade compact local-SEO templates to the exact shared site chrome. */
+  /* Upgrade only compact local-SEO templates to the full shared site chrome. */
   (function normalizeSharedChrome() {
     var header = document.querySelector('.site-header');
     if (header) {
+      var compactHeader = !header.id || !header.querySelector('.menu-toggle') || !header.querySelector('#mobile-menu') || !document.querySelector('.utility-bar');
       header.id = 'site-header';
 
-      if (!document.querySelector('.utility-bar')) {
+      if (compactHeader && !document.querySelector('.utility-bar')) {
         var utility = document.createElement('div');
         utility.className = 'utility-bar';
         utility.innerHTML = '<div class="marquee" role="group" aria-label="Hizmetlerimiz">' +
@@ -67,7 +68,7 @@
       if (brand) brand.setAttribute('aria-label', 'Canpolat Nakliyat ana sayfa');
 
       var desktopNav = header.querySelector('.desktop-nav');
-      if (desktopNav) {
+      if (compactHeader && desktopNav) {
         desktopNav.setAttribute('aria-label', 'Ana menü');
         desktopNav.innerHTML = '<a href="/">Ana Sayfa</a>' +
           '<a href="/#hizmetler">Hizmetler</a>' +
@@ -79,7 +80,7 @@
       }
 
       var headerPhone = header.querySelector('.header-phone');
-      if (headerPhone) {
+      if (compactHeader && headerPhone) {
         headerPhone.innerHTML = iconMarkup(ICON_PHONE) + '<span><small>Hemen arayın</small><strong>0535 912 06 91</strong></span>';
       }
 
@@ -88,7 +89,7 @@
       var mobileMenu = header.querySelector('#mobile-menu');
       var createdMenu = false;
 
-      if (inner && !menuButton) {
+      if (compactHeader && inner && !menuButton) {
         menuButton = document.createElement('button');
         menuButton.className = 'menu-toggle';
         menuButton.type = 'button';
@@ -100,7 +101,7 @@
         createdMenu = true;
       }
 
-      if (!mobileMenu) {
+      if (compactHeader && !mobileMenu) {
         mobileMenu = document.createElement('div');
         mobileMenu.className = 'mobile-menu';
         mobileMenu.id = 'mobile-menu';
