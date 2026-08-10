@@ -61,7 +61,7 @@ gallery_images=(
 # Galeri kareleri iki genişlikte yayınlanır; srcset'in iki ucu da eksiksiz olmalı.
 gallery_files=()
 for name in "${gallery_images[@]}"; do
-  gallery_files+=("assets/images/galeri/${name}.webp" "assets/images/galeri/${name}-640.webp")
+  gallery_files+=("assets/images/galeri/${name}.webp" "assets/images/galeri/${name}-mobil.webp")
 done
 
 required_paths=(

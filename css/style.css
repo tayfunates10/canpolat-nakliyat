@@ -784,9 +784,14 @@ address { font-style: normal; }
   .gallery__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 }
 
-@media (max-width: 560px) {
+/* Bant görselin içinde sabit oranda duruyor: kare ne kadar darsa bant o kadar
+   küçük. İki sütunlu dar ekranda 18-23 piksele düşüp okunmaz bir lekeye
+   dönüşüyordu. Tek sütun sınırı 720'ye çekildi; altında kare tam genişlik
+   olduğu için bant da okunur kalıyor. 1100 altında ayrıca bandı daha yüksek
+   ve yazısı daha büyük olan mobil sürüm servis ediliyor (picture/source). */
+@media (max-width: 720px) {
   .gallery__grid,
-  .gallery--page .gallery__grid { grid-template-columns: minmax(0, 1fr); }
+  .gallery--page .gallery__grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .gallery__all { width: 100%; }
 }
 
