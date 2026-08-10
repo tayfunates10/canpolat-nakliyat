@@ -95,6 +95,55 @@
   .hero h1 { margin-top: 0 !important; }
   .footer-bottom { flex-direction: row !important; }
 
+  /* Mobile hero info cards: the DOM order already places these immediately
+     after the two hero actions, so they naturally sit below the WhatsApp
+     button. Two cards form the top row; the third is centered below them. */
+  .hero__facts {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 430px;
+    margin: 18px auto 0 !important;
+    padding: 0 !important;
+    justify-content: initial !important;
+    align-items: stretch;
+    text-align: left;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  .hero__facts li {
+    display: flex !important;
+    min-width: 0;
+    min-height: 58px;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 9px !important;
+    padding: 10px 11px;
+    border: 1px solid rgba(239,124,0,.30);
+    border-radius: 12px;
+    background: rgba(255,255,255,.07);
+    color: #f2f5f8 !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1.25;
+    text-align: left;
+    opacity: 1 !important;
+    visibility: visible !important;
+    animation: none !important;
+    transform: none !important;
+  }
+  .hero__facts li:nth-child(3) {
+    grid-column: 1 / -1;
+    width: calc(50% - 5px);
+    justify-self: center;
+  }
+  .hero__facts-icon {
+    flex: 0 0 30px !important;
+    width: 30px !important;
+    height: 30px !important;
+  }
+
   /* R8 mobile gate: even if hero-animated.js has already finished loading and
      applied is-ready, keep every loaded layer in the exact entrance pose until
      the scene itself crosses the lower-middle viewport trigger line. */
