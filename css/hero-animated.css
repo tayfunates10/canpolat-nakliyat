@@ -67,6 +67,17 @@
 }
 
 /*
+ * Sahne bütünüyle imlece doğru hafifçe eğilir; katmanların kendi derinlik
+ * kaymasıyla birleşince derinlik hissi çıkar. Perspektif sahnede tanımlanır,
+ * eğim ise doğrudan tuvale uygulanır.
+ */
+.hero-r8.is-parallax { perspective: 1400px; }
+.hero-r8.is-parallax .hero-r8__canvas {
+  transform: rotateY(calc(var(--mx, 0) * 1.5deg)) rotateX(calc(var(--my, 0) * -1.1deg));
+  transition: transform 420ms cubic-bezier(.22, 1, .36, 1);
+}
+
+/*
  * R8 katmanlarının her biri 1536x1024 tam şeffaf tuvaldir.
  * Nihai koordinatlar PNG'nin kendi alfa tuvalinde bulunur. Bu nedenle hiçbir
  * breakpointte left/top/width ile obje bazlı yeniden yerleşim yapılmaz.
@@ -101,7 +112,20 @@
 
 .hero-r8.is-ready .hero-r8__layer.is-loaded {
   opacity: 1;
-  transform: translate3d(0, 0, 0) scale(1);
+  transform: translate3d(
+    calc(var(--mx, 0) * var(--depth, 0) * 1px),
+    calc(var(--my, 0) * var(--depth, 0) * .6px),
+    0) scale(1);
+}
+
+/*
+ * Giriş bittikten sonra imleci takip eden paralaks açılır. Giriş süreleri
+ * 900 ms'ye kadar çıktığı için o değerlerle takip ağır kalır; bu durumda
+ * süre kısalır ve katman gecikmeleri sıfırlanır.
+ */
+.hero-r8.is-parallax .hero-r8__layer {
+  transition-duration: 420ms;
+  transition-delay: 0ms;
 }
 
 .hero-r8.has-error .hero-r8__layer.is-loaded {
@@ -131,117 +155,143 @@
 
 /* Kilitli masaüstü giriş animasyonları. */
 .hero-r8__layer--p00 {
+  /* zemin aşağıdan yükselerek oturur */
   --hero-x: 0%;
-  --hero-y: 0%;
-  --hero-scale: .98;
+  --hero-y: 5%;
+  --hero-scale: .93;
   --hero-delay: 0ms;
-  --hero-duration: 500ms;
+  --hero-duration: 700ms;
+  --depth: 3;
 }
 
 .hero-r8__layer--t00 {
-  --hero-x: 5%;
+  /* kamyon soldan sürerek girer */
+  --hero-x: -13%;
   --hero-y: 0%;
-  --hero-scale: .98;
-  --hero-delay: 150ms;
-  --hero-duration: 750ms;
+  --hero-scale: 1;
+  --hero-delay: 120ms;
+  --hero-duration: 900ms;
+  --depth: 7;
 }
 
 .hero-r8__layer--l09 {
-  --hero-x: 3%;
-  --hero-y: 3%;
-  --hero-scale: .98;
-  --hero-delay: 400ms;
-  --hero-duration: 650ms;
+  /* arka grup soldan girer */
+  --hero-x: -7%;
+  --hero-y: 1%;
+  --hero-scale: .97;
+  --hero-delay: 300ms;
+  --hero-duration: 700ms;
+  --depth: 5;
 }
 
 .hero-r8__layer--l03 {
+  /* aşağıdan yükselir */
   --hero-x: 0%;
-  --hero-y: 4%;
-  --hero-scale: .98;
-  --hero-delay: 520ms;
-  --hero-duration: 600ms;
+  --hero-y: 7%;
+  --hero-scale: .96;
+  --hero-delay: 440ms;
+  --hero-duration: 620ms;
+  --depth: 13;
 }
 
 .hero-r8__layer--l02 {
-  --hero-x: -3%;
-  --hero-y: 1%;
-  --hero-scale: .98;
-  --hero-delay: 660ms;
-  --hero-duration: 650ms;
+  /* soldan girer */
+  --hero-x: -6%;
+  --hero-y: 2%;
+  --hero-scale: .97;
+  --hero-delay: 560ms;
+  --hero-duration: 640ms;
+  --depth: 11;
 }
 
 .hero-r8__layer--l01 {
-  --hero-x: -3%;
-  --hero-y: 1%;
-  --hero-scale: .98;
-  --hero-delay: 800ms;
-  --hero-duration: 700ms;
+  /* sağdan girer */
+  --hero-x: 6%;
+  --hero-y: 2%;
+  --hero-scale: .97;
+  --hero-delay: 680ms;
+  --hero-duration: 640ms;
+  --depth: 10;
 }
 
 .hero-r8__layer--l04 {
+  /* yukarıdan iner */
   --hero-x: 0%;
-  --hero-y: 4%;
-  --hero-scale: .98;
-  --hero-delay: 940ms;
-  --hero-duration: 600ms;
+  --hero-y: -7%;
+  --hero-scale: .96;
+  --hero-delay: 800ms;
+  --hero-duration: 620ms;
+  --depth: 12;
 }
 
 .hero-r8__layer--l05 {
-  --hero-x: 0%;
+  /* sağdan girer */
+  --hero-x: 5%;
   --hero-y: 3%;
-  --hero-scale: .98;
-  --hero-delay: 1080ms;
-  --hero-duration: 500ms;
+  --hero-scale: .95;
+  --hero-delay: 920ms;
+  --hero-duration: 600ms;
+  --depth: 15;
 }
 
 .hero-r8__layer--l06 {
-  --hero-x: 0%;
-  --hero-y: 3%;
-  --hero-scale: .97;
-  --hero-delay: 1200ms;
-  --hero-duration: 500ms;
+  /* yukarıdan iner */
+  --hero-x: 2%;
+  --hero-y: -9%;
+  --hero-scale: .94;
+  --hero-delay: 1030ms;
+  --hero-duration: 700ms;
+  --depth: 16;
 }
 
 .hero-r8__layer--l10 {
-  --hero-x: 0%;
-  --hero-y: 3%;
-  --hero-scale: .98;
-  --hero-delay: 1300ms;
-  --hero-duration: 500ms;
+  /* aşağıdan girer */
+  --hero-x: -2%;
+  --hero-y: 6%;
+  --hero-scale: .95;
+  --hero-delay: 1140ms;
+  --hero-duration: 560ms;
+  --depth: 18;
 }
 
 .hero-r8__layer--l11 {
-  --hero-x: 0%;
-  --hero-y: 3%;
-  --hero-scale: .98;
-  --hero-delay: 1400ms;
-  --hero-duration: 500ms;
+  /* sağdan girer */
+  --hero-x: 5%;
+  --hero-y: 2%;
+  --hero-scale: .96;
+  --hero-delay: 1230ms;
+  --hero-duration: 560ms;
+  --depth: 19;
 }
 
 .hero-r8__layer--l07 {
+  /* aşağıdan girer */
   --hero-x: 0%;
-  --hero-y: 3%;
-  --hero-scale: .98;
-  --hero-delay: 1500ms;
-  --hero-duration: 500ms;
+  --hero-y: 6%;
+  --hero-scale: .94;
+  --hero-delay: 1310ms;
+  --hero-duration: 560ms;
+  --depth: 21;
 }
 
 .hero-r8__layer--l08 {
+  /* büyüyerek belirir */
   --hero-x: 0%;
-  --hero-y: 1%;
-  --hero-scale: .99;
-  --hero-delay: 1600ms;
-  --hero-duration: 450ms;
-  --hero-ease: ease-out;
+  --hero-y: 2%;
+  --hero-scale: .88;
+  --hero-delay: 1390ms;
+  --hero-duration: 520ms;
+  --depth: 23;
 }
 
 .hero-r8__layer--l12 {
-  --hero-x: -2%;
+  /* soldan girer */
+  --hero-x: -5%;
   --hero-y: 3%;
-  --hero-scale: .98;
-  --hero-delay: 1700ms;
-  --hero-duration: 500ms;
-  --hero-ease: ease-out;
+  --hero-scale: .95;
+  --hero-delay: 1470ms;
+  --hero-duration: 560ms;
+  --depth: 25;
 }
 
 /* Eski tek-parça hero görseli yerine yalnız R8 kullanılır. */
@@ -306,6 +356,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero-r8.is-parallax .hero-r8__canvas {
+    transform: none !important;
+    transition: none !important;
+  }
+
   .hero-r8__layer {
     transform: none !important;
     transition: none !important;

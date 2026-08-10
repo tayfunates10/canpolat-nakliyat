@@ -79,6 +79,49 @@
     });
   }
 
+  /*
+   * Masaüstünde imleci takip eden paralaks. Katmanların kayma miktarı CSS'teki
+   * --depth ile, sahnenin eğimi ise doğrudan --mx/--my ile belirlenir; burada
+   * yalnız imlecin merkeze göre konumu -1..1 aralığına indirilip yazılır.
+   * Dokunmatik cihazlarda ve hareket azaltma açıkken hiç kurulmaz.
+   */
+  function enableParallax(stage) {
+    if (!window.matchMedia) return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var hero = stage.closest('.hero') || stage;
+    var frame = 0;
+    var x = 0;
+    var y = 0;
+
+    function apply() {
+      frame = 0;
+      stage.style.setProperty('--mx', x.toFixed(3));
+      stage.style.setProperty('--my', y.toFixed(3));
+    }
+
+    function queue() {
+      if (!frame) frame = requestAnimationFrame(apply);
+    }
+
+    hero.addEventListener('mousemove', function (event) {
+      var box = hero.getBoundingClientRect();
+      if (!box.width || !box.height) return;
+      x = ((event.clientX - box.left) / box.width - 0.5) * 2;
+      y = ((event.clientY - box.top) / box.height - 0.5) * 2;
+      queue();
+    }, { passive: true });
+
+    hero.addEventListener('mouseleave', function () {
+      x = 0;
+      y = 0;
+      queue();
+    }, { passive: true });
+
+    stage.classList.add('is-parallax');
+  }
+
   function startHeroAnimation() {
     var stage = document.getElementById('heroAnimated');
     if (!stage) return;
@@ -121,6 +164,9 @@
           requestAnimationFrame(function () {
             stage.classList.add('is-ready');
             document.documentElement.classList.add('hero-r8-mounted');
+            // En geç gelen katman 1470 ms gecikme + 560 ms sürede oturuyor;
+            // paralaks ancak giriş bittikten sonra devreye giriyor.
+            setTimeout(function () { enableParallax(stage); }, 2100);
           });
         });
       });

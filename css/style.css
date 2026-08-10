@@ -861,13 +861,6 @@ address { font-style: normal; }
 .section-title h2 { margin-top: 13px; font-size: clamp(34px, 4vw, 52px); line-height: 1.1; letter-spacing: -.04em; }
 .section-title p { margin-top: 14px; color: var(--muted); }
 
-.page-cta { color: #fff; background: var(--orange); }
-.page-cta__inner { min-height: 190px; display: flex; align-items: center; justify-content: space-between; gap: 42px; }
-.page-cta p { color: #54300a; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: .09em; }
-.page-cta h2 { max-width: 730px; margin-top: 7px; color: var(--navy-3); font-size: clamp(30px, 4vw, 47px); line-height: 1.08; letter-spacing: -.04em; }
-.page-cta__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
-.page-cta .button--navy { min-width: 170px; }
-.page-cta .button--cream { min-width: 170px; }
 
 .legal-meta { margin-bottom: 30px; color: #697487; font-size: 13px; }
 /* Site yolu şeridi ilk satırı tam genişlikte alır, hata metni kalan alanda
@@ -909,9 +902,6 @@ address { font-style: normal; }
   .prose { font-size: 15px; }
   .prose h2 { margin-top: 38px; font-size: 29px; }
   .page-aside, .fact-grid, .related-grid, .area-grid { grid-template-columns: 1fr; }
-  .page-cta__inner { padding: 48px 0; align-items: flex-start; flex-direction: column; gap: 26px; }
-  .page-cta__actions { width: 100%; justify-content: flex-start; }
-  .page-cta__actions .button { flex: 1 1 160px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1136,7 +1126,6 @@ main > section.is-visible .reveal {
 .quote.is-armed { --reveal-from: translateY(26px) scale(.985); }
 .page-hero.is-armed { --reveal-from: translateY(22px); }
 .page-section.is-armed { --reveal-from: translateY(22px); }
-.page-cta.is-armed { --reveal-from: translateY(24px) scale(.985); }
 
 @media (prefers-reduced-motion: reduce) {
   main > section.is-armed .reveal,
