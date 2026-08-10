@@ -41,12 +41,15 @@
 }
 
 /* The uploaded master logo stays untouched on light surfaces. On the two dark
-   surfaces, the same transparent artwork is rendered as a high-contrast white
-   mark so its navy portions cannot disappear into the background. */
-.footer-brand img,
-.final-cta .cta__logo {
+   surfaces, the same transparent artwork is rendered with stronger contrast.
+   CTA opacity is deliberately NOT forced here; its entrance animation needs
+   to own the hidden/visible states. */
+.footer-brand img {
   filter: brightness(0) invert(1) !important;
   opacity: 1 !important;
+}
+.final-cta .cta__logo {
+  filter: brightness(0) invert(1) !important;
 }
 
 /* Footer bottom: legal line centered, duplicate address removed. The copyright
@@ -69,7 +72,7 @@
 }
 
 /* Hero: remove the artificial vertical offset around the copy and center both
-   columns. The .hero-scene / R8 rules and all R8 layers remain untouched. */
+   columns. The .hero-scene / R8 geometry and all R8 asset placement stay intact. */
 .hero__content {
   align-self: center !important;
   padding-top: 0 !important;
@@ -91,6 +94,63 @@
   .hero__content { padding-top: 20px !important; }
   .hero h1 { margin-top: 0 !important; }
   .footer-bottom { flex-direction: row !important; }
+
+  /* R8 mobile gate: even if hero-animated.js has already finished loading and
+     applied is-ready, keep every loaded layer in the exact entrance pose until
+     the scene itself crosses the lower-middle viewport trigger line. */
+  .hero-r8.is-ready:not(.is-r8-viewport-ready) .hero-r8__layer.is-loaded {
+    opacity: 0 !important;
+    transform: translate3d(var(--hero-x, 0), var(--hero-y, 0), 0) scale(var(--hero-scale, .98)) !important;
+    transition: none !important;
+  }
+
+  /* CTA mobile gate: the generic section observer may add is-visible as soon as
+     the section touches the viewport. That must not spend the CTA animation.
+     While the dedicated lower-middle trigger has not fired, all animated CTA
+     parts remain in their real starting states and their animations are paused. */
+  .final-cta.is-armed:not(.is-cta-viewport-ready) .cta__logo,
+  .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__actions .button,
+  .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__truck-wrap,
+  .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__lead,
+  .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__features,
+  .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__phone {
+    opacity: 0 !important;
+    transform: translateY(16px) !important;
+    animation: none !important;
+    transition: none !important;
+  }
+  .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__title-part {
+    clip-path: inset(0 100% 0 0) !important;
+    animation: none !important;
+  }
+  .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__ground {
+    opacity: 0 !important;
+    animation: none !important;
+  }
+
+  /* Supporting CTA content did not have its own original entrance sequence;
+     give those pieces a short stagger only after the dedicated gate opens. */
+  .final-cta.is-armed.is-visible.is-cta-viewport-ready .final-cta__lead {
+    animation: cta-support-in .55s cubic-bezier(.22,1,.36,1) 360ms both !important;
+  }
+  .final-cta.is-armed.is-visible.is-cta-viewport-ready .final-cta__features {
+    animation: cta-support-in .55s cubic-bezier(.22,1,.36,1) 470ms both !important;
+  }
+  .final-cta.is-armed.is-visible.is-cta-viewport-ready .final-cta__phone {
+    animation: cta-support-in .55s cubic-bezier(.22,1,.36,1) 760ms both !important;
+  }
+  .final-cta.is-armed.is-visible.is-cta-viewport-ready .final-cta__ground {
+    animation: cta-ground-in .45s ease 650ms both, cta-ground 5.2s ease-in-out 2.1s infinite !important;
+  }
+}
+
+@keyframes cta-support-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cta-ground-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* Per-content reveal. The legacy section-level is-visible flag is deliberately
@@ -118,5 +178,22 @@ main > section.is-armed .reveal.is-content-visible {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
+  }
+  .hero-r8.is-ready:not(.is-r8-viewport-ready) .hero-r8__layer.is-loaded,
+  .final-cta.is-armed:not(.is-cta-viewport-ready) .cta__logo,
+  .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__actions .button,
+  .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__truck-wrap,
+  .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__lead,
+  .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__features,
+  .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__phone,
+  .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__ground {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+  .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__title-part {
+    clip-path: none !important;
+    animation: none !important;
   }
 }
