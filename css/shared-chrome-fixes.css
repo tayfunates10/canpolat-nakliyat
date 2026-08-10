@@ -2,7 +2,9 @@
    Loaded after style.css and site-overrides.css on every public page. */
 
 /* Header/logo: inner pages use the image logo while the home page keeps its
-   approved inline SVG. Both must occupy the same responsive header footprint. */
+   approved inline SVG. Both must occupy the same responsive header footprint.
+   The content override uses a versioned URL so browsers cannot reuse the old
+   one-year-cached SVG that previously lived at the same path. */
 .site-header .brand {
   min-width: 0;
 }
@@ -11,6 +13,7 @@
   max-width: 100%;
   height: auto !important;
   object-fit: contain;
+  content: url('/assets/images/canpolat-logo.svg?v=20260811-header-approved-v3') !important;
 }
 
 /* Footer: region links are injected by script.js. Give the second footer group
