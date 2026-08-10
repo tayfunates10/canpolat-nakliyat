@@ -50,54 +50,98 @@ address { font-style: normal; }
 .skip-link { position: fixed; left: 18px; top: -80px; z-index: 1000; padding: 12px 18px; border-radius: 8px; color: var(--navy-3); background: var(--orange); font-weight: 850; transition: top .2s ease; }
 .skip-link:focus { top: 18px; }
 
+/* ---------------------------------------------------------------------------
+   Header üstündeki şerit: hizmetler ikonlarıyla sonsuz döngüde sola kayar.
+   İki özdeş liste yan yana durur ve ikisi de kendi genişliği kadar sola
+   kayar; birinci liste tam çıktığında ikincisi onun başladığı noktadadır,
+   bu yüzden döngünün başa dönüşü görünmez. İkinci liste yalnız bu dikişi
+   kapatmak için var, erişilebilirlik ağacından çıkarılmıştır.
+
+   Ögeler arası mesafe tek bir değişkenden gelir ve listenin sağ boşluğu da
+   aynı değere ayarlanır; yoksa dikiş yerindeki aralık ögeler arasındakinden
+   farklı çıkar ve döngü her turda gözle görülür bir sıçrama yapar.
+--------------------------------------------------------------------------- */
 .utility-bar { position: relative; overflow: hidden; color: #edf0f4; background: var(--navy); font-size: 12px; }
-.utility-bar__inner { position: relative; z-index: 1; min-height: 40px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-.utility-bar__list { display: flex; align-items: center; gap: 26px; min-width: 0; }
-.utility-bar__item { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
-.utility-bar__item svg { flex: 0 0 15px; width: 15px; height: 15px; color: var(--orange); stroke-width: 1.7; }
-.utility-bar__item > span, .utility-bar__item > a { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; opacity: .9; }
-.utility-bar__item > a:hover { opacity: 1; color: #ffd7a8; }
-.utility-bar__actions { display: flex; align-items: center; gap: 22px; }
-.utility-bar__phone { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; }
-.utility-bar__phone svg { flex: 0 0 15px; width: 15px; height: 15px; color: var(--orange); stroke-width: 1.7; }
-.utility-bar__phone:hover { color: #ffd7a8; }
+.marquee { --marquee-gap: 54px; display: flex; width: 100%; overflow: hidden; }
+.marquee__track {
+  display: flex; flex: 0 0 auto; align-items: center; margin: 0; list-style: none;
+  gap: var(--marquee-gap); padding: 11px var(--marquee-gap) 11px 0;
+  animation: marquee-left 34s linear infinite;
+}
+.marquee__track li { flex: 0 0 auto; }
+.marquee a { display: inline-flex; align-items: center; gap: 9px; white-space: nowrap; font-weight: 700; transition: color .18s ease; }
+.marquee a, .marquee a:link, .marquee a:visited { color: #edf0f4; }
+.marquee svg { flex: 0 0 16px; width: 16px; height: 16px; color: var(--orange); stroke-width: 1.7; transition: transform .18s ease; }
+.marquee a:hover { color: #ffd7a8; }
+.marquee a:hover svg { transform: scale(1.15); }
+.marquee a:active { color: var(--orange); }
+.marquee a:focus-visible { outline: 2px solid var(--orange); outline-offset: 4px; border-radius: 4px; }
+/* Kayan bir bağlantıya nişan almak zor; imleç şeridin üzerine gelince ya da
+   klavye odağı içeri girince akış durur. */
+.marquee:hover .marquee__track, .marquee:focus-within .marquee__track { animation-play-state: paused; }
 
-/* Şerit yüklendiğinde ögeler soldan sırayla yerine oturur, ardından ince bir ışık şeridi yavaşça geçer. */
-.utility-bar__item, .utility-bar__phone { animation: utility-in .5s cubic-bezier(.22,1,.36,1) both; }
-.utility-bar__list .utility-bar__item:nth-child(1) { animation-delay: 60ms; }
-.utility-bar__list .utility-bar__item:nth-child(2) { animation-delay: 150ms; }
-.utility-bar__actions .utility-bar__item { animation-delay: 240ms; }
-.utility-bar__phone { animation-delay: 330ms; }
-.utility-bar::after { content: ""; position: absolute; z-index: 0; inset: 0 auto 0 0; width: 38%; background: linear-gradient(100deg, transparent, rgba(239,124,0,.16) 45%, rgba(255,255,255,.07) 60%, transparent); transform: translateX(-120%); animation: utility-sheen 11s cubic-bezier(.5,0,.5,1) 1.6s infinite; pointer-events: none; }
-
-@keyframes utility-in { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
-@keyframes utility-sheen { 0% { transform: translateX(-120%); } 42%, 100% { transform: translateX(340%); } }
+@keyframes marquee-left { from { transform: translateX(0); } to { transform: translateX(-100%); } }
 
 .site-header { position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(37, 51, 73, .1); background: rgba(255, 255, 255, .94); backdrop-filter: blur(18px); transition: box-shadow .2s ease; }
 .site-header.is-scrolled { box-shadow: 0 10px 30px rgba(24, 35, 53, .1); }
 .site-header__inner { min-height: 82px; display: flex; align-items: center; gap: 34px; }
 /* ---------------------------------------------------------------------------
-   Logo. Başlıktaki logo bir bağlantı olduğu için bütün durumları ayrı ayrı
-   tanımlanır: dinlenme, üzerine gelme, klavye odağı, basılı tutma ve ziyaret
-   edilmiş hâl. Renk değiştiremediğimiz bir SVG görseli olduğundan durumlar
-   yükselme, turuncu parıltı ve altındaki turuncu çubukla anlatılır.
+   Logo. Amblem satır içi SVG olarak durur, çünkü <img> içindeki parçalara CSS
+   erişemez. Dört parça ayrı ayrı hareket eder: lacivert kemer, turuncu ok,
+   CANPOLAT kelimesi ve alt satır.
+
+   Açılışta parçalar kendi yönlerinden gelip birleşir; imleç üzerine geldiğinde
+   aynı parçalar bir tık ayrışır. Her parça kendi merkezine göre dönsün diye
+   transform-box: fill-box gerekir; varsayılan olan view-box'ta hepsi tuvalin
+   köşesine göre döner ve amblem dağılır.
+
+   Bağlantının bütün durumları ayrı tanımlıdır: dinlenme, üzerine gelme,
+   klavye odağı, basılı tutma ve ziyaret edilmiş hâl.
 --------------------------------------------------------------------------- */
-.brand { position: relative; flex: 0 0 242px; display: block; border-radius: 6px; transition: transform .22s cubic-bezier(.22,1,.36,1); }
-.brand img { display: block; width: 242px; height: auto; transition: filter .22s ease; animation: brand-in .7s cubic-bezier(.22,1,.36,1) both; }
+.brand { position: relative; flex: 0 0 242px; display: block; border-radius: 6px; }
 .brand:link, .brand:visited { text-decoration: none; }
+.brand__logo { display: block; width: 242px; height: auto; overflow: visible; }
+.brand__logo > g { transform-box: fill-box; transform-origin: center; }
+.brand__arc, .brand__chev, .brand__word, .brand__sub {
+  transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .3s ease;
+}
+
+/* Açılış: her parça kendi karakterine uygun bir yerden gelir. */
+.brand__arc { animation: brand-arc-in .72s cubic-bezier(.22,1,.36,1) backwards; }
+.brand__chev { animation: brand-chev-in .72s cubic-bezier(.34,1.4,.5,1) 110ms backwards; }
+.brand__word { animation: brand-word-in .6s cubic-bezier(.22,1,.36,1) 210ms backwards; }
+.brand__sub { animation: brand-word-in .6s cubic-bezier(.22,1,.36,1) 310ms backwards; }
+@keyframes brand-arc-in { from { opacity: 0; transform: rotate(-38deg) scale(.72); } to { opacity: 1; transform: none; } }
+@keyframes brand-chev-in { from { opacity: 0; transform: translateY(34%) scale(.8); } to { opacity: 1; transform: none; } }
+@keyframes brand-word-in { from { opacity: 0; transform: translateX(-13px); } to { opacity: 1; transform: none; } }
+
 /* Bağlantı olduğunu gösteren, ortadan açılan turuncu çubuk. */
 .brand::after { content: ""; position: absolute; left: 50%; right: 50%; bottom: -7px; height: 2px; border-radius: 2px; background: var(--orange); transition: left .24s ease, right .24s ease; }
-.brand:hover { transform: translateY(-2px); }
-.brand:hover img { filter: saturate(1.15) drop-shadow(0 6px 12px rgba(239,124,0,.32)); }
 .brand:hover::after, .brand:focus-visible::after { left: 0; right: 0; }
+
+/* Üzerine gelme ve klavye odağı: parçalar ayrışır, ok öne çıkar. */
+.brand:hover .brand__arc, .brand:focus-visible .brand__arc { transform: rotate(-11deg) scale(1.07); }
+.brand:hover .brand__chev, .brand:focus-visible .brand__chev { transform: translateY(-9%) scale(1.1); }
+.brand:hover .brand__word, .brand:focus-visible .brand__word { transform: translateX(5px); }
+.brand:hover .brand__sub, .brand:focus-visible .brand__sub { transform: translateX(9px); }
 .brand:focus-visible { outline: 3px solid var(--orange); outline-offset: 6px; }
-.brand:active { transform: translateY(0); }
-.brand:active img { filter: saturate(1.3) brightness(.94); }
-@keyframes brand-in { from { opacity: 0; transform: translateY(-7px) scale(.97); } to { opacity: 1; transform: none; } }
+
+/* Basılı tutma: parçalar tersine, merkeze doğru toplanır. */
+.brand:active .brand__arc { transform: rotate(3deg) scale(.95); }
+.brand:active .brand__chev { transform: translateY(2%) scale(.95); }
+.brand:active .brand__word { transform: translateX(-2px); }
+.brand:active .brand__sub { transform: translateX(-3px); }
+.brand:active .brand__arc, .brand:active .brand__chev,
+.brand:active .brand__word, .brand:active .brand__sub { transition-duration: .09s; }
+
 @media (prefers-reduced-motion: reduce) {
-  .brand, .brand img { transition: none; }
-  .brand img { animation: none; }
-  .brand:hover { transform: none; }
+  .brand__arc, .brand__chev, .brand__word, .brand__sub { animation: none; transition: none; }
+  .brand:hover .brand__arc, .brand:hover .brand__chev,
+  .brand:hover .brand__word, .brand:hover .brand__sub,
+  .brand:focus-visible .brand__arc, .brand:focus-visible .brand__chev,
+  .brand:focus-visible .brand__word, .brand:focus-visible .brand__sub,
+  .brand:active .brand__arc, .brand:active .brand__chev,
+  .brand:active .brand__word, .brand:active .brand__sub { transform: none; }
 }
 .desktop-nav { margin-left: auto; display: flex; align-items: center; gap: 27px; }
 .desktop-nav a { position: relative; padding: 29px 0 25px; color: #334054; font-size: 13px; font-weight: 760; transition: color .18s ease; }
@@ -337,8 +381,9 @@ address { font-style: normal; }
    Her top kendi rotasını offset-path olarak taşır; süre rota uzunluğuyla
    orantılı ki altı topun hızı aynı görünsün. İki uçta sönümlenerek başa
    dönüyor, böylece sıçrama görünmüyor. */
-/* Yarıçap harita birimindedir; harita küçüldükçe top da küçülür, bu yüzden
-   dar ekranlarda yarıçap ölçek kaybını telafi edecek kadar büyütülür. */
+/* Yarıçap harita birimindedir, yani top haritayla birlikte ölçeklenir. Dar
+   ekranda büyütülmüyor: büyütülünce şehir noktalarına göre orantısız kalıp
+   masaüstündekinden iri görünüyordu. */
 .regions-map .rtop {
   r: 10; fill: #ffd7a8; offset-rotate: 0deg; opacity: 0;
   filter: drop-shadow(0 0 7px rgba(239,124,0,.95));
@@ -529,10 +574,10 @@ address { font-style: normal; }
   background: linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent);
   transform: translateX(-160%) skewX(-18deg); pointer-events: none;
 }
-.floating-actions a::before { animation: action-sheen 6.7s cubic-bezier(.5,0,.5,1) .4s infinite; }
-.floating-actions svg { animation: action-cue 6.7s cubic-bezier(.36,.07,.19,.97) .4s infinite; }
-.floating-actions__phone::before, .floating-actions__phone svg { animation-duration: 8.3s; animation-delay: 2.9s; }
-.floating-actions__wa::before, .floating-actions__wa svg { animation-duration: 10.9s; animation-delay: 1.7s; }
+.floating-actions a::before { animation: action-sheen 3.1s cubic-bezier(.5,0,.5,1) .4s infinite; }
+.floating-actions svg { animation: action-cue 3.1s cubic-bezier(.36,.07,.19,.97) .4s infinite; }
+.floating-actions__phone::before, .floating-actions__phone svg { animation-duration: 3.7s; animation-delay: 1.3s; }
+.floating-actions__wa::before, .floating-actions__wa svg { animation-duration: 4.3s; animation-delay: 2.2s; }
 /* Kullanıcı zaten butonun üzerindeyse dikkat çekmeye gerek yok. */
 .floating-actions a:hover::before, .floating-actions a:hover svg { animation-play-state: paused; }
 
@@ -561,12 +606,11 @@ address { font-style: normal; }
 
 @media (max-width: 960px) {
   .section { padding: 82px 0; }
-  .regions-map .rtop { r: 17; }
   .desktop-nav, .header-actions { display: none; }
   .menu-toggle { display: block; }
   .site-header__inner { min-height: 74px; }
   .brand { flex-basis: 220px; }
-  .brand img { width: 220px; }
+  .brand__logo { width: 220px; }
   .hero, .hero__inner { min-height: auto; }
   .hero { background-image: radial-gradient(circle at 80% 12%, rgba(239, 124, 0, .1), transparent 34%), linear-gradient(180deg, rgba(17, 28, 45, .93) 0%, rgba(17, 28, 45, .85) 40%, rgba(19, 31, 50, .56) 70%, rgba(24, 38, 59, .26) 100%), url('/assets/images/hero/canpolat-hero-bg-2026.webp?v=20260809-02'); background-size: cover; background-position: center center, center center, 66% 42%; }
   .hero__inner { grid-template-columns: 1fr; gap: 0; padding-top: 22px; }
@@ -595,13 +639,12 @@ address { font-style: normal; }
 @media (max-width: 720px) {
   .container { width: calc(100% - 30px); }
   .section { padding: 68px 0; }
-  .regions-map .rtop { r: 22; }
-  .utility-bar__list .utility-bar__item:first-child { display: none; }
-  .utility-bar__inner { justify-content: center; }
-  .utility-bar__actions { justify-content: flex-end; }
-  .utility-bar__inner { gap: 14px; }
+  .marquee { --marquee-gap: 34px; }
+  .marquee__track { padding-top: 9px; padding-bottom: 9px; animation-duration: 26s; }
+  .marquee svg { flex-basis: 15px; width: 15px; height: 15px; }
   .site-header__inner { min-height: 68px; }
-  .brand, .brand img { width: 198px; flex-basis: 198px; }
+  .brand { flex-basis: 198px; }
+  .brand__logo { width: 198px; }
   .menu-toggle { width: 42px; height: 42px; }
   /* Telefonda gorselin tek yuksek kontrastli bolgesi sag kenardaki sehir
      kumesi ve turuncu ufuk parlamasi; kirpim oraya sabitlenir ve overlay
@@ -673,16 +716,17 @@ address { font-style: normal; }
   .mobile-contact-bar__wa { color: #fff; background: var(--green); }
   .mobile-contact-bar__wa:link, .mobile-contact-bar__wa:visited { color: #fff; }
   .mobile-contact-bar a { overflow: hidden; }
-  .mobile-contact-bar__dir::before, .mobile-contact-bar__dir svg { animation: 7.3s cubic-bezier(.5,0,.5,1) 1.1s infinite; }
-  .mobile-contact-bar__phone::before, .mobile-contact-bar__phone svg { animation: 9.1s cubic-bezier(.5,0,.5,1) 3.4s infinite; }
-  .mobile-contact-bar__wa::before, .mobile-contact-bar__wa svg { animation: 11.7s cubic-bezier(.5,0,.5,1) 2.2s infinite; }
+  .mobile-contact-bar__dir::before, .mobile-contact-bar__dir svg { animation: 3.3s cubic-bezier(.5,0,.5,1) .6s infinite; }
+  .mobile-contact-bar__phone::before, .mobile-contact-bar__phone svg { animation: 4.1s cubic-bezier(.5,0,.5,1) 1.5s infinite; }
+  .mobile-contact-bar__wa::before, .mobile-contact-bar__wa svg { animation: 4.9s cubic-bezier(.5,0,.5,1) 2.4s infinite; }
   .mobile-contact-bar a::before { animation-name: action-sheen; }
   .mobile-contact-bar a svg { animation-name: action-cue; animation-timing-function: cubic-bezier(.36,.07,.19,.97); }
   .site-footer { padding-bottom: 100px; }
 }
 
 @media (max-width: 460px) {
-  .brand, .brand img { width: 170px; flex-basis: 170px; }
+  .brand { flex-basis: 170px; }
+  .brand__logo { width: 170px; }
   .hero__facts { display: grid; grid-template-columns: 1fr 1fr; text-align: left; }
   .hero__facts li:last-child { grid-column: 1 / -1; justify-self: center; }
   .hero__visual { min-height: 285px; }
@@ -827,8 +871,12 @@ address { font-style: normal; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .utility-bar__item, .utility-bar__phone { animation: none; }
-  .utility-bar::after { display: none; }
+  /* Akış durur; kopya listeye gerek kalmaz. Şerit sığmadığında kullanıcı
+     kendi kaydırabilsin diye yatay kaydırma açık kalır, çubuğu gizlenir. */
+  .marquee__track { animation: none; }
+  .marquee__track + .marquee__track { display: none; }
+  .marquee { overflow-x: auto; scrollbar-width: none; }
+  .marquee::-webkit-scrollbar { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
