@@ -80,6 +80,24 @@ jobs:
           FTP_PORT: ${{ vars.FTP_PORT || '21' }}
         run: scripts/validate-ftp-config.sh
 
+      - name: FTP portuna ulaşılabildiğini ölç
+        id: ftp_reach
+        continue-on-error: true
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_PORT: ${{ vars.FTP_PORT || '21' }}
+        shell: bash
+        run: |
+          # Sunucu adı gizli kalır; yalnız sonucu yazdırırız. Denetim mesajını
+          # "kimlik hatası" ile "porta hiç ulaşılamıyor" arasında ayırır.
+          if timeout 20 bash -c "exec 3<>/dev/tcp/${FTP_SERVER}/${FTP_PORT}" 2>/dev/null; then
+            echo "FTP portu açık ve TCP bağlantısı kuruldu."
+          else
+            echo "UYARI: FTP portuna 20 saniye içinde TCP bağlantısı kurulamadı."
+            echo "Barındırma tarafı bu koşucunun IP'sini engelliyor veya sunucu yanıt vermiyor olabilir."
+            exit 1
+          fi
+
       - name: Kontrollü temizlik bağımlılığını kur
         id: deps
         if: >-
@@ -125,6 +143,7 @@ jobs:
           dangerous-clean-slate: false
           security: loose
           log-level: standard
+          timeout: 120000
           exclude: |
             **/.git*
             **/.git*/**
@@ -257,8 +276,8 @@ jobs:
           fi
           echo 'PASS: Canlı form, hizmet sayfası, gizlilik, robots ve canonical kontrolleri başarılı.'
 
-      - name: Canlı doğrulama düştüyse tanı çıktısı al
-        if: steps.live_verify.outcome != 'success' || steps.live_completion.outcome != 'success'
+      - name: Yayın ya da canlı doğrulama düştüyse tanı çıktısı al
+        if: always() && (steps.ftp_deploy.outcome != 'success' || steps.live_verify.outcome != 'success' || steps.live_completion.outcome != 'success')
         continue-on-error: true
         run: scripts/live-probe.sh
 
