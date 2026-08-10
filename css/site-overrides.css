@@ -334,3 +334,11 @@ main > section.is-armed .reveal.is-content-visible {
 }
 
 /* deploy-retry: 2026-08-11 gallery overlay */
+
+/* Remove the decorative line that precedes section labels on every page. */
+.eyebrow > span {
+  display: none !important;
+}
+.eyebrow {
+  gap: 0 !important;
+}
