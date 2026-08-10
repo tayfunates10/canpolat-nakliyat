@@ -59,15 +59,27 @@ gallery_images=(
   "asansorlu-tasima-edremit"
 )
 
-# Galeri kareleri iki genişlikte yayınlanır; srcset'in iki ucu da eksiksiz olmalı.
 gallery_files=()
 for name in "${gallery_images[@]}"; do
   gallery_files+=("assets/images/galeri/${name}.webp" "assets/images/galeri/${name}-mobil.webp")
 done
 
+local_seo_pages=(
+  "bolgeler/akcay-nakliyat.html"
+  "bolgeler/altinoluk-nakliyat.html"
+  "bolgeler/ayvalik-nakliyat.html"
+  "bolgeler/burhaniye-nakliyat.html"
+  "bolgeler/havran-nakliyat.html"
+  "bolgeler/ivrindi-nakliyat.html"
+  "bolgeler/kucukkuyu-nakliyat.html"
+  "bolgeler/gure-nakliyat.html"
+  "bolgeler/gomec-nakliyat.html"
+)
+
 required_paths=(
   "${publish_paths[@]}"
   "${gallery_files[@]}"
+  "${local_seo_pages[@]}"
   "api/teklif.php"
   "css/hero-animated.css"
   "css/services-tune.css"
@@ -99,7 +111,6 @@ for path in "${publish_paths[@]}"; do
   cp -a "${REPO_ROOT}/${path}" "${OUTPUT_PATH}/"
 done
 
-# Eski hero varlıklarının production paketine hiçbir şekilde girmesine izin verme.
 rm -f \
   "${OUTPUT_PATH}/assets/images/hero-canpolat.webp" \
   "${OUTPUT_PATH}/assets/images/hero-canpolat-mobil.webp" \
@@ -109,6 +120,7 @@ rm -rf "${OUTPUT_PATH}/assets/images/hero-parts"
 
 required_output_files=(
   "${gallery_files[@]}"
+  "${local_seo_pages[@]}"
   "index.php"
   "index.html"
   "index-template.html"
@@ -163,7 +175,6 @@ for forbidden in \
   fi
 done
 
-# Public index.html eski hero markup'ı veya eski görsel yollarını içeremez.
 if grep -Eq 'hero__picture|hero-canpolat(-mobil)?\.webp' "${OUTPUT_PATH}/index.html"; then
   echo "HATA: Public index.html içinde eski hero izi bulundu." >&2
   exit 1
