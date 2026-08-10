@@ -10,6 +10,12 @@ Canpolat Nakliyat'ın Edremit ve Körfez çevresindeki ticari niyetli nakliyat s
 
 Sıralama garantisi verilmez. Başarı; teknik kalite, içerik alakası, Google İşletme Profili, kullanıcı konumu, yorumlar, bağlantılar ve rakiplerin hareketlerine bağlıdır.
 
+## Çalışma kapsamı sınırı
+
+Bu SEO çalışması yalnızca `https://www.canpolatnakliyat.com` alan adı ve Canpolat Nakliyat'ın kendi Google İşletme Profili / dijital varlıkları üzerinde yürütülecektir.
+
+Başka alan adlarında yönlendirme, taşıma, Search Console değişikliği, içerik eşleme, canonical değişikliği veya otorite aktarımı yapılmayacaktır.
+
 ## Öncelikli sorgu kümeleri
 
 ### P0 — Edremit çekirdek
@@ -54,21 +60,9 @@ Sıralama garantisi verilmez. Başarı; teknik kalite, içerik alakası, Google 
 - Telefon ve WhatsApp dönüşüm noktaları belirgin.
 - Gerçek iş fotoğrafları ve galeri bulunuyor.
 
-## Kritik açıklar
+## Kritik geliştirme alanları
 
-### 1. Eski Canpolat alan adı hâlâ indeksleniyor
-`canpolatevdenevenakliyat.com` aynı marka ve telefonla canlı durumda. Bu alan adının eski içerik, bağlantı ve marka sinyalleri yeni alan adına aktarılmalı.
-
-Aksiyon:
-1. Eski alan adındaki tüm indekslenebilir URL'leri çıkar.
-2. Her eski URL'yi konu olarak en yakın yeni URL ile eşleştir.
-3. Yeni karşılığı bulunmayan değerli eski sayfalar için önce yeni ve özgün karşılık oluştur.
-4. Eski sunucuda doğrudan hedef URL'ye server-side 301 uygula.
-5. Redirect zinciri oluşturma.
-6. Eski sitemap'i kaldır / yeni domaine yönlendir.
-7. Search Console site taşıma ve URL denetimleriyle takip et.
-
-### 2. Bölgesel içerik kapsamı rakiplerden dar
+### 1. Bölgesel içerik kapsamı genişletilmeli
 Mevcut sitede güçlü bir Edremit sayfası var ancak Akçay, Altınoluk, Güre, Zeytinli, Havran, Burhaniye ve Ayvalık için bağımsız faydalı içerik sayfaları henüz yok.
 
 Kural: Bu sayfalar şube gibi gösterilmeyecek. Her sayfada açıkça “Edremit merkezli hizmet alanı” olduğu belirtilecek. Doorway/kopya sayfa yapılmayacak.
@@ -82,7 +76,7 @@ Her bölge sayfası şu özgün içeriği taşımalı:
 - ilgili hizmetlere doğal iç bağlantılar
 - tek ve benzersiz title/H1/description
 
-### 3. Google İşletme Profili ve web sitesi sinyalleri birebir eşleştirilmeli
+### 2. Google İşletme Profili ve web sitesi sinyalleri birebir eşleştirilmeli
 Kontrol listesi:
 - işletme adı tutarlı
 - birincil kategori en doğru kategori
@@ -96,14 +90,14 @@ Kontrol listesi:
 - logo, kapak ve gerçek iş fotoğrafları düzenli güncelleniyor
 - sahte şube/adres oluşturulmuyor
 
-### 4. Yorum otoritesi yeni profil üzerinde büyütülmeli
+### 3. Yorum otoritesi profil üzerinde büyütülmeli
 - Her gerçek taşıma sonrası Google yorum QR/link akışı kullanılacak.
 - Yorum karşılığı indirim/hediye verilmeyecek.
 - Müşteriye yorum metni dikte edilmeyecek.
 - Tüm yorumlara doğal ve özgün cevap verilecek.
 - Cevaplarda hizmet ve bölge bilgisi yalnız gerçekten ilgiliyse geçirilecek.
 
-### 5. Yerel citation ve bağlantı profili kurulmalı
+### 4. Yerel citation ve bağlantı profili kurulmalı
 Öncelik:
 - Google Business Profile
 - Apple Business Connect / Apple Maps
@@ -146,21 +140,6 @@ Yalnız gerçek talep ve yeterli özgün bilgi olduğunda oluşturulacak. İlk a
 - Edremit ↔ İzmir
 - Edremit ↔ Ankara
 
-## Eski alan adı geçiş eşleştirmesi — başlangıç
-
-| Eski içerik | Yeni hedef |
-|---|---|
-| canpolatevdenevenakliyat.com/ | https://www.canpolatnakliyat.com/ |
-| eski Edremit sayfası | https://www.canpolatnakliyat.com/bolgeler/edremit-nakliyat.html |
-| eski Akçay sayfası | planlanan /bolgeler/akcay-nakliyat.html |
-| eski Altınoluk sayfası | planlanan /bolgeler/altinoluk-nakliyat.html |
-| eski Güre sayfası | planlanan /bolgeler/gure-nakliyat.html |
-| eski Havran sayfası | planlanan /bolgeler/havran-nakliyat.html |
-| eski Burhaniye sayfası | planlanan /bolgeler/burhaniye-nakliyat.html |
-| eski Ayvalık sayfası | planlanan /bolgeler/ayvalik-nakliyat.html |
-
-Kesin redirect tablosu eski site URL envanteri çıkarıldıktan sonra tamamlanacak.
-
 ## İçerik kalite standardı
 
 Her yeni yerel sayfa:
@@ -189,13 +168,13 @@ Haftalık takip:
 ## 90 günlük uygulama sırası
 
 ### Faz 1 — 0–14 gün
-1. Eski domain URL envanteri ve 301 haritası.
-2. Search Console / sitemap / canonical / index kapsamı kontrolü.
-3. Google Business Profile tam optimizasyonu.
-4. Ana sayfa + Edremit + hizmet sayfalarında entity/NAP/schema tutarlılığı.
-5. Akçay ve Altınoluk için ilk özgün bölge sayfaları.
-6. İç bağlantı yapısının güçlendirilmesi.
-7. Yorum toplama akışının aktif kullanımı.
+1. Search Console / sitemap / canonical / index kapsamı kontrolü.
+2. Google Business Profile tam optimizasyonu.
+3. Ana sayfa + Edremit + hizmet sayfalarında entity/NAP/schema tutarlılığı.
+4. Akçay ve Altınoluk için ilk özgün bölge sayfaları.
+5. İç bağlantı yapısının güçlendirilmesi.
+6. Yorum toplama akışının aktif kullanımı.
+7. Yerel citation profilinin ilk güvenilir kayıtlarla güçlendirilmesi.
 
 ### Faz 2 — 15–45 gün
 1. Güre, Zeytinli, Havran, Burhaniye, Ayvalık içerikleri.
@@ -223,6 +202,5 @@ SEO değişikliği `main` dalına alınmadan önce:
 - 404/redirect testi
 - mobil/masaüstü regresyon kontrolü
 - yeni URL'lerin sitemap'e eklenmesi
-- eski URL'lere yanlış/loop redirect olmadığının kontrolü
 
 Çalışma dalı: `seo-local-2026-08-10`
