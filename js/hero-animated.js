@@ -37,9 +37,11 @@
   }
 
   /*
-   * Sahne görünür alana girdiğinde çözülen bekleme. Kullanıcı sahneyi hiç
-   * görmeden animasyon harcanmasın diye giriş, kesişim gözlemcisine bağlanır.
-   * Gözlemci desteklenmiyorsa veya sahne zaten ekrandaysa beklemeden çözülür.
+   * Sahne görünür alana girdiğinde çözülen bekleme. Masaüstündeki mevcut erken
+   * hazırlık davranışı korunur. Telefonda ise sahne ilk ekranın altında olsa
+   * bile animasyon harcanmaz; R8'in üst kısmı ekranın yaklaşık %65 seviyesine
+   * ulaştığında giriş başlar. Böylece sahne kullanıcının görüş alanına doğru
+   * gelirken katmanlar tek tek kurulmaya başlar.
    */
   function whenInView(element) {
     return new Promise(function (resolve) {
@@ -49,32 +51,34 @@
       }
 
       var settled = false;
+      var observer = null;
+      var safety = null;
+
       function settle() {
         if (settled) return;
         settled = true;
         if (observer) observer.disconnect();
-        clearTimeout(safety);
+        if (safety) clearTimeout(safety);
         resolve();
       }
 
-      var observer = new IntersectionObserver(function (entries) {
+      var isMobile = window.matchMedia && window.matchMedia('(max-width: 720px)').matches;
+      var options = isMobile
+        ? { threshold: 0.04, rootMargin: '0px 0px -35% 0px' }
+        : { threshold: 0, rootMargin: '0px 0px 100% 0px' };
+
+      observer = new IntersectionObserver(function (entries) {
         for (var i = 0; i < entries.length; i += 1) {
           if (entries[i].isIntersecting) {
             settle();
             return;
           }
         }
-      /*
-       * Hero sayfanın en üstünde; kısa telefon ekranlarında sahne tamamen
-       * katlamanın altında kalabiliyor ve dar bir gözlemci hiç tetiklenmeden
-       * hero görselsiz açılıyordu. Kök bir ekran boyu aşağı genişletilir:
-       * ilk ekrana yakın olan her şey anında oynar, sayfanın çok altındaki
-       * bölümler için kaydırmada tetiklenme davranışı korunur.
-       */
-      }, { threshold: 0, rootMargin: '0px 0px 100% 0px' });
+      }, options);
 
-      /* Gözlemci yine de tetiklenmezse katmanlar görünmez kalmasın. */
-      var safety = setTimeout(settle, 3000);
+      /* Masaüstündeki güvenlik davranışı korunur. Mobilde zaman aşımı yoktur;
+         kullanıcı sahneye ulaşmadan R8 animasyonu kesinlikle başlamaz. */
+      if (!isMobile) safety = setTimeout(settle, 3000);
       observer.observe(element);
     });
   }
