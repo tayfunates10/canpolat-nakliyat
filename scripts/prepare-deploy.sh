@@ -70,6 +70,7 @@ local_seo_pages=(
   "bolgeler/ayvalik-nakliyat.html"
   "bolgeler/burhaniye-nakliyat.html"
   "bolgeler/havran-nakliyat.html"
+  "bolgeler/ivrindi-nakliyat.html"
   "bolgeler/kucukkuyu-nakliyat.html"
   "bolgeler/gure-nakliyat.html"
   "bolgeler/gomec-nakliyat.html"
