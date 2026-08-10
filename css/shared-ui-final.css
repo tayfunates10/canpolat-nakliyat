@@ -61,14 +61,6 @@
 }
 
 @media (max-width: 720px) {
-  /* R8's visible entrance is locked to the 48% viewport line. Legacy 78/92%
-     readiness classes may still be added internally, but cannot reveal layers
-     before the dedicated 48% gate opens. Geometry and animation stay intact. */
-  .hero-r8.is-r8-trigger-48-lock:not(.is-r8-trigger-48-ready) .hero-r8__layer.is-loaded {
-    opacity: 0 !important;
-    transition: none !important;
-  }
-
   .site-footer .footer-regions {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 9px 12px !important;
