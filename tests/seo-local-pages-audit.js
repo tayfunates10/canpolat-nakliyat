@@ -71,9 +71,11 @@ const sitemap = read('sitemap.xml');
 const deployScript = read('scripts/prepare-deploy.sh');
 for (const relative of pages) {
   if (!sitemap.includes(`<loc>https://www.canpolatnakliyat.com/${relative}</loc>`)) failures.push(`sitemap.xml: ${relative} eksik.`);
-  const deployOccurrences = deployScript.split(`"${relative}"`).length - 1;
-  if (deployOccurrences < 2) failures.push(`scripts/prepare-deploy.sh: ${relative} hem kaynak hem çıktı doğrulamasında zorunlu olmalı.`);
+  if (!deployScript.includes(`"${relative}"`)) failures.push(`scripts/prepare-deploy.sh: ${relative} local_seo_pages listesinde bulunmalı.`);
 }
+if (!deployScript.includes('"${local_seo_pages[@]}"')) failures.push('scripts/prepare-deploy.sh: local_seo_pages listesi deploy doğrulamasına bağlanmamış.');
+const localListUses = deployScript.split('"${local_seo_pages[@]}"').length - 1;
+if (localListUses < 2) failures.push('scripts/prepare-deploy.sh: local_seo_pages hem kaynak hem çıktı doğrulamasında kullanılmalı.');
 
 if (failures.length) {
   console.error(`Yerel SEO denetimi başarısız (${failures.length}):`);
