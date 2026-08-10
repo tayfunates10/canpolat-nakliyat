@@ -2,9 +2,19 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.resolve(__dirname, '..');
-const pages = ['bolgeler/akcay-nakliyat.html', 'bolgeler/altinoluk-nakliyat.html'];
+const pages = [
+  'bolgeler/akcay-nakliyat.html',
+  'bolgeler/altinoluk-nakliyat.html',
+  'bolgeler/ayvalik-nakliyat.html',
+  'bolgeler/burhaniye-nakliyat.html',
+  'bolgeler/havran-nakliyat.html',
+  'bolgeler/kucukkuyu-nakliyat.html',
+  'bolgeler/gure-nakliyat.html',
+  'bolgeler/gomec-nakliyat.html',
+];
 const failures = [];
 const titles = new Set();
+const canonicals = new Set();
 
 function read(relative) {
   const file = path.join(root, relative);
@@ -34,6 +44,10 @@ for (const relative of pages) {
   if (title.length < 25 || title.length > 65) failures.push(`${relative}: title 25-65 karakter olmalı.`);
   if (titles.has(title)) failures.push(`${relative}: title benzersiz değil.`);
   titles.add(title);
+
+  const canonicalMatch = source.match(/<link rel="canonical" href="([^"]+)"/i)?.[1] || '';
+  if (canonicals.has(canonicalMatch)) failures.push(`${relative}: canonical benzersiz değil.`);
+  canonicals.add(canonicalMatch);
 
   const description = source.match(/<meta name="description" content="([^"]+)"/)?.[1] || '';
   if (description.length < 110 || description.length > 165) failures.push(`${relative}: description 110-165 karakter olmalı.`);
