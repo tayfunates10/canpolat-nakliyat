@@ -61,7 +61,7 @@ gallery_images=(
 # Galeri kareleri iki genişlikte yayınlanır; srcset'in iki ucu da eksiksiz olmalı.
 gallery_files=()
 for name in "${gallery_images[@]}"; do
-  gallery_files+=("assets/images/galeri/${name}.webp" "assets/images/galeri/${name}-640.webp")
+  gallery_files+=("assets/images/galeri/${name}.webp" "assets/images/galeri/${name}-mobil.webp")
 done
 
 required_paths=(
@@ -84,13 +84,6 @@ required_paths=(
   "assets/images/service-paketleme.webp"
   "assets/images/about-tasima.webp"
   "assets/images/cta-kamyon.webp"
-  "assets/images/cta/koli-grubu.webp"
-  "assets/images/cta/koltuk.webp"
-  "assets/images/cta/hali-rulo.webp"
-  "assets/images/cta/tasima-kizagi.webp"
-  "assets/images/cta/gardirop.webp"
-  "assets/images/cta/camasir-makinesi.webp"
-  "assets/images/cta/yatak-baza.webp"
 )
 
 for path in "${required_paths[@]}"; do
@@ -135,13 +128,6 @@ required_output_files=(
   "assets/images/service-paketleme.webp"
   "assets/images/about-tasima.webp"
   "assets/images/cta-kamyon.webp"
-  "assets/images/cta/koli-grubu.webp"
-  "assets/images/cta/koltuk.webp"
-  "assets/images/cta/hali-rulo.webp"
-  "assets/images/cta/tasima-kizagi.webp"
-  "assets/images/cta/gardirop.webp"
-  "assets/images/cta/camasir-makinesi.webp"
-  "assets/images/cta/yatak-baza.webp"
   "assets/images/hero-r8/platform-p00-r8-reference-exact.png"
   "assets/images/hero-r8/truck-t00-r6.png"
   "assets/images/hero-r8/layer-l01-r6.png"

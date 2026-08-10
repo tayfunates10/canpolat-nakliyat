@@ -19,9 +19,15 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SOURCE = os.path.join(ROOT, "source-assets", "galeri")
 OUT = os.path.join(ROOT, "assets", "images", "galeri")
 
-WIDE, PHOTO_H, BAND_H = 2400, 1644, 156      # 2x çalışma tuvali; toplam 2400x1800 = 4/3
-LARGE, SMALL = (1000, 750), (640, 480)
-LARGE_BUDGET, SMALL_BUDGET = 150 * 1024, 70 * 1024
+# Masaüstü tuvali: 2400x1644 fotoğraf + 156 bant = 2400x1800 = 4/3.
+WIDE, PHOTO_H, BAND_H = 2400, 1644, 156
+LARGE, LARGE_BUDGET = (1000, 750), 150 * 1024
+
+# Mobil tuvali: aynı 4/3 oranı, ama bant toplamın %13,3'ü (masaüstünde %8,7).
+# Küçük karede sabit oranlı bant 18-23 piksele düşüp okunmaz bir lekeye
+# dönüşüyordu; mobil bant hem daha yüksek hem yazısı orantılı olarak büyük.
+WIDE_M, PHOTO_H_M, BAND_H_M = 1440, 936, 144
+MOBILE, MOBILE_BUDGET = (900, 675), 85 * 1024
 
 # Dikey kadraj çıpası: 0 üstü, 1 altı korur. Dikey telefon karelerinde 4/3'e
 # inerken hangi bandın kalacağını belirler, her kare için ayrı seçilmiştir.
@@ -63,6 +69,9 @@ def main():
     band = Image.open(os.path.join(SOURCE, "band", "band.png")).convert("RGB")
     if band.size != (WIDE, BAND_H):
         raise SystemExit(f"Alt bant ölçüsü {WIDE}x{BAND_H} olmalı, bulunan {band.size}.")
+    band_m = Image.open(os.path.join(SOURCE, "band", "band-mobil.png")).convert("RGB")
+    if band_m.size != (WIDE_M, BAND_H_M):
+        raise SystemExit(f"Mobil bant ölçüsü {WIDE_M}x{BAND_H_M} olmalı, bulunan {band_m.size}.")
 
     ratio = WIDE / PHOTO_H
     for name, anchor in PHOTOS:
@@ -79,19 +88,22 @@ def main():
             box_w, box_h = width, int(round(width / ratio))
             left, top = 0, int(round((height - box_h) * anchor))
 
-        photo = image.crop((left, top, left + box_w, top + box_h)).resize((WIDE, PHOTO_H), Image.LANCZOS)
-        # Telefon kareleri için ölçülü bir canlandırma; rengi kaydırmayacak kadar hafif.
-        photo = ImageEnhance.Color(ImageEnhance.Contrast(photo).enhance(1.06)).enhance(1.05)
-        photo = ImageEnhance.Sharpness(photo).enhance(1.12)
+        crop = image.crop((left, top, left + box_w, top + box_h))
 
-        canvas = Image.new("RGB", (WIDE, PHOTO_H + BAND_H), "#1a2439")
-        canvas.paste(photo, (0, 0))
-        canvas.paste(band, (0, PHOTO_H))
+        def compose(target_w, target_h, strip, out_size, dest, budget):
+            photo = crop.resize((target_w, target_h), Image.LANCZOS)
+            # Telefon kareleri için ölçülü bir canlandırma; rengi kaydırmayacak kadar hafif.
+            photo = ImageEnhance.Color(ImageEnhance.Contrast(photo).enhance(1.06)).enhance(1.05)
+            photo = ImageEnhance.Sharpness(photo).enhance(1.12)
+            canvas = Image.new("RGB", (target_w, target_h + strip.height), "#1a2439")
+            canvas.paste(photo, (0, 0))
+            canvas.paste(strip, (0, target_h))
+            encode(canvas.resize(out_size, Image.LANCZOS), dest, budget)
+            return os.path.getsize(dest) // 1024
 
-        encode(canvas.resize(LARGE, Image.LANCZOS), os.path.join(OUT, name + ".webp"), LARGE_BUDGET)
-        encode(canvas.resize(SMALL, Image.LANCZOS), os.path.join(OUT, name + "-640.webp"), SMALL_BUDGET)
-        print(f"{name}: {os.path.getsize(os.path.join(OUT, name + '.webp')) // 1024} KB / "
-              f"{os.path.getsize(os.path.join(OUT, name + '-640.webp')) // 1024} KB")
+        big = compose(WIDE, PHOTO_H, band, LARGE, os.path.join(OUT, name + ".webp"), LARGE_BUDGET)
+        small = compose(WIDE_M, PHOTO_H_M, band_m, MOBILE, os.path.join(OUT, name + "-mobil.webp"), MOBILE_BUDGET)
+        print(f"{name}: {big} KB / {small} KB (mobil)")
 
     print(f"{len(PHOTOS)} galeri karesi üretildi: {OUT}")
 

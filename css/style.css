@@ -354,7 +354,8 @@ address { font-style: normal; }
 .final-cta__features li + li { padding-left: 22px; border-left: 1px solid rgba(255,255,255,.18); }
 .final-cta__features svg { flex: 0 0 22px; width: 22px; height: 22px; color: var(--orange); stroke-width: 1.7; }
 
-.final-cta__visual { position: relative; min-width: 0; display: grid; justify-items: end; gap: 18px; }
+/* Sahnede kamyondan başka nesne kalmadı; sütununda ortalanır. */
+.final-cta__visual { position: relative; min-width: 0; display: grid; justify-items: center; gap: 18px; }
 
 /* Kamyon sahnesi. Zemin gölgesi ve yansıma ayrı katmanlar; kamyon kendi
    içinde salındığı için gölge yerinde kalır, aksi hâlde havada sallanır. */
@@ -365,54 +366,8 @@ address { font-style: normal; }
    hizasına oturur; gövdenin arkasında kalırsa kamyon havada durur. */
 .final-cta__ground { position: absolute; z-index: 0; left: -2%; right: -6%; bottom: -9%; height: 24%; border-radius: 50%; background: radial-gradient(ellipse at 50% 50%, rgba(158,190,235,.17) 0%, rgba(158,190,235,.06) 44%, transparent 72%); filter: blur(11px); }
 .final-cta__ground::after { content: ""; position: absolute; left: 16%; right: 12%; top: 40%; height: 26%; border-radius: 50%; background: radial-gradient(ellipse at 50% 50%, rgba(2,5,11,.9) 0%, rgba(2,5,11,.5) 48%, transparent 76%); filter: blur(5px); }
-/* Sahne: kamyon artık sahnenin tamamını kaplamıyor, iki yanında eşya için
-   yer bırakıyor. Yerleşim kamyon karesinden ölçülen zemin çizgisine göre:
-   ön teker %35,2/%99,7, arka teker %62,5/%85,3 — yani zemin sağa doğru her
-   %1 yatayda %0,53 yükseliyor. Arkadaki nesneler bu yüzden hem yukarıda hem
-   küçük, öndekiler aşağıda ve büyük. Ölçek: kamyon karesinde 1 m ≈ 186 px,
-   kamyon sahnenin %62'si olduğu için 1 m ≈ sahne genişliğinin %11,8'i.
-   Arka gruptaki üç nesne sağa doğru sırayla küçülüp yükselir. */
-.final-cta__truck-wrap { position: relative; z-index: 1; width: 62%; margin-left: 10%; }
-
-.cta-prop { position: absolute; z-index: 0; display: block; }
-.cta-prop img { display: block; width: 100%; height: auto; filter: saturate(.88) brightness(.93) contrast(1.02); }
-.cta-prop::before {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  left: -10%;
-  right: -10%;
-  bottom: 0;
-  height: 13%;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at 50% 50%, rgba(2,5,11,.8) 0%, rgba(2,5,11,.4) 46%, transparent 74%);
-  filter: blur(5px);
-}
-
-/* Kamyonun gerisi: uzakta oldukları için hem daha küçük hem daha yukarıda,
-   ayrıca bir tık daha koyu — havanın uzaklıkla açması yerine sahnenin koyu
-   zemininde uzak nesneler sönükleşir. */
-.cta-prop--yatak { left: 69%; bottom: 11%; width: 15%; }
-.cta-prop--gardirop { left: 89%; bottom: 18%; width: 9.5%; }
-.cta-prop--camasir { left: 84%; bottom: 14.5%; width: 6%; }
-.cta-prop--kizak { z-index: 2; left: 25%; bottom: 0; width: 7.5%; }
-.cta-prop--yatak img,
-.cta-prop--gardirop img,
-.cta-prop--camasir img { filter: saturate(.8) brightness(.82) contrast(1.02); }
-
-/* Kamyonun önü: kameraya yakın, aracın önünde duruyorlar. */
-.cta-prop--koltuk { z-index: 2; left: -1%; bottom: -1%; width: 13%; }
-.cta-prop--hali { z-index: 2; left: 14%; bottom: 2%; width: 7.5%; }
+.final-cta__truck-wrap { position: relative; z-index: 1; }
 .final-cta__truck { width: 100%; height: auto; filter: saturate(.86) brightness(.94) contrast(1.02); }
-/* Koliler kamyonun önünde, zemin üzerinde durmalı. Eski ölçüde (%30)
-   koliler kamyonun tekerleğinden büyük görünüyor ve tampona basmış gibi
-   duruyordu; gerçek oranda bir koli, aracın tekerleği kadardır. Ölçü %20'ye
-   indirildi, taban kamyonun zemin çizgisinin biraz altına alındı (üç çeyrek
-   perspektifte kameraya yakın olan nesne karede daha aşağıda durur) ve
-   altına temas gölgesi konuldu. */
-.final-cta__boxes { position: absolute; z-index: 3; left: 4%; bottom: -3%; width: 15%; }
-.final-cta__boxes::before { content: ""; position: absolute; z-index: 0; left: -8%; right: -8%; bottom: 1%; height: 15%; border-radius: 50%; background: radial-gradient(ellipse at 50% 50%, rgba(2,5,11,.85) 0%, rgba(2,5,11,.45) 46%, transparent 74%); filter: blur(6px); }
-.final-cta__boxes-img { position: relative; z-index: 1; display: block; width: 100%; height: auto; filter: saturate(.9) brightness(.95) drop-shadow(0 6px 8px rgba(4,9,17,.45)); }
 .final-cta__phone { display: inline-flex; align-items: center; gap: 13px; }
 .final-cta__phone-icon { flex: 0 0 46px; width: 46px; height: 46px; display: grid; place-items: center; border: 2px solid rgba(239,124,0,.7); border-radius: 50%; color: var(--orange); transition: background-color .18s ease, border-color .18s ease; }
 .final-cta__phone-icon svg { width: 21px; height: 21px; }
@@ -504,13 +459,6 @@ address { font-style: normal; }
   .final-cta__visual { justify-items: start; }
   .final-cta__stage { max-width: none; }
   /* Koliler dar ekranda sahnenin soluna taşıp sayfa kenarında kesiliyordu. */
-  .final-cta__boxes { left: 4%; }
-  /* Dar ekranda altı obje sahneyi okunmaz hâle getiriyor; kamyonun
-     gerisindekiler ile koltuk gizlenir, koli grubu ve halılar kalır. */
-  .cta-prop--yatak, .cta-prop--gardirop, .cta-prop--camasir, .cta-prop--koltuk { display: none; }
-  .final-cta__truck-wrap { width: 82%; margin-left: 15%; }
-  .cta-prop--hali { left: 1%; bottom: 1%; width: 11%; }
-  .cta-prop--kizak { left: 26%; bottom: 2%; width: 10%; }
   .about__grid { gap: 54px; }
   .why-us__intro { max-width: 680px; }
   .regions__visual { min-height: 0; }
@@ -750,8 +698,6 @@ address { font-style: normal; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-
-@media (prefers-reduced-motion: reduce) {
   .utility-bar__item, .utility-bar__phone { animation: none; }
   .utility-bar::after { display: none; }
 }
@@ -776,8 +722,7 @@ address { font-style: normal; }
 --------------------------------------------------------------------------- */
 .final-cta.is-armed .cta__logo,
 .final-cta.is-armed .final-cta__actions .button,
-.final-cta.is-armed .final-cta__truck-wrap,
-.final-cta.is-armed .final-cta__boxes { opacity: 0; }
+.final-cta.is-armed .final-cta__truck-wrap { opacity: 0; }
 .final-cta.is-armed .final-cta__title-part { clip-path: inset(0 100% 0 0); }
 
 .final-cta.is-armed.is-visible .cta__logo { animation: cta-drop .6s cubic-bezier(.22,1,.36,1) 40ms both; }
@@ -788,7 +733,6 @@ address { font-style: normal; }
 .final-cta.is-armed.is-visible .final-cta__actions .button:nth-child(1) { animation-delay: 520ms; }
 .final-cta.is-armed.is-visible .final-cta__actions .button:nth-child(2) { animation-delay: 610ms; }
 .final-cta.is-armed.is-visible .final-cta__truck-wrap { animation: cta-arrive 1.05s cubic-bezier(.16,.84,.3,1) 180ms both; }
-.final-cta.is-armed.is-visible .final-cta__boxes { animation: cta-settle .7s cubic-bezier(.3,1.5,.5,1) 1.15s both; }
 
 /* Döngüler */
 .final-cta.is-visible .final-cta__truck { animation: cta-idle 5.2s ease-in-out 1.4s infinite; }
@@ -798,21 +742,18 @@ address { font-style: normal; }
 @keyframes cta-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 -2% 0 0); } }
 @keyframes cta-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 @keyframes cta-arrive { from { opacity: 0; transform: translateX(64px); } to { opacity: 1; transform: none; } }
-@keyframes cta-settle { 0% { opacity: 0; transform: translateY(-30px); } 60% { opacity: 1; } 100% { opacity: 1; transform: none; } }
 @keyframes cta-idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 @keyframes cta-ground { 0%, 100% { transform: scaleX(1); opacity: 1; } 50% { transform: scaleX(.97); opacity: .82; } }
 
 @media (prefers-reduced-motion: reduce) {
   .final-cta.is-armed .cta__logo,
   .final-cta.is-armed .final-cta__actions .button,
-  .final-cta.is-armed .final-cta__truck-wrap,
-  .final-cta.is-armed .final-cta__boxes { opacity: 1; }
+  .final-cta.is-armed .final-cta__truck-wrap { opacity: 1; }
   .final-cta.is-armed .final-cta__title-part { clip-path: none; }
   .final-cta.is-armed.is-visible .cta__logo,
   .final-cta.is-armed.is-visible .final-cta__title-part,
   .final-cta.is-armed.is-visible .final-cta__actions .button,
   .final-cta.is-armed.is-visible .final-cta__truck-wrap,
-  .final-cta.is-armed.is-visible .final-cta__boxes,
   .final-cta.is-visible .final-cta__truck,
   .final-cta.is-visible .final-cta__ground,
   .final-cta.is-visible .final-cta__truck-wrap { animation: none; }
@@ -843,9 +784,14 @@ address { font-style: normal; }
   .gallery__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 }
 
-@media (max-width: 560px) {
+/* Bant görselin içinde sabit oranda duruyor: kare ne kadar darsa bant o kadar
+   küçük. İki sütunlu dar ekranda 18-23 piksele düşüp okunmaz bir lekeye
+   dönüşüyordu. Tek sütun sınırı 720'ye çekildi; altında kare tam genişlik
+   olduğu için bant da okunur kalıyor. 1100 altında ayrıca bandı daha yüksek
+   ve yazısı daha büyük olan mobil sürüm servis ediliyor (picture/source). */
+@media (max-width: 720px) {
   .gallery__grid,
-  .gallery--page .gallery__grid { grid-template-columns: minmax(0, 1fr); }
+  .gallery--page .gallery__grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .gallery__all { width: 100%; }
 }
 

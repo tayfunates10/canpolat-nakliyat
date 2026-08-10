@@ -68,7 +68,7 @@ for (const relative of publicPages.concat(['404.html'])) {
     'id="ana-icerik"',
     'rel="icon" href="/assets/images/favicon-canpolat.svg"',
     'rel="manifest" href="/manifest.webmanifest"',
-    'href="/css/style.css?v=20260810-06"',
+    'href="/css/style.css?v=20260810-07"',
     'href="tel:+905359120691"',
     'https://wa.me/905359120691',
     'Camivasat Mah. Akçay Cad. No: 78',
@@ -320,20 +320,31 @@ for (const [relative, source, expected] of galleryPages) {
   const images = [...grid[1].matchAll(/<img\b[^>]*>/g)].map(match => match[0]);
   if (images.length !== expected) failures.push(`${relative}: ${expected} galeri karesi bekleniyor, bulunan ${images.length}.`);
 
-  for (const image of images) {
-    const source1x = image.match(/src="\/assets\/images\/galeri\/([a-z0-9-]+)\.webp/);
-    if (!source1x) {
-      failures.push(`${relative}: galeri karesi /assets/images/galeri altından gelmelidir.`);
+  /*
+   * Varsayılan kaynak mobil sürüm; masaüstü sürümü picture/source ile
+   * 1100 pikselin üstünde devreye giriyor. Bant görselin içinde sabit oranda
+   * durduğu için küçük karede okunmuyordu; mobil sürümün bandı daha yüksek.
+   */
+  const sources = [...grid[1].matchAll(/<source\b[^>]*>/g)].map(match => match[0]);
+  if (sources.length !== expected) failures.push(`${relative}: her galeri karesi bir source taşımalıdır, bulunan ${sources.length}.`);
+
+  for (const [index, image] of images.entries()) {
+    const defaultSrc = image.match(/src="\/assets\/images\/galeri\/([a-z0-9-]+)-mobil\.webp/);
+    if (!defaultSrc) {
+      failures.push(`${relative}: galeri karesinin varsayılan kaynağı /assets/images/galeri/<ad>-mobil.webp olmalıdır.`);
       continue;
     }
-    galleryNames.add(source1x[1]);
+    const name = defaultSrc[1];
+    galleryNames.add(name);
 
-    for (const suffix of ['', '-640']) {
-      const file = path.join(root, 'assets/images/galeri', `${source1x[1]}${suffix}.webp`);
-      if (!fs.existsSync(file)) failures.push(`${relative}: galeri görseli eksik: ${source1x[1]}${suffix}.webp`);
+    for (const suffix of ['', '-mobil']) {
+      const file = path.join(root, 'assets/images/galeri', `${name}${suffix}.webp`);
+      if (!fs.existsSync(file)) failures.push(`${relative}: galeri görseli eksik: ${name}${suffix}.webp`);
     }
-    if (!image.includes(`/assets/images/galeri/${source1x[1]}-640.webp`)) failures.push(`${relative}: ${source1x[1]} için srcset dar genişliği eksik.`);
-    if (!/\bsizes="/.test(image)) failures.push(`${relative}: ${source1x[1]} için sizes tanımı eksik.`);
+
+    const wide = sources[index] || '';
+    if (!wide.includes(`/assets/images/galeri/${name}.webp`)) failures.push(`${relative}: ${name} için geniş ekran kaynağı eksik.`);
+    if (!wide.includes('media="(min-width: 1101px)"')) failures.push(`${relative}: ${name} için geniş ekran kırılımı eksik.`);
 
     const alt = image.match(/alt="([^"]*)"/);
     if (!alt || alt[1].trim().length < 30) failures.push(`${relative}: galeri karesi açıklayıcı alt metin taşımalıdır: ${source1x[1]}`);
