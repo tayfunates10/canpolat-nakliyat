@@ -37,35 +37,74 @@
   }
 
   /*
-   * Sahne görünür alana girdiğinde çözülen bekleme. Masaüstündeki mevcut erken
-   * hazırlık davranışı korunur. Telefonda ise sahne ilk ekranın altında olsa
-   * bile animasyon harcanmaz; R8'in üst kısmı ekranın yaklaşık %65 seviyesine
-   * ulaştığında giriş başlar. Böylece sahne kullanıcının görüş alanına doğru
-   * gelirken katmanlar tek tek kurulmaya başlar.
+   * Desktop keeps its existing pre-trigger behavior. On phones we deliberately
+   * wait for two conditions instead of merely intersecting the scene:
+   *   1) the hero copy has almost cleared the viewport, and
+   *   2) the midpoint of the R8 scene has reached the lower-middle area.
+   * This prevents the R8 entrance from playing while the heading/CTA block is
+   * still the main thing the user is looking at.
    */
   function whenInView(element) {
     return new Promise(function (resolve) {
-      if (typeof IntersectionObserver !== 'function') {
-        resolve();
-        return;
-      }
-
+      var isMobile = window.matchMedia && window.matchMedia('(max-width: 720px)').matches;
       var settled = false;
       var observer = null;
       var safety = null;
+      var cleanup = null;
 
       function settle() {
         if (settled) return;
         settled = true;
         if (observer) observer.disconnect();
         if (safety) clearTimeout(safety);
+        if (cleanup) cleanup();
         resolve();
       }
 
-      var isMobile = window.matchMedia && window.matchMedia('(max-width: 720px)').matches;
-      var options = isMobile
-        ? { threshold: 0.04, rootMargin: '0px 0px -35% 0px' }
-        : { threshold: 0, rootMargin: '0px 0px 100% 0px' };
+      if (isMobile) {
+        var hero = element.closest('.hero');
+        var copy = hero ? hero.querySelector('.hero__content') : null;
+        var frame = 0;
+
+        function checkMobileTrigger() {
+          frame = 0;
+          var stageRect = element.getBoundingClientRect();
+          var copyRect = copy ? copy.getBoundingClientRect() : null;
+          var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+          /* The copy may leave only a small remnant in the upper 22% before
+             the scene is allowed to start. The scene midpoint must also be at
+             or above 72% of the viewport, so the effect begins around the
+             lower-middle of the screen rather than during the opening copy. */
+          var copyCleared = !copyRect || copyRect.bottom <= viewportHeight * 0.22;
+          var sceneMidpoint = stageRect.top + stageRect.height * 0.5;
+          var sceneReady = sceneMidpoint <= viewportHeight * 0.72 && stageRect.bottom > 0;
+
+          if (copyCleared && sceneReady) settle();
+        }
+
+        function queueMobileCheck() {
+          if (!frame) frame = requestAnimationFrame(checkMobileTrigger);
+        }
+
+        cleanup = function () {
+          window.removeEventListener('scroll', queueMobileCheck);
+          window.removeEventListener('resize', queueMobileCheck);
+          window.removeEventListener('orientationchange', queueMobileCheck);
+          if (frame) cancelAnimationFrame(frame);
+        };
+
+        window.addEventListener('scroll', queueMobileCheck, { passive: true });
+        window.addEventListener('resize', queueMobileCheck, { passive: true });
+        window.addEventListener('orientationchange', queueMobileCheck, { passive: true });
+        queueMobileCheck();
+        return;
+      }
+
+      if (typeof IntersectionObserver !== 'function') {
+        settle();
+        return;
+      }
 
       observer = new IntersectionObserver(function (entries) {
         for (var i = 0; i < entries.length; i += 1) {
@@ -74,11 +113,10 @@
             return;
           }
         }
-      }, options);
+      }, { threshold: 0, rootMargin: '0px 0px 100% 0px' });
 
-      /* Masaüstündeki güvenlik davranışı korunur. Mobilde zaman aşımı yoktur;
-         kullanıcı sahneye ulaşmadan R8 animasyonu kesinlikle başlamaz. */
-      if (!isMobile) safety = setTimeout(settle, 3000);
+      /* Desktop safety behavior is unchanged. */
+      safety = setTimeout(settle, 3000);
       observer.observe(element);
     });
   }
