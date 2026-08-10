@@ -360,7 +360,41 @@ address { font-style: normal; }
    hizasına oturur; gövdenin arkasında kalırsa kamyon havada durur. */
 .final-cta__ground { position: absolute; z-index: 0; left: -2%; right: -6%; bottom: -9%; height: 24%; border-radius: 50%; background: radial-gradient(ellipse at 50% 50%, rgba(158,190,235,.17) 0%, rgba(158,190,235,.06) 44%, transparent 72%); filter: blur(11px); }
 .final-cta__ground::after { content: ""; position: absolute; left: 16%; right: 12%; top: 40%; height: 26%; border-radius: 50%; background: radial-gradient(ellipse at 50% 50%, rgba(2,5,11,.9) 0%, rgba(2,5,11,.5) 48%, transparent 76%); filter: blur(5px); }
-.final-cta__truck-wrap { position: relative; z-index: 1; }
+/* Sahne: kamyon artık sahnenin tamamını kaplamıyor, iki yanında eşya için
+   yer bırakıyor. Yerleşim kamyon karesinden ölçülen zemin çizgisine göre:
+   ön teker %38,8/%99,7, arka teker %67,9/%85,3 — yani zemin sağa doğru her
+   %1 yatayda %0,495 yükseliyor. Arkadaki nesneler bu yüzden hem yukarıda hem
+   küçük, öndekiler aşağıda ve büyük. Ölçek: kamyon karesinde 1 m ≈ 186 px,
+   kamyon sahnenin %66'sı olduğu için 1 m ≈ sahne genişliğinin %12,5'i. */
+.final-cta__truck-wrap { position: relative; z-index: 1; width: 66%; margin-left: 12%; }
+
+.cta-prop { position: absolute; z-index: 0; display: block; }
+.cta-prop img { display: block; width: 100%; height: auto; filter: saturate(.88) brightness(.93) contrast(1.02); }
+.cta-prop::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: -10%;
+  right: -10%;
+  bottom: 0;
+  height: 13%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(2,5,11,.8) 0%, rgba(2,5,11,.4) 46%, transparent 74%);
+  filter: blur(5px);
+}
+
+/* Kamyonun gerisi: uzakta oldukları için hem daha küçük hem daha yukarıda,
+   ayrıca bir tık daha koyu — havanın uzaklıkla açması yerine sahnenin koyu
+   zemininde uzak nesneler sönükleşir. */
+.cta-prop--gardirop { left: 77%; bottom: 13%; width: 12.5%; }
+.cta-prop--camasir { left: 89.5%; bottom: 15.5%; width: 6.5%; }
+.cta-prop--kizak { z-index: 2; left: 27%; bottom: 0; width: 8%; }
+.cta-prop--gardirop img,
+.cta-prop--camasir img { filter: saturate(.8) brightness(.82) contrast(1.02); }
+
+/* Kamyonun önü: kameraya yakın, aracın önünde duruyorlar. */
+.cta-prop--koltuk { z-index: 2; left: -1%; bottom: -1%; width: 14%; }
+.cta-prop--hali { z-index: 2; left: 16%; bottom: 2%; width: 8%; }
 .final-cta__truck { width: 100%; height: auto; filter: saturate(.86) brightness(.94) contrast(1.02); }
 /* Koliler kamyonun önünde, zemin üzerinde durmalı. Eski ölçüde (%30)
    koliler kamyonun tekerleğinden büyük görünüyor ve tampona basmış gibi
@@ -368,7 +402,7 @@ address { font-style: normal; }
    indirildi, taban kamyonun zemin çizgisinin biraz altına alındı (üç çeyrek
    perspektifte kameraya yakın olan nesne karede daha aşağıda durur) ve
    altına temas gölgesi konuldu. */
-.final-cta__boxes { position: absolute; z-index: 2; left: -1%; bottom: -2%; width: 20%; }
+.final-cta__boxes { position: absolute; z-index: 3; left: 5%; bottom: -3%; width: 16%; }
 .final-cta__boxes::before { content: ""; position: absolute; z-index: 0; left: -8%; right: -8%; bottom: 1%; height: 15%; border-radius: 50%; background: radial-gradient(ellipse at 50% 50%, rgba(2,5,11,.85) 0%, rgba(2,5,11,.45) 46%, transparent 74%); filter: blur(6px); }
 .final-cta__boxes-img { position: relative; z-index: 1; display: block; width: 100%; height: auto; filter: saturate(.9) brightness(.95) drop-shadow(0 6px 8px rgba(4,9,17,.45)); }
 .final-cta__phone { display: inline-flex; align-items: center; gap: 13px; }
@@ -462,7 +496,13 @@ address { font-style: normal; }
   .final-cta__visual { justify-items: start; }
   .final-cta__stage { max-width: none; }
   /* Koliler dar ekranda sahnenin soluna taşıp sayfa kenarında kesiliyordu. */
-  .final-cta__boxes { left: 0; }
+  .final-cta__boxes { left: 4%; }
+  /* Dar ekranda altı obje sahneyi okunmaz hâle getiriyor; kamyonun
+     gerisindekiler ile koltuk gizlenir, koli grubu ve halılar kalır. */
+  .cta-prop--gardirop, .cta-prop--camasir, .cta-prop--koltuk { display: none; }
+  .final-cta__truck-wrap { width: 82%; margin-left: 15%; }
+  .cta-prop--hali { left: 1%; bottom: 1%; width: 11%; }
+  .cta-prop--kizak { left: 26%; bottom: 2%; width: 10%; }
   .about__grid { gap: 54px; }
   .why-us__intro { max-width: 680px; }
   .regions__visual { min-height: 0; }
