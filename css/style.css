@@ -319,10 +319,6 @@ address { font-style: normal; }
 .quote { color: #edf2f7; background: var(--navy); }
 .quote__grid { display: grid; grid-template-columns: .72fr 1.28fr; gap: 72px; align-items: start; }
 .quote__intro > p:not(.eyebrow) { margin-top: 22px; color: #bbc5d1; }
-.quote__contact { margin-top: 38px; display: grid; gap: 12px; }
-.quote__contact a { display: grid; padding: 17px 18px; border: 1px solid rgba(255,255,255,.13); border-radius: 12px; background: rgba(255,255,255,.035); }
-.quote__contact small { color: #9eabba; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
-.quote__contact strong { margin-top: 4px; color: #fff; font-size: 15px; overflow-wrap: anywhere; }
 .quote-form { padding: 34px; border: 1px solid rgba(255,255,255,.16); border-radius: 22px; background: rgba(11, 20, 33, .36); box-shadow: 0 22px 60px rgba(0,0,0,.18); }
 .quote-form__head { margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .quote-form__head h3 { font-size: 24px; }
@@ -503,8 +499,10 @@ address { font-style: normal; }
   .site-header__inner { min-height: 68px; }
   .brand, .brand img { width: 198px; flex-basis: 198px; }
   .menu-toggle { width: 42px; height: 42px; }
-  /* Telefon genişliğinde arka plan görseli kırpıldığında düz lacivertten ayırt edilemiyor; indirmeye değmediği için yalnız gradient bırakılır (preload da media ile kapalı). */
-  .hero { background-image: radial-gradient(circle at 80% 10%, rgba(239, 124, 0, .09), transparent 36%), linear-gradient(125deg, #111c2d 0%, #253349 58%, #1c2b41 100%); background-size: auto; background-position: center center; }
+  /* Telefonda gorselin tek yuksek kontrastli bolgesi sag kenardaki sehir
+     kumesi ve turuncu ufuk parlamasi; kirpim oraya sabitlenir ve overlay
+     metin kontrastini korumak icin ustte koyu, altta acik tutulur. */
+  .hero { background-image: radial-gradient(circle at 82% 16%, rgba(239, 124, 0, .12), transparent 38%), linear-gradient(180deg, rgba(15, 25, 41, .95) 0%, rgba(15, 25, 41, .88) 40%, rgba(17, 28, 45, .55) 68%, rgba(20, 33, 52, .3) 100%), url('/assets/images/hero/canpolat-hero-bg-2026.webp?v=20260809-02'); background-size: auto 132%; background-position: center center, center center, 88% 58%; }
   .hero__content { padding-top: 42px; }
   .hero h1 { margin-top: 17px; font-size: clamp(44px, 13vw, 62px); }
   .hero__lead { margin-top: 22px; font-size: 15px; }
@@ -556,8 +554,10 @@ address { font-style: normal; }
   .final-cta__inner { padding: 42px 0 46px; }
   .final-cta__actions { display: grid; }
   .final-cta .button { width: 100%; }
-  .final-cta__features { gap: 12px 16px; }
-  .final-cta__features li + li { padding-left: 16px; }
+  /* Uc oge 360px kapsayiciya sigmiyor ve ucuncusu alt satira dusuyordu;
+     bu genislikte kasitli olarak dikey listeye alinir. */
+  .final-cta__features { display: grid; justify-items: start; gap: 11px; }
+  .final-cta__features li + li { padding-left: 0; border-left: 0; }
   .final-cta__phone strong { font-size: 22px; }
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px 24px; }
   .footer-brand { grid-column: 1 / -1; }
@@ -606,10 +606,20 @@ address { font-style: normal; }
 .page-hero__grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.04fr) minmax(320px, .72fr); align-items: center; gap: 66px; }
 .page-hero__grid--single { grid-template-columns: minmax(0, 1fr); }
 .page-hero__content { min-width: 0; }
-.breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: #c3ccd7; font-size: 12px; font-weight: 700; }
-.breadcrumb a { color: #ffd09a; }
-.breadcrumb a:hover { color: #fff; }
-.breadcrumb span[aria-hidden="true"] { opacity: .62; }
+/* ---------------------------------------------------------------------------
+   Site yolu. Her iç sayfada header'ın hemen altında, sayfa içeriğinden önce
+   duran ince bir şerit. Beyaz header ile koyu sayfa kahramanı arasında ayrı
+   bir kademe olarak okunur; ana sayfada gösterilecek bir yol olmadığı için
+   yalnızca iç sayfalarda bulunur.
+--------------------------------------------------------------------------- */
+.breadcrumb-bar { border-bottom: 1px solid rgba(37,51,73,.1); background: var(--cream-2); }
+.breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px 0; color: var(--navy); font-size: 12.5px; font-weight: 700; letter-spacing: .01em; }
+.breadcrumb a { color: #6c7789; border-radius: 4px; transition: color .18s ease; }
+.breadcrumb a:hover { color: var(--orange-2); }
+.breadcrumb a:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; color: var(--orange-2); }
+.breadcrumb a:active { color: var(--navy); }
+.breadcrumb span[aria-hidden="true"] { color: #a7afbc; }
+.breadcrumb span[aria-current="page"] { color: var(--navy); }
 .page-hero h1 { max-width: 830px; margin-top: 20px; font-size: clamp(44px, 5.4vw, 74px); line-height: 1.02; letter-spacing: -.052em; }
 .page-hero__lead { max-width: 760px; margin-top: 24px; color: #d0d7e0; font-size: 17px; line-height: 1.75; }
 .page-hero__actions { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 12px; }
@@ -673,8 +683,11 @@ address { font-style: normal; }
 .page-cta .button--cream { min-width: 170px; }
 
 .legal-meta { margin-bottom: 30px; color: #697487; font-size: 13px; }
-.error-page { min-height: 68vh; display: grid; place-items: center; text-align: center; }
-.error-page__inner { max-width: 760px; padding: 80px 0; }
+/* Site yolu şeridi ilk satırı tam genişlikte alır, hata metni kalan alanda
+   ortalanır; place-items: center şeridi de daraltıyordu. */
+.error-page { min-height: 68vh; display: grid; grid-template-rows: auto 1fr; text-align: center; }
+.error-page__inner { align-self: center; max-width: 760px; padding: 80px 0; }
+.error-page .breadcrumb { text-align: left; }
 .error-code { color: var(--orange); font-size: 14px; font-weight: 900; letter-spacing: .18em; }
 .error-page h1 { margin-top: 15px; font-size: clamp(44px, 7vw, 78px); line-height: 1; letter-spacing: -.055em; }
 .error-page p { max-width: 620px; margin: 22px auto 0; color: var(--muted); font-size: 17px; }
@@ -780,4 +793,40 @@ address { font-style: normal; }
   .final-cta.is-visible .final-cta__truck,
   .final-cta.is-visible .final-cta__ground,
   .final-cta.is-visible .final-cta__pin-ring { animation: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   Galeri. Ana sayfada altı kare, /galeri.html sayfasında tamamı. Fotoğraflar
+   markalı alt bandıyla birlikte 4/3 oranında üretilir; oran burada birebir
+   aynı verildiği için object-fit hiçbir şeyi kırpmaz, bant her zaman görünür.
+   Kare sayısı her kırılımda sütun sayısına tam bölünür: ana sayfada 6 kare
+   3/2/1 sütuna, galeri sayfasında 16 kare 4/2/1 sütuna eksiksiz oturur.
+--------------------------------------------------------------------------- */
+.gallery { background: var(--cream-2); }
+.gallery__grid { margin-top: 8px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.gallery__item { margin: 0; overflow: hidden; border: 1px solid rgba(37,51,73,.1); border-radius: var(--radius-md); background: var(--cream); box-shadow: 0 8px 24px rgba(23,32,51,.06); transition: box-shadow .3s ease, border-color .3s ease; }
+.gallery__item img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; transition: transform .45s ease; }
+.gallery__item:hover { border-color: rgba(239,124,0,.35); box-shadow: 0 14px 34px rgba(23,32,51,.14); }
+.gallery__item:hover img { transform: scale(1.04); }
+.gallery__all { margin-top: 34px; }
+.gallery--page { background: var(--cream); }
+.gallery--page .gallery__grid { margin-top: 0; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+@media (max-width: 1100px) {
+  .gallery--page .gallery__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+}
+
+@media (max-width: 960px) {
+  .gallery__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+}
+
+@media (max-width: 560px) {
+  .gallery__grid,
+  .gallery--page .gallery__grid { grid-template-columns: minmax(0, 1fr); }
+  .gallery__all { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery__item img { transition: none; }
+  .gallery__item:hover img { transform: none; }
 }

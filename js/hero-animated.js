@@ -64,10 +64,17 @@
             return;
           }
         }
-      }, { threshold: 0.2, rootMargin: '0px 0px -8% 0px' });
+      /*
+       * Hero sayfanın en üstünde; kısa telefon ekranlarında sahne tamamen
+       * katlamanın altında kalabiliyor ve dar bir gözlemci hiç tetiklenmeden
+       * hero görselsiz açılıyordu. Kök bir ekran boyu aşağı genişletilir:
+       * ilk ekrana yakın olan her şey anında oynar, sayfanın çok altındaki
+       * bölümler için kaydırmada tetiklenme davranışı korunur.
+       */
+      }, { threshold: 0, rootMargin: '0px 0px 100% 0px' });
 
-      /* Gözlemci hiç tetiklenmezse katmanlar görünmez kalmasın. */
-      var safety = setTimeout(settle, 8000);
+      /* Gözlemci yine de tetiklenmezse katmanlar görünmez kalmasın. */
+      var safety = setTimeout(settle, 3000);
       observer.observe(element);
     });
   }

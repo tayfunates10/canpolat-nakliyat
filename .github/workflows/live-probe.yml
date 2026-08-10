@@ -1,0 +1,28 @@
+name: Canlı site tanısı
+
+# Yayın yapmadan yalnızca canlı siteyi yoklar. Yayın doğrulaması düştüğünde
+# sebebi görmek için elle çalıştırılır; FTP bilgilerine hiç dokunmaz.
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: Yoklanacak taban adres
+        required: false
+        type: string
+        default: https://www.canpolatnakliyat.com
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    name: Canlı yolları yokla
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Kaynak kodu al
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Yolları yokla
+        run: scripts/live-probe.sh "${{ inputs.base_url }}"

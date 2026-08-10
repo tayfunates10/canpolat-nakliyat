@@ -25,6 +25,7 @@ publish_paths=(
   "index-template.html"
   "404.html"
   "hakkimizda.html"
+  "galeri.html"
   "gizlilik.html"
   "robots.txt"
   "sitemap.xml"
@@ -38,8 +39,34 @@ publish_paths=(
   "bolgeler"
 )
 
+gallery_images=(
+  "asansorlu-tasima-edremit"
+  "kamyona-esya-yukleme"
+  "sehirler-arasi-nakliyat-istanbul"
+  "paketlenmis-esyalar-tasimaya-hazir"
+  "evden-eve-nakliyat-araci-edremit"
+  "kamyon-ici-esya-istifleme"
+  "apartman-onunde-yukleme"
+  "salon-koltuk-takimi-paketleme"
+  "yuksek-kata-tasima-hazirligi"
+  "yatak-koruyucu-kilif-paketleme"
+  "kapali-kasa-nakliyat-kamyonu"
+  "koltuk-koruyucu-kilif-sarim"
+  "gece-tasima-hizmeti"
+  "kusakli-mobilya-sabitleme"
+  "yagmurda-nakliyat-tasima"
+  "baza-yatak-koruma-ortusu"
+)
+
+# Galeri kareleri iki genişlikte yayınlanır; srcset'in iki ucu da eksiksiz olmalı.
+gallery_files=()
+for name in "${gallery_images[@]}"; do
+  gallery_files+=("assets/images/galeri/${name}.webp" "assets/images/galeri/${name}-640.webp")
+done
+
 required_paths=(
   "${publish_paths[@]}"
+  "${gallery_files[@]}"
   "api/teklif.php"
   "css/hero-animated.css"
   "css/services-tune.css"
@@ -47,6 +74,7 @@ required_paths=(
   "js/quote-form.js"
   "hizmetler/paketleme-montaj.html"
   "hizmetler/parca-esya-tasimaciligi.html"
+  "galeri.html"
   "assets/images/hero-r8/ASSET-MANIFEST.md"
   "assets/images/hero/canpolat-hero-bg-2026.webp"
   "assets/images/service-evden-eve.webp"
@@ -79,6 +107,7 @@ rm -f \
 rm -rf "${OUTPUT_PATH}/assets/images/hero-parts"
 
 required_output_files=(
+  "${gallery_files[@]}"
   "index.php"
   "index.html"
   "index-template.html"
@@ -91,6 +120,7 @@ required_output_files=(
   "js/quote-form.js"
   "hizmetler/paketleme-montaj.html"
   "hizmetler/parca-esya-tasimaciligi.html"
+  "galeri.html"
   "assets/images/hero/canpolat-hero-bg-2026.webp"
   "assets/images/service-evden-eve.webp"
   "assets/images/service-sehirler-arasi.webp"
