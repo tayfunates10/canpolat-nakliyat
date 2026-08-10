@@ -952,6 +952,57 @@ address { font-style: normal; }
 .gallery__item:hover { border-color: rgba(239,124,0,.35); box-shadow: 0 14px 34px rgba(23,32,51,.14); }
 .gallery__item:hover img { transform: scale(1.04); }
 .gallery__all { margin-top: 34px; }
+
+/* Kare bir düğme: tıklama adrese çapa yazmadığı için sayfa konumu kaymaz. */
+.gallery__open { position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
+.gallery__open:focus-visible { outline: 3px solid var(--orange); outline-offset: -3px; }
+.gallery__open::after {
+  content: ""; position: absolute; inset: 0; opacity: 0;
+  background: linear-gradient(to top, rgba(12,20,33,.45), transparent 52%);
+  transition: opacity .3s ease;
+}
+.gallery__item:hover .gallery__open::after, .gallery__open:focus-visible::after { opacity: 1; }
+.gallery__item figcaption { padding: 13px 16px 15px; color: var(--ink); font-size: 13px; font-weight: 700; line-height: 1.45; }
+
+/* ---------------------------------------------------------------------------
+   Galeri önizleme penceresi. Sabit konumlu olduğu için sayfanın kaydırma
+   konumuna dokunmaz; arka planın kaymasını gövdedeki lightbox-open durdurur.
+--------------------------------------------------------------------------- */
+body.lightbox-open { position: fixed; left: 0; right: 0; overflow: hidden; }
+.lightbox { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; }
+.lightbox[hidden] { display: none; }
+.lightbox__backdrop { position: absolute; inset: 0; background: rgba(8,14,24,.86); backdrop-filter: blur(3px); animation: lightbox-fade .22s ease both; }
+.lightbox__panel { position: relative; z-index: 1; width: min(1100px, 94vw); display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; animation: lightbox-rise .28s cubic-bezier(.22,1,.36,1) both; }
+.lightbox__figure { min-width: 0; margin: 0; }
+.lightbox__image { display: block; width: 100%; max-height: 78vh; margin: 0 auto; object-fit: contain; border-radius: var(--radius-md); background: #0d1623; }
+.lightbox__caption { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 6px 14px; margin-top: 14px; color: #eef2f7; font-size: 14px; font-weight: 700; text-align: center; }
+.lightbox__count { color: var(--orange); font-size: 12px; font-weight: 800; letter-spacing: .06em; }
+.lightbox__nav, .lightbox__close {
+  display: grid; place-items: center; border: 1px solid rgba(255,255,255,.24); border-radius: 50%;
+  color: #fff; background: rgba(255,255,255,.09); cursor: pointer; line-height: 1;
+  transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
+}
+.lightbox__nav { width: 52px; height: 52px; flex: 0 0 52px; font-size: 30px; }
+.lightbox__close { position: absolute; top: -54px; right: 0; width: 42px; height: 42px; font-size: 24px; }
+.lightbox__nav:hover, .lightbox__close:hover { border-color: var(--orange); background: rgba(239,124,0,.3); }
+.lightbox__nav:active, .lightbox__close:active { transform: scale(.93); }
+.lightbox__nav:focus-visible, .lightbox__close:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+@keyframes lightbox-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes lightbox-rise { from { opacity: 0; transform: translateY(16px) scale(.97); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .lightbox__backdrop, .lightbox__panel { animation: none; }
+  .lightbox__nav, .lightbox__close { transition: none; }
+}
+/* Telefonda üç sütun görsele yer bırakmıyor; oklar görselin üstüne biner. */
+@media (max-width: 720px) {
+  .lightbox__panel { grid-template-columns: minmax(0, 1fr); }
+  .lightbox__figure { grid-column: 1; grid-row: 1; }
+  .lightbox__nav { position: absolute; top: 50%; z-index: 2; width: 44px; height: 44px; flex-basis: 44px; margin-top: -40px; font-size: 26px; background: rgba(8,14,24,.62); }
+  .lightbox__nav--prev { grid-column: 1; grid-row: 1; left: 6px; }
+  .lightbox__nav--next { grid-column: 1; grid-row: 1; right: 6px; }
+  .lightbox__close { top: -50px; right: 2px; }
+  .lightbox__image { max-height: 66vh; }
+}
 .gallery--page { background: var(--cream); }
 .gallery--page .gallery__grid { margin-top: 0; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 

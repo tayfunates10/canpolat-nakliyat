@@ -40,22 +40,22 @@ publish_paths=(
 )
 
 gallery_images=(
-  "asansorlu-tasima-edremit"
-  "kamyona-esya-yukleme"
-  "sehirler-arasi-nakliyat-istanbul"
-  "paketlenmis-esyalar-tasimaya-hazir"
-  "evden-eve-nakliyat-araci-edremit"
-  "kamyon-ici-esya-istifleme"
-  "apartman-onunde-yukleme"
-  "salon-koltuk-takimi-paketleme"
-  "yuksek-kata-tasima-hazirligi"
-  "yatak-koruyucu-kilif-paketleme"
-  "kapali-kasa-nakliyat-kamyonu"
-  "koltuk-koruyucu-kilif-sarim"
-  "gece-tasima-hizmeti"
-  "kusakli-mobilya-sabitleme"
-  "yagmurda-nakliyat-tasima"
   "baza-yatak-koruma-ortusu"
+  "yagmurda-nakliyat-tasima"
+  "kusakli-mobilya-sabitleme"
+  "gece-tasima-hizmeti"
+  "koltuk-koruyucu-kilif-sarim"
+  "kapali-kasa-nakliyat-kamyonu"
+  "yatak-koruyucu-kilif-paketleme"
+  "yuksek-kata-tasima-hazirligi"
+  "salon-koltuk-takimi-paketleme"
+  "apartman-onunde-yukleme"
+  "kamyon-ici-esya-istifleme"
+  "evden-eve-nakliyat-araci-edremit"
+  "paketlenmis-esyalar-tasimaya-hazir"
+  "sehirler-arasi-nakliyat-istanbul"
+  "kamyona-esya-yukleme"
+  "asansorlu-tasima-edremit"
 )
 
 # Galeri kareleri iki genişlikte yayınlanır; srcset'in iki ucu da eksiksiz olmalı.
