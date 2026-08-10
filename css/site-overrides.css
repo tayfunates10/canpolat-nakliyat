@@ -108,7 +108,7 @@
     padding: 0 !important;
     justify-content: initial !important;
     align-items: stretch;
-    text-align: left;
+    text-align: center;
     opacity: 1 !important;
     visibility: visible !important;
   }
@@ -117,7 +117,7 @@
     min-width: 0;
     min-height: 58px;
     align-items: center !important;
-    justify-content: flex-start !important;
+    justify-content: center !important;
     gap: 9px !important;
     padding: 10px 11px;
     border: 1px solid rgba(239,124,0,.30);
@@ -127,7 +127,7 @@
     font-size: 11px !important;
     font-weight: 700 !important;
     line-height: 1.25;
-    text-align: left;
+    text-align: center !important;
     opacity: 1 !important;
     visibility: visible !important;
     animation: none !important;
