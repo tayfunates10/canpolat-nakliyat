@@ -227,6 +227,46 @@
   to { opacity: 1; }
 }
 
+/* Gallery overlays: show only during an intentional interaction. The source
+   stylesheet kept captions permanently visible on touch devices; these rules
+   restore a clean image-only resting state on both desktop and mobile. */
+.gallery__open::after {
+  opacity: 0 !important;
+}
+.gallery__item figcaption {
+  opacity: 0 !important;
+  transform: translateY(9px) !important;
+}
+.gallery__item:hover .gallery__open::after,
+.gallery__open:focus-visible::after,
+.gallery__open:active::after {
+  opacity: 1 !important;
+}
+.gallery__item:hover figcaption,
+.gallery__open:focus-visible figcaption,
+.gallery__open:active figcaption {
+  opacity: 1 !important;
+  transform: none !important;
+}
+@media (hover: none) {
+  .gallery__open::after {
+    opacity: 0 !important;
+  }
+  .gallery__item figcaption {
+    opacity: 0 !important;
+    transform: translateY(9px) !important;
+  }
+  .gallery__open:active::after,
+  .gallery__open:focus::after {
+    opacity: 1 !important;
+  }
+  .gallery__open:active figcaption,
+  .gallery__open:focus figcaption {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
 /* Per-content reveal. The legacy section-level is-visible flag is deliberately
    ignored; only the content observer's is-content-visible class may finish a
    reveal. This prevents a whole section from arriving at once. */
