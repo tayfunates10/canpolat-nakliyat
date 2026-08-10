@@ -156,7 +156,7 @@ address { font-style: normal; }
 .hero::before { content: ""; position: absolute; inset: 0; opacity: .08; background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px); background-size: 42px 42px; mask-image: linear-gradient(90deg, transparent, #000 55%, #000); }
 .hero__glow { position: absolute; right: -8%; top: -35%; width: 700px; height: 700px; border: 1px solid rgba(239,124,0,.22); border-radius: 50%; box-shadow: 0 0 0 80px rgba(239,124,0,.025), 0 0 0 160px rgba(239,124,0,.018); }
 .hero__inner { position: relative; z-index: 2; min-height: 662px; display: grid; grid-template-columns: .82fr 1.18fr; align-items: center; gap: 18px; }
-.hero__content { padding: 70px 0 76px; }
+.hero__content { padding: 70px 0 76px; transform: translateY(36px); }
 .eyebrow { display: flex; align-items: center; gap: 10px; color: var(--orange-dark); font-size: 12px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
 .eyebrow span { width: 24px; height: 2px; background: currentColor; }
 .eyebrow--light { color: #ffad4a; }
@@ -168,9 +168,32 @@ address { font-style: normal; }
 .hero__facts li { display: flex; align-items: center; gap: 8px; }
 .hero__facts-icon { flex: 0 0 27px; width: 27px; height: 27px; display: grid; place-items: center; border: 1px solid rgba(239,124,0,.5); border-radius: 9px; background: rgba(239,124,0,.1); color: var(--orange); }
 .hero__facts-icon .icon { width: 15px; height: 15px; }
+
+/* Hero geliş animasyonu. Yalnız CSS ile çalışır: JS kapalı olsa da
+   animasyon oynar ve içerik görünür hâlde biter. Sıralama okuma sırasını
+   takip eder; başlık, açıklama, butonlar, sonra bilgi kutuları. */
+@keyframes hero-rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+.hero h1 { animation: hero-rise .75s cubic-bezier(.22,1,.36,1) 80ms both; }
+.hero__lead { animation: hero-rise .75s cubic-bezier(.22,1,.36,1) 200ms both; }
+.hero__actions { animation: hero-rise .7s cubic-bezier(.22,1,.36,1) 320ms both; }
+.hero__facts li { animation: hero-rise .6s cubic-bezier(.22,1,.36,1) both; }
+.hero__facts li:nth-child(1) { animation-delay: 440ms; }
+.hero__facts li:nth-child(2) { animation-delay: 520ms; }
+.hero__facts li:nth-child(3) { animation-delay: 600ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero h1,
+  .hero__lead,
+  .hero__actions,
+  .hero__facts li { animation: none; }
+}
 .hero__visual { position: relative; min-width: 0; align-self: stretch; display: flex; align-items: flex-end; }
 /* Tuvalin alt %16.7'si şeffaf; bant kolon genişliğinin ~%13'üne denk gelir ve layout'tan geri alınır. */
-.hero-scene { position: relative; width: 118%; aspect-ratio: 3 / 2; margin-left: -10%; margin-bottom: -10%; filter: drop-shadow(0 26px 22px rgba(0,0,0,.34)); }
+/* Sahnenin görsel kütlesi metin bloğundan 109 piksel aşağıda kalıyordu:
+   PNG katmanlarının üst kısmı boş, kutu dikeyde ortalanınca kamyon aşağı
+   düşüyor. Sahne yukarı, metin bir miktar aşağı alınarak ikisinin optik
+   merkezi eşitlenir. Kaydırma transform ile yapılır, yerleşimi bozmaz. */
+.hero-scene { position: relative; width: 118%; aspect-ratio: 3 / 2; margin-left: -10%; margin-bottom: -10%; transform: translateY(-12%); filter: drop-shadow(0 26px 22px rgba(0,0,0,.34)); }
 .scene-layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 
 /* minmax(0,...) olmadan kolonlar min-content altına inemez ve dar masaüstünde şeridi taşırır. */
