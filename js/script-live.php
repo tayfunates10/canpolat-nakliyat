@@ -5,3 +5,5 @@ header('Cache-Control: no-cache, no-store, max-age=0, must-revalidate');
 readfile(__DIR__ . '/script.js');
 echo "\n";
 readfile(__DIR__ . '/site-tuning.js');
+echo "\n";
+readfile(__DIR__ . '/header-logo-fix.js');
