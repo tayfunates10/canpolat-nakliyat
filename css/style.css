@@ -606,10 +606,20 @@ address { font-style: normal; }
 .page-hero__grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.04fr) minmax(320px, .72fr); align-items: center; gap: 66px; }
 .page-hero__grid--single { grid-template-columns: minmax(0, 1fr); }
 .page-hero__content { min-width: 0; }
-.breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: #c3ccd7; font-size: 12px; font-weight: 700; }
-.breadcrumb a { color: #ffd09a; }
-.breadcrumb a:hover { color: #fff; }
-.breadcrumb span[aria-hidden="true"] { opacity: .62; }
+/* ---------------------------------------------------------------------------
+   Site yolu. Her iç sayfada header'ın hemen altında, sayfa içeriğinden önce
+   duran ince bir şerit. Beyaz header ile koyu sayfa kahramanı arasında ayrı
+   bir kademe olarak okunur; ana sayfada gösterilecek bir yol olmadığı için
+   yalnızca iç sayfalarda bulunur.
+--------------------------------------------------------------------------- */
+.breadcrumb-bar { border-bottom: 1px solid rgba(37,51,73,.1); background: var(--cream-2); }
+.breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px 0; color: var(--navy); font-size: 12.5px; font-weight: 700; letter-spacing: .01em; }
+.breadcrumb a { color: #6c7789; border-radius: 4px; transition: color .18s ease; }
+.breadcrumb a:hover { color: var(--orange-2); }
+.breadcrumb a:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; color: var(--orange-2); }
+.breadcrumb a:active { color: var(--navy); }
+.breadcrumb span[aria-hidden="true"] { color: #a7afbc; }
+.breadcrumb span[aria-current="page"] { color: var(--navy); }
 .page-hero h1 { max-width: 830px; margin-top: 20px; font-size: clamp(44px, 5.4vw, 74px); line-height: 1.02; letter-spacing: -.052em; }
 .page-hero__lead { max-width: 760px; margin-top: 24px; color: #d0d7e0; font-size: 17px; line-height: 1.75; }
 .page-hero__actions { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 12px; }
@@ -673,8 +683,11 @@ address { font-style: normal; }
 .page-cta .button--cream { min-width: 170px; }
 
 .legal-meta { margin-bottom: 30px; color: #697487; font-size: 13px; }
-.error-page { min-height: 68vh; display: grid; place-items: center; text-align: center; }
-.error-page__inner { max-width: 760px; padding: 80px 0; }
+/* Site yolu şeridi ilk satırı tam genişlikte alır, hata metni kalan alanda
+   ortalanır; place-items: center şeridi de daraltıyordu. */
+.error-page { min-height: 68vh; display: grid; grid-template-rows: auto 1fr; text-align: center; }
+.error-page__inner { align-self: center; max-width: 760px; padding: 80px 0; }
+.error-page .breadcrumb { text-align: left; }
 .error-code { color: var(--orange); font-size: 14px; font-weight: 900; letter-spacing: .18em; }
 .error-page h1 { margin-top: 15px; font-size: clamp(44px, 7vw, 78px); line-height: 1; letter-spacing: -.055em; }
 .error-page p { max-width: 620px; margin: 22px auto 0; color: var(--muted); font-size: 17px; }

@@ -68,7 +68,7 @@ for (const relative of publicPages.concat(['404.html'])) {
     'id="ana-icerik"',
     'rel="icon" href="/assets/images/favicon-canpolat.svg"',
     'rel="manifest" href="/manifest.webmanifest"',
-    'href="/css/style.css?v=20260809-14"',
+    'href="/css/style.css?v=20260809-15"',
     'href="tel:+905359120691"',
     'https://wa.me/905359120691',
     'Camivasat Mah. Akçay Cad. No: 78',
@@ -130,6 +130,22 @@ for (const relative of publicPages) {
   requireToken(relative, source, '<meta property="og:url" content="https://www.canpolatnakliyat.com', 'Open Graph URL eksik.');
 }
 
+/*
+ * Site yolu her iç sayfada aynı yerde durmalı: main açılır açılmaz, sayfa
+ * kahramanından önce. Ana sayfada gösterilecek bir yol yok, o yüzden dışarıda.
+ */
+for (const relative of publicPages.concat(['404.html'])) {
+  if (relative === 'index-template.html') {
+    if (read(relative).includes('class="breadcrumb-bar"')) failures.push(`${relative}: ana sayfada site yolu bulunmamalıdır.`);
+    continue;
+  }
+  const source = read(relative);
+  if (!/<main id="ana-icerik"[^>]*>\n  <div class="breadcrumb-bar">\n    <nav class="breadcrumb container" aria-label="Sayfa yolu">/.test(source)) {
+    failures.push(`${relative}: site yolu header'ın hemen altında, main'in ilk öğesi olmalıdır.`);
+  }
+  if (!/<span aria-current="page">[^<]+<\/span><\/nav>/.test(source)) failures.push(`${relative}: site yolunda bulunulan sayfa işaretlenmelidir.`);
+}
+
 const notFound = read('404.html');
 requireToken('404.html', notFound, '<meta name="robots" content="noindex, follow">', '404 noindex olmalıdır.');
 if (notFound.includes('rel="canonical"')) failures.push('404.html: 404 sayfasında canonical bulunmamalıdır.');
@@ -141,7 +157,7 @@ for (const relative of servicePages) {
   requireToken(relative, source, `href="/${relative}" aria-current="page"`, 'yan hizmet menüsünde aktif sayfa durumu eksik.');
   requireToken(relative, source, '"@type": "Service"', 'Service JSON-LD eksik.');
   requireToken(relative, source, '"@type": "BreadcrumbList"', 'BreadcrumbList JSON-LD eksik.');
-  requireToken(relative, source, '<nav class="breadcrumb"', 'görünür sayfa yolu eksik.');
+  requireToken(relative, source, '<nav class="breadcrumb container"', 'görünür sayfa yolu eksik.');
   if (source.replace(/<[^>]+>/g, ' ').trim().split(/\s+/).length < 350) failures.push(`${relative}: hizmet içeriği yetersiz.`);
   const related = source.match(/<div class="related-grid">([\s\S]*?)<\/div>/);
   if (!related) {
