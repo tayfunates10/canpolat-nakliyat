@@ -1,5 +1,62 @@
 /* Canpolat live polish — 2026-08-10 */
 
+/* Header logo: keep the newly approved artwork, but return the original
+   piece-by-piece entrance language. The mark, CANPOLAT word and subtitle use
+   separate visual layers; hover/focus still animates only the mark. */
+.brand {
+  flex-basis: 218px !important;
+}
+.brand__logo {
+  width: 218px !important;
+  clip-path: inset(68% 0 0 22%);
+  animation: brand-word-in .78s cubic-bezier(.22,1,.36,1) 580ms backwards !important;
+}
+.brand::before,
+.brand::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: url('/assets/images/canpolat-logo-20260810.svg') center / contain no-repeat;
+  will-change: transform, opacity;
+}
+.brand::before {
+  clip-path: inset(0 77% 0 0);
+  transform-origin: 11.5% 45%;
+  animation: brand-mark-in .72s cubic-bezier(.22,1,.36,1) backwards;
+  transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .3s ease;
+}
+.brand::after {
+  clip-path: inset(0 0 30% 18%);
+  animation: brand-word-in .78s cubic-bezier(.22,1,.36,1) 420ms backwards;
+}
+@keyframes brand-mark-in {
+  from { opacity: 0; transform: translateY(8%) rotate(-38deg) scale(.72); }
+  64% { opacity: 1; transform: translateY(-2%) rotate(-4deg) scale(1.03); }
+  to { opacity: 1; transform: none; }
+}
+.brand:hover::before,
+.brand:focus-visible::before {
+  transform: translateY(-4%) rotate(-7deg) scale(1.06);
+}
+.brand:active::before {
+  transform: translateY(1%) rotate(2deg) scale(.95);
+  transition-duration: .09s;
+}
+
+@media (max-width: 960px) {
+  .brand { flex-basis: 200px !important; }
+  .brand__logo { width: 200px !important; }
+}
+@media (max-width: 720px) {
+  .brand { flex-basis: 180px !important; }
+  .brand__logo { width: 180px !important; }
+}
+@media (max-width: 460px) {
+  .brand { flex-basis: 160px !important; }
+  .brand__logo { width: 160px !important; }
+}
+
 /* The uploaded master logo stays untouched on light surfaces. On the two dark
    surfaces, the same transparent artwork is rendered as a high-contrast white
    mark so its navy portions cannot disappear into the background. */
@@ -68,6 +125,13 @@ main > section.is-armed .reveal.is-content-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .brand__logo,
+  .brand::before,
+  .brand::after {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
   main > section.is-armed .reveal,
   main > section.is-armed .reveal.is-content-visible {
     opacity: 1 !important;
