@@ -43,4 +43,18 @@ header('Cache-Control: no-cache, max-age=0, must-revalidate');
 header('X-Hero-Version: R8-11');
 header('Vary: Accept-Encoding');
 
-readfile($templatePath);
+$html = file_get_contents($templatePath);
+if (!is_string($html)) {
+    http_response_code(500);
+    echo 'Ana sayfa şablonu okunamadı.';
+    exit;
+}
+
+$ogImage = 'https://www.canpolatnakliyat.com/assets/images/canpolat-opengraph-20260811.jpg';
+$html = preg_replace('/(<meta\s+property="og:image"\s+content=")[^"]*(")/i', '$1' . $ogImage . '$2', $html, 1) ?? $html;
+$html = preg_replace('/(<meta\s+name="twitter:image"\s+content=")[^"]*(")/i', '$1' . $ogImage . '$2', $html, 1) ?? $html;
+$html = preg_replace('/(<meta\s+property="og:image:width"\s+content=")[^"]*(")/i', '${1}300$2', $html, 1) ?? $html;
+$html = preg_replace('/(<meta\s+property="og:image:height"\s+content=")[^"]*(")/i', '${1}200$2', $html, 1) ?? $html;
+$html = preg_replace('/(<meta\s+property="og:image:alt"\s+content=")[^"]*(")/i', '${1}Canpolat Evden Eve Nakliyat - Edremit Balıkesir$2', $html, 1) ?? $html;
+
+echo $html;
