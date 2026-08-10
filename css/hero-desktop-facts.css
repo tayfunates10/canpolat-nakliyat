@@ -1,14 +1,32 @@
 /* Desktop-only hero layout — 2026-08-11
    IMPORTANT: the approved R8 stage geometry, position, scale, layer order and
-   animation are intentionally untouched. Only the left copy/action spacing and
-   the existing fact-row placement are adjusted so the complete hero is visible
-   in the initial desktop viewport. Tablet/mobile keeps its existing layout. */
+   animation are intentionally untouched. Only desktop copy/action placement,
+   fact-row placement and the hero's excess bottom layout area are adjusted.
+   Tablet/mobile keeps its existing layout. */
 @media (min-width: 961px) {
-  /* The previous 505px lead width wrapped the paragraph into too many lines on
-     desktop and pushed the action row below the first viewport. Use the space
-     already available in the left grid column instead of moving the R8 scene. */
+  /* R8's 3:2 transparent canvas is taller than its visible artwork and was
+     making the hero section taller than the first desktop viewport. Keep the
+     inner grid at its natural size and anchored to the same top edge so R8 does
+     not move; only clip the unused lower part of the hero section. */
+  .hero {
+    height: clamp(680px, calc(100svh - 128px), 730px) !important;
+    min-height: 0 !important;
+    align-items: flex-start !important;
+  }
+
   .hero__content {
     min-width: 0;
+  }
+
+  /* Move only the copy/actions upward. The independent translate property is
+     used so the existing transform-based entrance animations remain intact and
+     the absolutely positioned fact row keeps .hero__inner as its containing
+     block. */
+  .hero__content > .eyebrow,
+  .hero h1,
+  .hero__lead,
+  .hero__actions {
+    translate: 0 -70px;
   }
 
   .hero__lead {
@@ -21,14 +39,17 @@
     margin-top: 24px !important;
   }
 
-  /* Keep the three original fact items beneath the R8 stage, distributed
-     left/centre/right. Their original icon + text visual language is preserved. */
+  /* Align the three existing facts to the visible R8 platform footprint.
+     At 1920px this produces centres around x=795 / 1150 / 1510, matching the
+     left / centre / right thirds of the visible stage. Top anchoring keeps the
+     row visible even though the transparent R8 canvas itself extends lower. */
   .hero__facts {
     position: absolute;
     z-index: 4;
-    left: calc(41% + 10px);
-    right: 0;
-    bottom: 42px;
+    left: 32%;
+    right: 12%;
+    top: 590px;
+    bottom: auto;
     width: auto;
     margin: 0 !important;
     display: grid !important;
@@ -39,8 +60,8 @@
     visibility: visible !important;
   }
 
-  /* Original desktop appearance: no cards, no panel fill, no added border or
-     blur. Only the location changes. */
+  /* Preserve the approved original desktop appearance: icon + text, without
+     introducing new cards, panel fill, blur or borders. */
   .hero__facts li {
     min-width: 0;
     min-height: 0;
@@ -67,16 +88,29 @@
   }
 }
 
-/* At the narrower desktop grid the R8 column starts farther right. Adjust only
-   the fact-row anchor and copy wrapping; the scene itself remains untouched. */
+/* Narrow desktop: keep the same intent but fit the smaller right column. R8
+   itself remains completely untouched. */
 @media (min-width: 961px) and (max-width: 1160px) {
+  .hero {
+    height: clamp(680px, calc(100svh - 128px), 720px) !important;
+  }
+
+  .hero__content > .eyebrow,
+  .hero h1,
+  .hero__lead,
+  .hero__actions {
+    translate: 0 -54px;
+  }
+
   .hero__lead {
     max-width: 560px !important;
     font-size: 16px;
   }
 
   .hero__facts {
-    left: calc(45% + 9px);
+    left: 42%;
+    right: 5%;
+    top: 588px;
     gap: 8px !important;
   }
 
@@ -85,8 +119,7 @@
   }
 }
 
-/* Short desktop viewports need a little more vertical economy. This affects
-   only text/action spacing and never the R8 visual column. */
+/* Extra-short desktop screens: reduce copy spacing only. R8 remains locked. */
 @media (min-width: 961px) and (max-height: 900px) {
   .hero__lead {
     margin-top: 16px !important;
@@ -95,9 +128,5 @@
 
   .hero__actions {
     margin-top: 18px !important;
-  }
-
-  .hero__facts {
-    bottom: 30px;
   }
 }
