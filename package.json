@@ -6,7 +6,7 @@
   "scripts": {
     "serve": "php -S 127.0.0.1:8099",
     "test:php": "php -l index.php && php -l api/teklif.php",
-    "test:static": "node tests/site-audit.js && node tests/completion-audit.js && node tests/parca-esya-audit.js && node tests/ftp-cleanup.js",
+    "test:static": "node tests/site-audit.js && node tests/completion-audit.js && node tests/parca-esya-audit.js && node tests/seo-local-pages-audit.js && node tests/ftp-cleanup.js",
     "test": "npm run test:php && npm run test:static"
   },
   "devDependencies": {
