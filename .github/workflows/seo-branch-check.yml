@@ -1,0 +1,34 @@
+name: SEO Branch Quality Check
+
+on:
+  push:
+    branches:
+      - seo-local-2026-08-10
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: canpolat-seo-branch-check
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Run production test suite without deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout SEO branch
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@1e60f620b9541dca1515405c02a0891d1b43639c # v6
+        with:
+          node-version: '22'
+
+      - name: Validate PHP syntax
+        run: npm run test:php
+
+      - name: Run static site, SEO and regression audits
+        run: npm run test:static
