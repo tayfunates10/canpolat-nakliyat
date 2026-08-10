@@ -81,7 +81,12 @@ for (const relative of publicPages.concat(['404.html'])) {
     [/Çalışma Saatleri|Hafta içi|openingHoursSpecification|i-saat/, 'çalışma saati'],
     // Kutu adresi yalnız api/teklif.php içinde kalır; hiçbir sayfada görünmez.
     [/info@canpolatnakliyat\.com|mailto:/, 'e-posta'],
+    // Konum butonları işletmenin Google Haritalar kaydına gider, adres sorgusuna değil.
+    [/google\.com\/maps\/dir/, 'eski yol tarifi sorgusu'],
   ]) if (pattern.test(source)) failures.push(`${relative}: ${label} bilgisi kaldırılmış olmalıydı.`);
+
+  const mapLinks = (source.match(/href="https:\/\/maps\.app\.goo\.gl\/soogyt8uA8WxuFEM8"/g) || []).length;
+  if (mapLinks !== 2) failures.push(`${relative}: iki konum butonu da Google Haritalar kaydına bağlanmalı, bulunan ${mapLinks}.`);
 
   // Footer sütun sırası her sayfada aynı olmalı: Kurumsal, Hizmetlerimiz, İletişim.
   const footerMarkup = (source.match(/<div class="container footer-grid">[\s\S]*?<div class="container footer-bottom">/) || [''])[0];
