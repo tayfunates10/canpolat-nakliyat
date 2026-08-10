@@ -4,10 +4,29 @@
    Only the requested smaller responsive sizing is overridden here. */
 .brand {
   flex-basis: 218px !important;
+  overflow: hidden;
 }
 .brand__logo {
   width: 218px !important;
+  overflow: hidden !important;
 }
+
+/* The original SVG word/subtitle groups carry their own transform attributes
+   that place them beside the emblem. Animating CSS `transform` temporarily
+   overrides those SVG coordinates and makes the text appear below the header
+   before snapping into place. Animate the independent `translate` property
+   instead, so the original SVG positioning remains active for every frame. */
+.brand__word {
+  animation: brand-word-safe-in .78s cubic-bezier(.22,1,.36,1) 420ms backwards !important;
+}
+.brand__sub {
+  animation: brand-word-safe-in .78s cubic-bezier(.22,1,.36,1) 580ms backwards !important;
+}
+@keyframes brand-word-safe-in {
+  from { opacity: 0; translate: -20px 0; }
+  to { opacity: 1; translate: 0 0; }
+}
+
 @media (max-width: 960px) {
   .brand { flex-basis: 200px !important; }
   .brand__logo { width: 200px !important; }
@@ -89,6 +108,11 @@ main > section.is-armed .reveal.is-content-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .brand__word,
+  .brand__sub {
+    animation: none !important;
+    translate: none !important;
+  }
   main > section.is-armed .reveal,
   main > section.is-armed .reveal.is-content-visible {
     opacity: 1 !important;
