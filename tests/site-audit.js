@@ -69,7 +69,7 @@ for (const relative of publicPages.concat(['404.html'])) {
     'id="ana-icerik"',
     'rel="icon" href="/assets/images/favicon-canpolat.svg"',
     'rel="manifest" href="/manifest.webmanifest"',
-    'href="/css/style.css?v=20260810-16"',
+    'href="/css/style.css?v=20260810-19"',
     'href="tel:+905359120691"',
     'https://wa.me/905359120691',
     'Edremit / Balıkesir',

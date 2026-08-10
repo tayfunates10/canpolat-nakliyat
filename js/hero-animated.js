@@ -140,11 +140,6 @@
       return { image: image, promise: imageReady(image) };
     });
 
-    var critical = readiness.filter(function (entry) {
-      return entry.image.classList.contains('hero-r8__layer--p00') ||
-             entry.image.classList.contains('hero-r8__layer--t00');
-    });
-
     /*
      * Tek bir görünürlük sözü iki akış tarafından da paylaşılır. is-loading
      * sınıfı sahne ekrana girmeden kaldırılırsa katmanlar sahne görünmezken
@@ -152,35 +147,35 @@
      */
     var inView = whenInView(stage);
 
-    Promise.all(critical.map(function (entry) { return entry.promise; })).then(function (results) {
+    /*
+     * Tek bir zincir. Önceki sürümde kritik katmanlar ve tüm katmanlar ayrı
+     * zincirlerde ilerliyordu; görseller önbellekten hızlı geldiğinde
+     * is-loading, is-ready eklenmeden kaldırılabiliyordu. Başlangıç durumu
+     * hiç boyanmadığı için geçiş başlamıyor ve 14 katman gecikmesiz, hep
+     * birlikte beliriyordu. Artık is-loading yalnız is-ready ile aynı karede
+     * kaldırılıyor.
+     */
+    Promise.all(readiness.map(function (entry) { return entry.promise; })).then(function (results) {
+      return inView.then(function () { return results; });
+    }).then(function (results) {
       if (!results.every(Boolean)) {
         stage.classList.remove('is-loading');
         stage.classList.add('has-error');
         return;
       }
 
-      return inView.then(function () {
+      stage.classList.remove('has-error');
+      // İki kare bekleyerek başlangıç durumunun boyanması garantiye alınır.
+      requestAnimationFrame(function () {
         requestAnimationFrame(function () {
-          requestAnimationFrame(function () {
-            stage.classList.add('is-ready');
-            document.documentElement.classList.add('hero-r8-mounted');
-            // En geç gelen katman 1470 ms gecikme + 560 ms sürede oturuyor;
-            // paralaks ancak giriş bittikten sonra devreye giriyor.
-            setTimeout(function () { enableParallax(stage); }, 2100);
-          });
+          stage.classList.add('is-ready');
+          stage.classList.remove('is-loading');
+          document.documentElement.classList.add('hero-r8-mounted');
+          // En geç gelen katman 1470 ms gecikme + 560 ms sürede oturuyor;
+          // paralaks ancak giriş bittikten sonra devreye giriyor.
+          setTimeout(function () { enableParallax(stage); }, 2150);
         });
       });
-    });
-
-    Promise.all(readiness.map(function (entry) { return entry.promise; })).then(function (results) {
-      return inView.then(function () { return results; });
-    }).then(function (results) {
-      stage.classList.remove('is-loading');
-      if (results.every(Boolean)) {
-        stage.classList.remove('has-error');
-      } else {
-        stage.classList.add('has-error');
-      }
     });
   }
 
