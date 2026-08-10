@@ -77,6 +77,124 @@
     link.insertBefore(svg, link.firstChild);
   });
 
+  /* Every inner page uses the same white + orange heading language as the
+     approved home hero/CTA. Keep the full title accessible as normal text and
+     accent only the final meaningful two-word phrase. */
+  (function normalizeInnerHeadingAccents() {
+    document.querySelectorAll('.page-hero h1').forEach(function (heading) {
+      if (heading.querySelector('.page-title-accent')) return;
+      var text = (heading.textContent || '').replace(/\s+/g, ' ').trim();
+      var words = text.split(' ').filter(Boolean);
+      if (words.length < 2) return;
+      var accentCount = words.length >= 4 ? 2 : 1;
+      var splitAt = words.length - accentCount;
+      heading.textContent = words.slice(0, splitAt).join(' ') + ' ';
+      var accent = document.createElement('span');
+      accent.className = 'page-title-accent';
+      accent.textContent = words.slice(splitAt).join(' ');
+      heading.appendChild(accent);
+    });
+
+    document.querySelectorAll('.final-cta h2').forEach(function (heading) {
+      if (heading.querySelector('em')) return;
+
+      var lastPart = heading.querySelector('.final-cta__title-part:last-child');
+      if (lastPart) {
+        var partText = (lastPart.textContent || '').trim();
+        if (!partText) return;
+        lastPart.textContent = '';
+        var em = document.createElement('em');
+        em.textContent = partText;
+        lastPart.appendChild(em);
+        return;
+      }
+
+      var text = (heading.textContent || '').replace(/\s+/g, ' ').trim();
+      var words = text.split(' ').filter(Boolean);
+      if (words.length < 2) return;
+      var splitAt = Math.max(1, words.length - 2);
+      heading.textContent = '';
+
+      var first = document.createElement('span');
+      first.className = 'final-cta__title-part final-cta__title-part--1';
+      first.textContent = words.slice(0, splitAt).join(' ');
+
+      var second = document.createElement('span');
+      second.className = 'final-cta__title-part final-cta__title-part--2';
+      var em = document.createElement('em');
+      em.textContent = words.slice(splitAt).join(' ');
+      second.appendChild(em);
+
+      heading.appendChild(first);
+      heading.appendChild(document.createTextNode(' '));
+      heading.appendChild(second);
+    });
+  })();
+
+  /* The screenshot target is lower than the previous 78% mobile trigger line.
+     Add an earlier mobile-only R8 gate at 92% of the usable viewport. This only
+     decides WHEN the approved R8 animation begins: geometry, 26px phone offset,
+     scale, z-order, layer coordinates and animation timings remain untouched. */
+  (function armScreenshotMatchedR8Gate() {
+    if (!window.matchMedia || !window.matchMedia('(max-width: 720px)').matches) return;
+    var r8 = document.getElementById('heroAnimated');
+    if (!r8 || r8.classList.contains('is-r8-viewport-ready')) return;
+
+    var initialScroll = window.scrollY || window.pageYOffset || 0;
+    var userMoved = initialScroll > 8;
+    var raf = 0;
+
+    function usableViewportHeight() {
+      var height = window.innerHeight || document.documentElement.clientHeight;
+      var bar = document.querySelector('.mobile-contact-bar');
+      if (!bar || window.getComputedStyle(bar).display === 'none') return height;
+      var rect = bar.getBoundingClientRect();
+      return rect.height ? Math.min(height, Math.max(0, rect.top)) : height;
+    }
+
+    function cleanup() {
+      window.removeEventListener('scroll', requestCheck);
+      window.removeEventListener('resize', requestCheck);
+      window.removeEventListener('orientationchange', requestCheck);
+      window.removeEventListener('touchmove', markMoved);
+    }
+
+    function markMoved() {
+      userMoved = true;
+      requestCheck();
+    }
+
+    function check() {
+      raf = 0;
+      if (r8.classList.contains('is-r8-viewport-ready')) {
+        cleanup();
+        return;
+      }
+
+      var currentScroll = window.scrollY || window.pageYOffset || 0;
+      if (Math.abs(currentScroll - initialScroll) > 4) userMoved = true;
+      if (!userMoved) return;
+
+      var rect = r8.getBoundingClientRect();
+      var viewport = usableViewportHeight();
+      if (rect.bottom > 0 && rect.top <= viewport * 0.92) {
+        r8.classList.add('is-r8-viewport-ready');
+        cleanup();
+      }
+    }
+
+    function requestCheck() {
+      if (raf) return;
+      raf = window.requestAnimationFrame(check);
+    }
+
+    window.addEventListener('scroll', requestCheck, { passive: true });
+    window.addEventListener('resize', requestCheck, { passive: true });
+    window.addEventListener('orientationchange', requestCheck, { passive: true });
+    window.addEventListener('touchmove', markMoved, { passive: true });
+    requestCheck();
+  })();
+
   /* Guarantee one complete service-area group in every footer. */
   (function ensureFooterRegions() {
     var footer = document.querySelector('.site-footer');
