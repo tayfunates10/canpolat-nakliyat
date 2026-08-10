@@ -65,7 +65,7 @@ address { font-style: normal; }
 .marquee { --marquee-gap: 54px; display: flex; width: 100%; overflow: hidden; }
 .marquee__track {
   display: flex; flex: 0 0 auto; align-items: center; margin: 0; list-style: none;
-  gap: var(--marquee-gap); padding: 11px var(--marquee-gap) 11px 0;
+  gap: var(--marquee-gap); padding: 7px var(--marquee-gap) 7px 0;
   animation: marquee-left 34s linear infinite;
 }
 .marquee__track li { flex: 0 0 auto; }
@@ -90,10 +90,11 @@ address { font-style: normal; }
    erişemez. Dört parça ayrı ayrı hareket eder: lacivert kemer, turuncu ok,
    CANPOLAT kelimesi ve alt satır.
 
-   Açılışta parçalar kendi yönlerinden gelip birleşir; imleç üzerine geldiğinde
-   aynı parçalar bir tık ayrışır. Her parça kendi merkezine göre dönsün diye
-   transform-box: fill-box gerekir; varsayılan olan view-box'ta hepsi tuvalin
-   köşesine göre döner ve amblem dağılır.
+   Açılışta parçalar kendi yönlerinden gelip birleşir. Üzerine gelindiğinde ise
+   yalnız amblem canlanır, yazı hiç kımıldamaz: yazının kayması logoyu her
+   hover'da farklı bir yerde gösteriyor ve tutarsız duruyordu. Her parça kendi
+   merkezine göre dönsün diye transform-box: fill-box gerekir; varsayılan olan
+   view-box'ta hepsi tuvalin köşesine göre döner ve amblem dağılır.
 
    Bağlantının bütün durumları ayrı tanımlıdır: dinlenme, üzerine gelme,
    klavye odağı, basılı tutma ve ziyaret edilmiş hâl.
@@ -115,24 +116,15 @@ address { font-style: normal; }
 @keyframes brand-chev-in { from { opacity: 0; transform: translateY(34%) scale(.8); } to { opacity: 1; transform: none; } }
 @keyframes brand-word-in { from { opacity: 0; transform: translateX(-13px); } to { opacity: 1; transform: none; } }
 
-/* Bağlantı olduğunu gösteren, ortadan açılan turuncu çubuk. */
-.brand::after { content: ""; position: absolute; left: 50%; right: 50%; bottom: -7px; height: 2px; border-radius: 2px; background: var(--orange); transition: left .24s ease, right .24s ease; }
-.brand:hover::after, .brand:focus-visible::after { left: 0; right: 0; }
-
-/* Üzerine gelme ve klavye odağı: parçalar ayrışır, ok öne çıkar. */
-.brand:hover .brand__arc, .brand:focus-visible .brand__arc { transform: rotate(-11deg) scale(1.07); }
-.brand:hover .brand__chev, .brand:focus-visible .brand__chev { transform: translateY(-9%) scale(1.1); }
-.brand:hover .brand__word, .brand:focus-visible .brand__word { transform: translateX(5px); }
-.brand:hover .brand__sub, .brand:focus-visible .brand__sub { transform: translateX(9px); }
+/* Üzerine gelme ve klavye odağı: yalnız amblem canlanır, yazı yerinde kalır. */
+.brand:hover .brand__arc, .brand:focus-visible .brand__arc { transform: rotate(-9deg) scale(1.06); }
+.brand:hover .brand__chev, .brand:focus-visible .brand__chev { transform: translateY(-7%) scale(1.08); }
 .brand:focus-visible { outline: 3px solid var(--orange); outline-offset: 6px; }
 
-/* Basılı tutma: parçalar tersine, merkeze doğru toplanır. */
+/* Basılı tutma: amblem merkeze doğru toplanır. */
 .brand:active .brand__arc { transform: rotate(3deg) scale(.95); }
 .brand:active .brand__chev { transform: translateY(2%) scale(.95); }
-.brand:active .brand__word { transform: translateX(-2px); }
-.brand:active .brand__sub { transform: translateX(-3px); }
-.brand:active .brand__arc, .brand:active .brand__chev,
-.brand:active .brand__word, .brand:active .brand__sub { transition-duration: .09s; }
+.brand:active .brand__arc, .brand:active .brand__chev { transition-duration: .09s; }
 
 @media (prefers-reduced-motion: reduce) {
   .brand__arc, .brand__chev, .brand__word, .brand__sub { animation: none; transition: none; }
@@ -693,7 +685,7 @@ address { font-style: normal; }
   .container { width: calc(100% - 30px); }
   .section { padding: 68px 0; }
   .marquee { --marquee-gap: 34px; }
-  .marquee__track { padding-top: 9px; padding-bottom: 9px; animation-duration: 26s; }
+  .marquee__track { padding-top: 6px; padding-bottom: 6px; animation-duration: 26s; }
   .marquee svg { flex-basis: 15px; width: 15px; height: 15px; }
   .site-header__inner { min-height: 68px; }
   .brand { flex-basis: 198px; }
@@ -1006,15 +998,34 @@ address { font-style: normal; }
 .gallery__all { margin-top: 34px; }
 
 /* Kare bir düğme: tıklama adrese çapa yazmadığı için sayfa konumu kaymaz. */
-.gallery__open { position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
+.gallery__open { position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; overflow: hidden; }
 .gallery__open:focus-visible { outline: 3px solid var(--orange); outline-offset: -3px; }
+/* Açıklama görselin alt kenarına biner; okunması için arkasına koyu bir
+   geçiş konur. İkisi de üzerine gelindiğinde ya da klavye odağında belirir. */
 .gallery__open::after {
   content: ""; position: absolute; inset: 0; opacity: 0;
-  background: linear-gradient(to top, rgba(12,20,33,.45), transparent 52%);
-  transition: opacity .3s ease;
+  background: linear-gradient(to top, rgba(9,15,26,.9) 12%, rgba(9,15,26,.6) 36%, rgba(9,15,26,0) 70%);
+  transition: opacity .3s ease; pointer-events: none;
 }
-.gallery__item:hover .gallery__open::after, .gallery__open:focus-visible::after { opacity: 1; }
-.gallery__item figcaption { padding: 13px 16px 15px; color: var(--ink); font-size: 13px; font-weight: 700; line-height: 1.45; }
+.gallery__item figcaption {
+  position: absolute; z-index: 1; left: 0; right: 0; bottom: 14%;
+  padding: 0 16px 10px; color: #fff; font-size: 13.5px; font-weight: 750; line-height: 1.4;
+  text-align: left; text-shadow: 0 1px 3px rgba(0,0,0,.5);
+  opacity: 0; transform: translateY(9px);
+  transition: opacity .3s ease, transform .3s var(--reveal-e);
+}
+.gallery__item:hover .gallery__open::after,
+.gallery__open:focus-visible::after { opacity: 1; }
+.gallery__item:hover figcaption,
+.gallery__open:focus-visible figcaption { opacity: 1; transform: none; }
+/* Dokunmatik cihazda hover yok; açıklama sürekli görünür kalır. */
+@media (hover: none) {
+  .gallery__open::after { opacity: 1; }
+  .gallery__item figcaption { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gallery__item figcaption { transition: none; transform: none; }
+}
 
 /* ---------------------------------------------------------------------------
    Galeri önizleme penceresi. Sabit konumlu olduğu için sayfanın kaydırma
@@ -1083,155 +1094,51 @@ body.lightbox-open { position: fixed; left: 0; right: 0; overflow: hidden; }
 }
 
 /* ---------------------------------------------------------------------------
-   Bölüm geliş efektleri.
+   Geliş efektleri.
 
-   is-armed sınıfını yalnız JS ve IntersectionObserver varken script.js ekler;
-   bu yüzden JS çalışmadığında hiçbir bölüm gizli kalmaz. Bölüm görünür alana
-   girince is-visible eklenir ve içerik yerine oturur.
+   Her satır, buton, bağlantı, görsel ve kart ayrı ayrı gelir. Hangi ögelerin
+   geleceğini script.js seçer; her birine .reveal sınıfı ve sıra numarası
+   (--reveal-i) verir, gecikme buradan hesaplanır. Kart, kutu ve figür gibi
+   çerçeveli ögeler bütün olarak gelir; içlerini tek tek getirmek boş bir
+   çerçevenin sonradan dolması gibi görünüyordu.
 
-   Her bölüm kendi karakterine uygun bir yönden gelir: iki sütunlu bölümlerde
-   sütunlar karşılıklı, ızgaralı bölümlerde kartlar sırayla, form ve kapanış
-   bloklarında ise bütün olarak.
+   Başlangıç dönüşümü --reveal-from ile bölümden gelir, böylece her bölümün
+   kendi karakteri olur. İki kural aynı özgüllükte; bitiş kuralı sonra
+   yazıldığı için kazanır. Bu sıra önemli: önceki sürümde bölüme özel armed
+   kuralları ortak is-visible kuralından sonra geldiği için dönüşüm hiç
+   sıfırlanmıyor ve içerik kalıcı olarak yana kaymış duruyordu.
+
+   Yatay kaydırma bilerek kullanılmıyor; ekran kenarına yakın bloklarda
+   içeriği sola kaçmış gibi gösteriyordu.
 --------------------------------------------------------------------------- */
 :root { --reveal-e: cubic-bezier(.22, 1, .36, 1); }
 
-/* Ortak: gelmesi beklenen her parça önce gizli, is-visible ile yerine oturur. */
-.section.is-armed .section-heading > div,
-.section.is-armed .section-heading > p,
-.section.is-armed .service-card,
-.section.is-armed .about__media,
-.section.is-armed .about__content,
-.section.is-armed .process-grid li,
-.section.is-armed .why-us__intro,
-.section.is-armed .why-us__cards article,
-.section.is-armed .regions__content,
-.section.is-armed .regions__visual,
-.section.is-armed .gallery__item,
-.section.is-armed .gallery__all,
-.section.is-armed .faq__intro,
-.section.is-armed .accordion__item,
-.section.is-armed .faq__more,
-.section.is-armed .quote__intro,
-.section.is-armed .quote-form,
-.page-hero.is-armed .page-hero__content,
-.page-section.is-armed .prose,
-.page-section.is-armed .faq-page,
-.page-section.is-armed .page-aside,
-.page-cta.is-armed .container {
+main > section.is-armed .reveal {
   opacity: 0;
-  transition: opacity .6s ease, transform .65s var(--reveal-e);
+  transform: var(--reveal-from, translateY(20px));
+  transition: opacity .5s ease, transform .58s var(--reveal-e);
+  transition-delay: calc(min(var(--reveal-i, 0), 14) * 55ms);
 }
-.section.is-visible .section-heading > div,
-.section.is-visible .section-heading > p,
-.section.is-visible .service-card,
-.section.is-visible .about__media,
-.section.is-visible .about__content,
-.section.is-visible .process-grid li,
-.section.is-visible .why-us__intro,
-.section.is-visible .why-us__cards article,
-.section.is-visible .regions__content,
-.section.is-visible .regions__visual,
-.section.is-visible .gallery__item,
-.section.is-visible .gallery__all,
-.section.is-visible .faq__intro,
-.section.is-visible .accordion__item,
-.section.is-visible .faq__more,
-.section.is-visible .quote__intro,
-.section.is-visible .quote-form,
-.page-hero.is-visible .page-hero__content,
-.page-section.is-visible .prose,
-.page-section.is-visible .faq-page,
-.page-section.is-visible .page-aside,
-.page-cta.is-visible .container {
-  opacity: 1; transform: none;
+main > section.is-visible .reveal {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(min(var(--reveal-i, 0), 14) * 55ms);
 }
 
-/* Hizmetler: başlık yükselir, kartlar sırayla aşağıdan gelir. */
-.services.is-armed .section-heading > div { transform: translateY(22px); }
-.services.is-armed .section-heading > p { transform: translateY(22px); transition-delay: 90ms; }
-.services.is-armed .service-card { transform: translateY(32px); }
-.services.is-armed .service-card:nth-child(2) { transition-delay: 70ms; }
-.services.is-armed .service-card:nth-child(3) { transition-delay: 140ms; }
-.services.is-armed .service-card:nth-child(4) { transition-delay: 210ms; }
-.services.is-armed .service-card:nth-child(5) { transition-delay: 280ms; }
-
-/* Hakkımızda: fotoğraf soldan, metin sağdan; iki sütun karşılıklı kapanır. */
-.about.is-armed .about__media { transform: translateX(-34px); }
-.about.is-armed .about__content { transform: translateX(34px); transition-delay: 90ms; }
-
-/* Süreç: dört adım soldan sağa, yürüyen bir sıra gibi. */
-.process.is-armed .section-heading > div { transform: translateY(20px); }
-.process.is-armed .section-heading > p { transform: translateY(20px); transition-delay: 90ms; }
-.process.is-armed .process-grid li { transform: translateY(26px); }
-.process.is-armed .process-grid li:nth-child(1) { transition-delay: 120ms; }
-.process.is-armed .process-grid li:nth-child(2) { transition-delay: 220ms; }
-.process.is-armed .process-grid li:nth-child(3) { transition-delay: 320ms; }
-.process.is-armed .process-grid li:nth-child(4) { transition-delay: 420ms; }
-
-/* Neden Canpolat: metin soldan, kutucuklar tek tek büyüyerek belirir. */
-.why-us.is-armed .why-us__intro { transform: translateX(-30px); }
-.why-us.is-armed .why-us__cards article { transform: scale(.94); }
-.why-us.is-armed .why-us__cards article:nth-child(1) { transition-delay: 90ms; }
-.why-us.is-armed .why-us__cards article:nth-child(2) { transition-delay: 170ms; }
-.why-us.is-armed .why-us__cards article:nth-child(3) { transition-delay: 250ms; }
-.why-us.is-armed .why-us__cards article:nth-child(4) { transition-delay: 330ms; }
-
-/* Bölgeler: metin soldan, harita hafifçe yakınlaşarak açılır. */
-.regions.is-armed .regions__content { transform: translateX(-30px); }
-.regions.is-armed .regions__visual { transform: scale(.95); transition-delay: 110ms; }
-
-/* Galeri: kareler sıradan değil, dalga hâlinde açılır. */
-.gallery.is-armed .section-heading > div { transform: translateY(20px); }
-.gallery.is-armed .section-heading > p { transform: translateY(20px); transition-delay: 90ms; }
-.gallery.is-armed .gallery__item { transform: translateY(26px) scale(.97); }
-.gallery.is-armed .gallery__item:nth-child(3n+2) { transition-delay: 90ms; }
-.gallery.is-armed .gallery__item:nth-child(3n) { transition-delay: 180ms; }
-.gallery.is-armed .gallery__all { transform: translateY(16px); transition-delay: 260ms; }
-
-/* SSS: giriş soldan, kutular alttan sırayla. */
-.faq.is-armed .faq__intro { transform: translateX(-28px); }
-.faq.is-armed .accordion__item { transform: translateY(20px); }
-.faq.is-armed .accordion__item:nth-child(2) { transition-delay: 70ms; }
-.faq.is-armed .accordion__item:nth-child(3) { transition-delay: 140ms; }
-.faq.is-armed .accordion__item:nth-child(4) { transition-delay: 210ms; }
-.faq.is-armed .accordion__item:nth-child(5) { transition-delay: 280ms; }
-.faq.is-armed .accordion__item:nth-child(6) { transition-delay: 350ms; }
-.faq.is-armed .faq__more { transform: translateY(14px); transition-delay: 420ms; }
-
-/* Teklif: metin soldan, form aşağıdan yükselirken hafifçe büyür. */
-.quote.is-armed .quote__intro { transform: translateX(-30px); }
-.quote.is-armed .quote-form { transform: translateY(30px) scale(.98); transition-delay: 110ms; }
-
-/* İç sayfalar: kahraman metni yükselir, içerik soldan, yan sütun sağdan. */
-.page-hero.is-armed .page-hero__content { transform: translateY(22px); }
-.page-section.is-armed .prose,
-.page-section.is-armed .faq-page { transform: translateY(26px); }
-.page-section.is-armed .page-aside { transform: translateX(28px); transition-delay: 120ms; }
-.page-cta.is-armed .container { transform: translateY(26px) scale(.985); }
+/* Bölüm karakterleri: yalnız başlangıç dönüşümü değişir. */
+.services.is-armed { --reveal-from: translateY(26px); }
+.about.is-armed { --reveal-from: translateY(22px) scale(.985); }
+.process.is-armed { --reveal-from: translateY(24px) scale(.97); }
+.why-us.is-armed { --reveal-from: translateY(18px) scale(.95); }
+.regions.is-armed { --reveal-from: translateY(20px) scale(.99); }
+.gallery.is-armed { --reveal-from: translateY(26px) scale(.97); }
+.faq.is-armed { --reveal-from: translateY(18px); }
+.quote.is-armed { --reveal-from: translateY(26px) scale(.985); }
+.page-hero.is-armed { --reveal-from: translateY(22px); }
+.page-section.is-armed { --reveal-from: translateY(22px); }
+.page-cta.is-armed { --reveal-from: translateY(24px) scale(.985); }
 
 @media (prefers-reduced-motion: reduce) {
-  .section.is-armed .section-heading > div,
-  .section.is-armed .section-heading > p,
-  .section.is-armed .service-card,
-  .section.is-armed .about__media,
-  .section.is-armed .about__content,
-  .section.is-armed .process-grid li,
-  .section.is-armed .why-us__intro,
-  .section.is-armed .why-us__cards article,
-  .section.is-armed .regions__content,
-  .section.is-armed .regions__visual,
-  .section.is-armed .gallery__item,
-  .section.is-armed .gallery__all,
-  .section.is-armed .faq__intro,
-  .section.is-armed .accordion__item,
-  .section.is-armed .faq__more,
-  .section.is-armed .quote__intro,
-  .section.is-armed .quote-form,
-  .page-hero.is-armed .page-hero__content,
-  .page-section.is-armed .prose,
-  .page-section.is-armed .faq-page,
-  .page-section.is-armed .page-aside,
-  .page-cta.is-armed .container {
-    opacity: 1; transform: none; transition: none;
-  }
+  main > section.is-armed .reveal,
+  main > section.is-visible .reveal { opacity: 1; transform: none; transition: none; }
 }

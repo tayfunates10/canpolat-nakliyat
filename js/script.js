@@ -112,6 +112,19 @@
     var sections = document.querySelectorAll('main > section');
     if (!sections.length || typeof IntersectionObserver !== 'function') return;
 
+    /*
+     * Gelecek ögeler. Çerçeveli olanlar (kart, kutu, figür, form) bütün olarak
+     * gelsin diye listede önce yer alır; DOM sırasında da içeriklerinden önce
+     * geldikleri için altlarındaki satırlar ayrıca seçilmez.
+     */
+    var REVEAL = [
+      '.service-card', '.accordion__item', '.why-us__cards article', '.gallery__item',
+      '.side-card', '.quote-form', '.process-grid li', '.about__features > div',
+      '.about__media', '.regions__visual', '.region-tags', 'figure',
+      'h1', 'h2', 'h3', '.section-tag', 'p', 'address', 'ul:not(.region-tags)',
+      '.button', '.text-link', 'img'
+    ].join(',');
+
     var observer = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
@@ -123,6 +136,22 @@
     sections.forEach(function (section) {
       section.classList.add('is-armed');
       observer.observe(section);
+
+      // Hero ve kapanış bandının kendi animasyon zinciri var; ikinci kez
+      // sahnelenirlerse iki animasyon üst üste biner.
+      if (section.classList.contains('hero') || section.classList.contains('final-cta')) return;
+
+      var chosen = [];
+      Array.prototype.forEach.call(section.querySelectorAll(REVEAL), function (node) {
+        for (var i = 0; i < chosen.length; i++) {
+          if (chosen[i].contains(node)) return;   // seçilmiş bir ögenin içindeyse atla
+        }
+        chosen.push(node);
+      });
+      chosen.forEach(function (node, index) {
+        node.classList.add('reveal');
+        node.style.setProperty('--reveal-i', String(index));
+      });
     });
   })();
 
