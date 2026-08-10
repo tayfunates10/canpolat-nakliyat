@@ -1081,3 +1081,157 @@ body.lightbox-open { position: fixed; left: 0; right: 0; overflow: hidden; }
   .gallery__item img { transition: none; }
   .gallery__item:hover img { transform: none; }
 }
+
+/* ---------------------------------------------------------------------------
+   Bölüm geliş efektleri.
+
+   is-armed sınıfını yalnız JS ve IntersectionObserver varken script.js ekler;
+   bu yüzden JS çalışmadığında hiçbir bölüm gizli kalmaz. Bölüm görünür alana
+   girince is-visible eklenir ve içerik yerine oturur.
+
+   Her bölüm kendi karakterine uygun bir yönden gelir: iki sütunlu bölümlerde
+   sütunlar karşılıklı, ızgaralı bölümlerde kartlar sırayla, form ve kapanış
+   bloklarında ise bütün olarak.
+--------------------------------------------------------------------------- */
+:root { --reveal-e: cubic-bezier(.22, 1, .36, 1); }
+
+/* Ortak: gelmesi beklenen her parça önce gizli, is-visible ile yerine oturur. */
+.section.is-armed .section-heading > div,
+.section.is-armed .section-heading > p,
+.section.is-armed .service-card,
+.section.is-armed .about__media,
+.section.is-armed .about__content,
+.section.is-armed .process-grid li,
+.section.is-armed .why-us__intro,
+.section.is-armed .why-us__cards article,
+.section.is-armed .regions__content,
+.section.is-armed .regions__visual,
+.section.is-armed .gallery__item,
+.section.is-armed .gallery__all,
+.section.is-armed .faq__intro,
+.section.is-armed .accordion__item,
+.section.is-armed .faq__more,
+.section.is-armed .quote__intro,
+.section.is-armed .quote-form,
+.page-hero.is-armed .page-hero__content,
+.page-section.is-armed .prose,
+.page-section.is-armed .faq-page,
+.page-section.is-armed .page-aside,
+.page-cta.is-armed .container {
+  opacity: 0;
+  transition: opacity .6s ease, transform .65s var(--reveal-e);
+}
+.section.is-visible .section-heading > div,
+.section.is-visible .section-heading > p,
+.section.is-visible .service-card,
+.section.is-visible .about__media,
+.section.is-visible .about__content,
+.section.is-visible .process-grid li,
+.section.is-visible .why-us__intro,
+.section.is-visible .why-us__cards article,
+.section.is-visible .regions__content,
+.section.is-visible .regions__visual,
+.section.is-visible .gallery__item,
+.section.is-visible .gallery__all,
+.section.is-visible .faq__intro,
+.section.is-visible .accordion__item,
+.section.is-visible .faq__more,
+.section.is-visible .quote__intro,
+.section.is-visible .quote-form,
+.page-hero.is-visible .page-hero__content,
+.page-section.is-visible .prose,
+.page-section.is-visible .faq-page,
+.page-section.is-visible .page-aside,
+.page-cta.is-visible .container {
+  opacity: 1; transform: none;
+}
+
+/* Hizmetler: başlık yükselir, kartlar sırayla aşağıdan gelir. */
+.services.is-armed .section-heading > div { transform: translateY(22px); }
+.services.is-armed .section-heading > p { transform: translateY(22px); transition-delay: 90ms; }
+.services.is-armed .service-card { transform: translateY(32px); }
+.services.is-armed .service-card:nth-child(2) { transition-delay: 70ms; }
+.services.is-armed .service-card:nth-child(3) { transition-delay: 140ms; }
+.services.is-armed .service-card:nth-child(4) { transition-delay: 210ms; }
+.services.is-armed .service-card:nth-child(5) { transition-delay: 280ms; }
+
+/* Hakkımızda: fotoğraf soldan, metin sağdan; iki sütun karşılıklı kapanır. */
+.about.is-armed .about__media { transform: translateX(-34px); }
+.about.is-armed .about__content { transform: translateX(34px); transition-delay: 90ms; }
+
+/* Süreç: dört adım soldan sağa, yürüyen bir sıra gibi. */
+.process.is-armed .section-heading > div { transform: translateY(20px); }
+.process.is-armed .section-heading > p { transform: translateY(20px); transition-delay: 90ms; }
+.process.is-armed .process-grid li { transform: translateY(26px); }
+.process.is-armed .process-grid li:nth-child(1) { transition-delay: 120ms; }
+.process.is-armed .process-grid li:nth-child(2) { transition-delay: 220ms; }
+.process.is-armed .process-grid li:nth-child(3) { transition-delay: 320ms; }
+.process.is-armed .process-grid li:nth-child(4) { transition-delay: 420ms; }
+
+/* Neden Canpolat: metin soldan, kutucuklar tek tek büyüyerek belirir. */
+.why-us.is-armed .why-us__intro { transform: translateX(-30px); }
+.why-us.is-armed .why-us__cards article { transform: scale(.94); }
+.why-us.is-armed .why-us__cards article:nth-child(1) { transition-delay: 90ms; }
+.why-us.is-armed .why-us__cards article:nth-child(2) { transition-delay: 170ms; }
+.why-us.is-armed .why-us__cards article:nth-child(3) { transition-delay: 250ms; }
+.why-us.is-armed .why-us__cards article:nth-child(4) { transition-delay: 330ms; }
+
+/* Bölgeler: metin soldan, harita hafifçe yakınlaşarak açılır. */
+.regions.is-armed .regions__content { transform: translateX(-30px); }
+.regions.is-armed .regions__visual { transform: scale(.95); transition-delay: 110ms; }
+
+/* Galeri: kareler sıradan değil, dalga hâlinde açılır. */
+.gallery.is-armed .section-heading > div { transform: translateY(20px); }
+.gallery.is-armed .section-heading > p { transform: translateY(20px); transition-delay: 90ms; }
+.gallery.is-armed .gallery__item { transform: translateY(26px) scale(.97); }
+.gallery.is-armed .gallery__item:nth-child(3n+2) { transition-delay: 90ms; }
+.gallery.is-armed .gallery__item:nth-child(3n) { transition-delay: 180ms; }
+.gallery.is-armed .gallery__all { transform: translateY(16px); transition-delay: 260ms; }
+
+/* SSS: giriş soldan, kutular alttan sırayla. */
+.faq.is-armed .faq__intro { transform: translateX(-28px); }
+.faq.is-armed .accordion__item { transform: translateY(20px); }
+.faq.is-armed .accordion__item:nth-child(2) { transition-delay: 70ms; }
+.faq.is-armed .accordion__item:nth-child(3) { transition-delay: 140ms; }
+.faq.is-armed .accordion__item:nth-child(4) { transition-delay: 210ms; }
+.faq.is-armed .accordion__item:nth-child(5) { transition-delay: 280ms; }
+.faq.is-armed .accordion__item:nth-child(6) { transition-delay: 350ms; }
+.faq.is-armed .faq__more { transform: translateY(14px); transition-delay: 420ms; }
+
+/* Teklif: metin soldan, form aşağıdan yükselirken hafifçe büyür. */
+.quote.is-armed .quote__intro { transform: translateX(-30px); }
+.quote.is-armed .quote-form { transform: translateY(30px) scale(.98); transition-delay: 110ms; }
+
+/* İç sayfalar: kahraman metni yükselir, içerik soldan, yan sütun sağdan. */
+.page-hero.is-armed .page-hero__content { transform: translateY(22px); }
+.page-section.is-armed .prose,
+.page-section.is-armed .faq-page { transform: translateY(26px); }
+.page-section.is-armed .page-aside { transform: translateX(28px); transition-delay: 120ms; }
+.page-cta.is-armed .container { transform: translateY(26px) scale(.985); }
+
+@media (prefers-reduced-motion: reduce) {
+  .section.is-armed .section-heading > div,
+  .section.is-armed .section-heading > p,
+  .section.is-armed .service-card,
+  .section.is-armed .about__media,
+  .section.is-armed .about__content,
+  .section.is-armed .process-grid li,
+  .section.is-armed .why-us__intro,
+  .section.is-armed .why-us__cards article,
+  .section.is-armed .regions__content,
+  .section.is-armed .regions__visual,
+  .section.is-armed .gallery__item,
+  .section.is-armed .gallery__all,
+  .section.is-armed .faq__intro,
+  .section.is-armed .accordion__item,
+  .section.is-armed .faq__more,
+  .section.is-armed .quote__intro,
+  .section.is-armed .quote-form,
+  .page-hero.is-armed .page-hero__content,
+  .page-section.is-armed .prose,
+  .page-section.is-armed .faq-page,
+  .page-section.is-armed .page-aside,
+  .page-cta.is-armed .container {
+    opacity: 1; transform: none; transition: none;
+  }
+}

@@ -101,7 +101,30 @@
   }
 
   revealOnView('.regions__visual', 0.3);
-  revealOnView('.final-cta', 0.22);
+
+  /*
+   * Her bölüm görünür alana girdiğinde kendi geliş efektini oynatır. is-armed
+   * yalnız gözlemci varken eklenir; JS çalışmazsa hiçbir bölüm gizlenmez.
+   * Eşik 0.01: bir bölüm ekrandan uzun olduğunda yüzdelik eşik hiç dolmayabilir,
+   * bu yüzden "ilk pikseli girdiğinde" tetiklenir.
+   */
+  (function armSections() {
+    var sections = document.querySelectorAll('main > section');
+    if (!sections.length || typeof IntersectionObserver !== 'function') return;
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.01, rootMargin: '0px 0px -8% 0px' });
+
+    sections.forEach(function (section) {
+      section.classList.add('is-armed');
+      observer.observe(section);
+    });
+  })();
 
   /*
    * Galeri önizlemesi. Kareler <button> olduğu için tıklama adres çubuğuna
