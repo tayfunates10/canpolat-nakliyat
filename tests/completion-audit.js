@@ -110,6 +110,7 @@ const expectedSitemapUrls = [
   'https://www.canpolatnakliyat.com/bolgeler/ayvalik-nakliyat.html',
   'https://www.canpolatnakliyat.com/bolgeler/burhaniye-nakliyat.html',
   'https://www.canpolatnakliyat.com/bolgeler/havran-nakliyat.html',
+  'https://www.canpolatnakliyat.com/bolgeler/ivrindi-nakliyat.html',
   'https://www.canpolatnakliyat.com/bolgeler/kucukkuyu-nakliyat.html',
   'https://www.canpolatnakliyat.com/bolgeler/gure-nakliyat.html',
   'https://www.canpolatnakliyat.com/bolgeler/gomec-nakliyat.html',
