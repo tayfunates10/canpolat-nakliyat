@@ -37,12 +37,12 @@
   }
 
   /*
-   * Desktop keeps its existing pre-trigger behavior. On phones we deliberately
-   * wait for two conditions instead of merely intersecting the scene:
-   *   1) the hero copy has almost cleared the viewport, and
-   *   2) the midpoint of the R8 scene has reached the lower-middle area.
-   * This prevents the R8 entrance from playing while the heading/CTA block is
-   * still the main thing the user is looking at.
+   * Desktop keeps its existing pre-trigger behavior. On phones the actual R8
+   * animation is calibrated to the user's target 691x1536 screenshot instead
+   * of abstract viewport percentages. In that target frame the third hero fact
+   * ("Kurulum desteği") ends at about 704px while the fixed mobile contact bar
+   * begins at about 1340px: 704 / 1340 ~= .525. We use .53 so the animation
+   * begins a few pixels before that exact visual state rather than after it.
    */
   function whenInView(element) {
     return new Promise(function (resolve) {
@@ -63,24 +63,35 @@
 
       if (isMobile) {
         var hero = element.closest('.hero');
-        var copy = hero ? hero.querySelector('.hero__content') : null;
+        var anchor = hero ? hero.querySelector('.hero__facts li:nth-child(3)') : null;
+        var TARGET_RATIO = 0.53;
         var frame = 0;
+
+        function contactBarTop() {
+          var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+          var bar = document.querySelector('.mobile-contact-bar');
+          if (!bar || window.getComputedStyle(bar).display === 'none') return viewportHeight;
+
+          var barRect = bar.getBoundingClientRect();
+          if (!barRect.height || barRect.top <= 0) return viewportHeight;
+          return Math.min(viewportHeight, barRect.top);
+        }
 
         function checkMobileTrigger() {
           frame = 0;
           var stageRect = element.getBoundingClientRect();
-          var copyRect = copy ? copy.getBoundingClientRect() : null;
-          var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+          var barTop = contactBarTop();
 
-          /* The copy may leave only a small remnant in the upper 22% before
-             the scene is allowed to start. The scene midpoint must also be at
-             or above 72% of the viewport, so the effect begins around the
-             lower-middle of the screen rather than during the opening copy. */
-          var copyCleared = !copyRect || copyRect.bottom <= viewportHeight * 0.22;
-          var sceneMidpoint = stageRect.top + stageRect.height * 0.5;
-          var sceneReady = sceneMidpoint <= viewportHeight * 0.72 && stageRect.bottom > 0;
+          if (anchor) {
+            var anchorRect = anchor.getBoundingClientRect();
+            if (anchorRect.bottom <= barTop * TARGET_RATIO && stageRect.bottom > 0) {
+              settle();
+              return;
+            }
+          }
 
-          if (copyCleared && sceneReady) settle();
+          /* Defensive fallback for an unexpected template without hero facts. */
+          if (!anchor && stageRect.bottom > 0 && stageRect.top <= barTop - 260) settle();
         }
 
         function queueMobileCheck() {
