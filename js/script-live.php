@@ -9,5 +9,3 @@ echo "\n";
 readfile(__DIR__ . '/header-logo-fix.js');
 echo "\n";
 readfile(__DIR__ . '/shared-ui-final.js');
-echo "\n";
-readfile(__DIR__ . '/r8-trigger-48.js');
