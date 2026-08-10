@@ -104,6 +104,24 @@
     transition: none !important;
   }
 
+  /* Slow, clearly staged R8 entrance on phones. These important custom
+     properties intentionally override the faster values in hero-animated.css
+     without changing any R8 geometry, layer order, assets or trigger point. */
+  .hero-r8__layer--p00 { --hero-delay: 120ms !important; --hero-duration: 620ms !important; }
+  .hero-r8__layer--t00 { --hero-delay: 260ms !important; --hero-duration: 820ms !important; }
+  .hero-r8__layer--l09 { --hero-delay: 420ms !important; --hero-duration: 700ms !important; }
+  .hero-r8__layer--l03 { --hero-delay: 560ms !important; --hero-duration: 620ms !important; }
+  .hero-r8__layer--l02 { --hero-delay: 700ms !important; --hero-duration: 660ms !important; }
+  .hero-r8__layer--l01 { --hero-delay: 840ms !important; --hero-duration: 700ms !important; }
+  .hero-r8__layer--l04 { --hero-delay: 980ms !important; --hero-duration: 620ms !important; }
+  .hero-r8__layer--l05 { --hero-delay: 1120ms !important; --hero-duration: 580ms !important; }
+  .hero-r8__layer--l06 { --hero-delay: 1240ms !important; --hero-duration: 600ms !important; }
+  .hero-r8__layer--l10 { --hero-delay: 1360ms !important; --hero-duration: 560ms !important; }
+  .hero-r8__layer--l11 { --hero-delay: 1480ms !important; --hero-duration: 560ms !important; }
+  .hero-r8__layer--l07 { --hero-delay: 1600ms !important; --hero-duration: 560ms !important; }
+  .hero-r8__layer--l08 { --hero-delay: 1720ms !important; --hero-duration: 520ms !important; }
+  .hero-r8__layer--l12 { --hero-delay: 1840ms !important; --hero-duration: 580ms !important; }
+
   /* CTA mobile gate: the generic section observer may add is-visible as soon as
      the section touches the viewport. That must not spend the CTA animation.
      While the dedicated lower-middle trigger has not fired, all animated CTA
