@@ -98,6 +98,7 @@ required_paths=(
   "assets/images/service-paketleme.webp"
   "assets/images/about-tasima.webp"
   "assets/images/cta-kamyon.webp"
+  "assets/images/canpolat-opengraph-20260811.jpg"
 )
 
 for path in "${required_paths[@]}"; do
@@ -110,6 +111,60 @@ done
 for path in "${publish_paths[@]}"; do
   cp -a "${REPO_ROOT}/${path}" "${OUTPUT_PATH}/"
 done
+
+# Open Graph/Twitter paylaşım görseli tüm public HTML sayfalarında aynı,
+# kullanıcı tarafından onaylanan Canpolat görseline bağlanır. Kaynak HTML
+# dosyaları değişmeden kalır; yalnız production paketi normalize edilir.
+python3 - "${OUTPUT_PATH}" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+root = Path(sys.argv[1])
+og_url = 'https://www.canpolatnakliyat.com/assets/images/canpolat-opengraph-20260811.jpg'
+
+for html_path in root.rglob('*.html'):
+    source = html_path.read_text(encoding='utf-8')
+    if 'property="og:image"' not in source:
+        continue
+
+    source = re.sub(
+        r'(<meta\s+property="og:image"\s+content=")[^"]*(")',
+        lambda m: m.group(1) + og_url + m.group(2),
+        source,
+        count=1,
+        flags=re.IGNORECASE,
+    )
+    source = re.sub(
+        r'(<meta\s+name="twitter:image"\s+content=")[^"]*(")',
+        lambda m: m.group(1) + og_url + m.group(2),
+        source,
+        count=1,
+        flags=re.IGNORECASE,
+    )
+    source = re.sub(
+        r'(<meta\s+property="og:image:width"\s+content=")[^"]*(")',
+        lambda m: m.group(1) + '300' + m.group(2),
+        source,
+        count=1,
+        flags=re.IGNORECASE,
+    )
+    source = re.sub(
+        r'(<meta\s+property="og:image:height"\s+content=")[^"]*(")',
+        lambda m: m.group(1) + '200' + m.group(2),
+        source,
+        count=1,
+        flags=re.IGNORECASE,
+    )
+    source = re.sub(
+        r'(<meta\s+property="og:image:alt"\s+content=")[^"]*(")',
+        lambda m: m.group(1) + 'Canpolat Evden Eve Nakliyat - Edremit Balıkesir' + m.group(2),
+        source,
+        count=1,
+        flags=re.IGNORECASE,
+    )
+    html_path.write_text(source, encoding='utf-8')
+PY
 
 rm -f \
   "${OUTPUT_PATH}/assets/images/hero-canpolat.webp" \
@@ -143,6 +198,7 @@ required_output_files=(
   "assets/images/service-paketleme.webp"
   "assets/images/about-tasima.webp"
   "assets/images/cta-kamyon.webp"
+  "assets/images/canpolat-opengraph-20260811.jpg"
   "assets/images/hero-r8/platform-p00-r8-reference-exact.png"
   "assets/images/hero-r8/truck-t00-r6.png"
   "assets/images/hero-r8/layer-l01-r6.png"
@@ -177,6 +233,11 @@ done
 
 if grep -Eq 'hero__picture|hero-canpolat(-mobil)?\.webp' "${OUTPUT_PATH}/index.html"; then
   echo "HATA: Public index.html içinde eski hero izi bulundu." >&2
+  exit 1
+fi
+
+if ! grep -q 'canpolat-opengraph-20260811.jpg' "${OUTPUT_PATH}/index-template.html"; then
+  echo "HATA: Open Graph görseli production ana sayfasına uygulanamadı." >&2
   exit 1
 fi
 
