@@ -68,7 +68,7 @@ for (const relative of publicPages.concat(['404.html'])) {
     'id="ana-icerik"',
     'rel="icon" href="/assets/images/favicon-canpolat.svg"',
     'rel="manifest" href="/manifest.webmanifest"',
-    'href="/css/style.css?v=20260810-01"',
+    'href="/css/style.css?v=20260810-02"',
     'href="tel:+905359120691"',
     'https://wa.me/905359120691',
     'Camivasat Mah. Akçay Cad. No: 78',
@@ -188,7 +188,7 @@ if (homeSchemaMatch) {
     }
   }
 }
-const sectionOrder = ['id="anasayfa"', 'class="trust-bar"', 'id="hizmetler"', 'id="hakkimizda"', 'id="surec"', 'class="section why-us"', 'id="bolgeler"', 'id="sss"', 'id="teklif"', 'class="final-cta"'];
+const sectionOrder = ['id="anasayfa"', 'id="hizmetler"', 'id="hakkimizda"', 'id="surec"', 'class="section why-us"', 'id="bolgeler"', 'id="sss"', 'id="teklif"', 'class="final-cta"'];
 let previous = -1;
 for (const token of sectionOrder) {
   const current = template.indexOf(token);
