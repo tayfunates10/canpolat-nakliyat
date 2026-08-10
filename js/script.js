@@ -48,14 +48,12 @@
       document.querySelectorAll('.accordion__item button').forEach(function (otherButton) {
         var otherTarget = document.getElementById(otherButton.getAttribute('aria-controls'));
         otherButton.setAttribute('aria-expanded', 'false');
-        otherButton.querySelector('span').textContent = '+';
         otherButton.closest('.accordion__item').classList.remove('is-open');
         if (otherTarget) otherTarget.hidden = true;
       });
 
       if (willOpen && target) {
         button.setAttribute('aria-expanded', 'true');
-        button.querySelector('span').textContent = '−';
         button.closest('.accordion__item').classList.add('is-open');
         target.hidden = false;
       }
@@ -131,7 +129,7 @@
         entry.target.classList.add('is-visible');
         observer.unobserve(entry.target);
       });
-    }, { threshold: 0.01, rootMargin: '0px 0px -8% 0px' });
+    }, { threshold: 0.01, rootMargin: '0px 0px -14% 0px' });
 
     sections.forEach(function (section) {
       section.classList.add('is-armed');
@@ -176,6 +174,14 @@
       };
     });
 
+    // Pencere ikonları 24'lük ızgarada çizilir; metin glifleri (× ‹ ›) yazı
+    // tipine göre farklı optik ağırlıkta geldiği için simetrik durmuyordu.
+    function ikon(d) {
+      return '<svg class="lightbox__icon" viewBox="0 0 24 24" aria-hidden="true">' +
+             '<path d="' + d + '" fill="none" stroke="currentColor" stroke-width="2.2" ' +
+             'stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    }
+
     var box = document.createElement('div');
     box.className = 'lightbox';
     box.hidden = true;
@@ -185,14 +191,17 @@
     box.innerHTML =
       '<div class="lightbox__backdrop" data-close></div>' +
       '<div class="lightbox__panel">' +
-        '<button type="button" class="lightbox__close" data-close aria-label="Önizlemeyi kapat">&times;</button>' +
-        '<button type="button" class="lightbox__nav lightbox__nav--prev" data-step="-1" aria-label="Önceki görsel">&#8249;</button>' +
+        '<button type="button" class="lightbox__close" data-close aria-label="Önizlemeyi kapat">' +
+          ikon('M6.4 6.4 17.6 17.6M17.6 6.4 6.4 17.6') + '</button>' +
+        '<button type="button" class="lightbox__nav lightbox__nav--prev" data-step="-1" aria-label="Önceki görsel">' +
+          ikon('M14.8 5.4 8.2 12l6.6 6.6') + '</button>' +
         '<figure class="lightbox__figure">' +
           '<img class="lightbox__image" alt="">' +
           '<figcaption class="lightbox__caption"><span class="lightbox__text"></span>' +
           '<span class="lightbox__count" aria-hidden="true"></span></figcaption>' +
         '</figure>' +
-        '<button type="button" class="lightbox__nav lightbox__nav--next" data-step="1" aria-label="Sonraki görsel">&#8250;</button>' +
+        '<button type="button" class="lightbox__nav lightbox__nav--next" data-step="1" aria-label="Sonraki görsel">' +
+          ikon('M9.2 5.4 15.8 12l-6.6 6.6') + '</button>' +
       '</div>';
     document.body.appendChild(box);
 

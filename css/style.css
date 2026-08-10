@@ -110,11 +110,11 @@ address { font-style: normal; }
 /* Açılış: her parça kendi karakterine uygun bir yerden gelir. */
 .brand__arc { animation: brand-arc-in .72s cubic-bezier(.22,1,.36,1) backwards; }
 .brand__chev { animation: brand-chev-in .72s cubic-bezier(.34,1.4,.5,1) 110ms backwards; }
-.brand__word { animation: brand-word-in .6s cubic-bezier(.22,1,.36,1) 210ms backwards; }
-.brand__sub { animation: brand-word-in .6s cubic-bezier(.22,1,.36,1) 310ms backwards; }
+.brand__word { animation: brand-word-in .78s cubic-bezier(.22,1,.36,1) 420ms backwards; }
+.brand__sub { animation: brand-word-in .78s cubic-bezier(.22,1,.36,1) 580ms backwards; }
 @keyframes brand-arc-in { from { opacity: 0; transform: rotate(-38deg) scale(.72); } to { opacity: 1; transform: none; } }
 @keyframes brand-chev-in { from { opacity: 0; transform: translateY(34%) scale(.8); } to { opacity: 1; transform: none; } }
-@keyframes brand-word-in { from { opacity: 0; transform: translateX(-13px); } to { opacity: 1; transform: none; } }
+@keyframes brand-word-in { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: none; } }
 
 /* Üzerine gelme ve klavye odağı: yalnız amblem canlanır, yazı yerinde kalır. */
 .brand:hover .brand__arc, .brand:focus-visible .brand__arc { transform: rotate(-9deg) scale(1.06); }
@@ -246,7 +246,7 @@ address { font-style: normal; }
 .eyebrow--light { color: #ffad4a; }
 .hero h1 { max-width: 630px; font-size: clamp(52px, 5vw, 76px); line-height: .98; letter-spacing: -.055em; font-weight: 850; }
 .hero h1 em { color: var(--orange); font-style: normal; }
-.hero__lead { max-width: 565px; margin-top: 28px; color: #cbd3de; font-size: 17px; line-height: 1.75; }
+.hero__lead { max-width: 505px; margin-top: 26px; color: #cbd3de; font-size: 17px; line-height: 1.72; }
 .hero__actions { margin-top: 34px; display: flex; flex-wrap: wrap; gap: 12px; }
 .hero__facts { margin-top: 38px; display: flex; flex-wrap: wrap; gap: 18px 28px; color: #d7dde5; font-size: 12px; font-weight: 650; }
 .hero__facts li { display: flex; align-items: center; gap: 8px; }
@@ -450,8 +450,14 @@ address { font-style: normal; }
 .accordion button { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 19px 22px; border: 0; border-radius: var(--radius-md); color: var(--navy); background: transparent; text-align: left; font-weight: 780; cursor: pointer; }
 .accordion button:hover { color: var(--orange-dark); }
 .accordion button:focus-visible { outline: 3px solid var(--orange); outline-offset: -3px; }
-.accordion button span { width: 32px; height: 32px; display: grid; place-items: center; flex: 0 0 auto; border: 1px solid #d2d7de; border-radius: 50%; color: var(--orange-dark); font-size: 19px; transition: border-color .2s ease, background-color .2s ease; }
-.accordion__item.is-open button span { border-color: var(--orange); background: rgba(239,124,0,.12); }
+/* Aç/kapa işareti: iki çubuk tam ortalanmış, artı hâlinden eksiye dönerken
+   dikey çubuk merkezinden kapanıyor. Metin + ve − glifleri yazı tipine göre
+   farklı yükseklikte oturduğu için simetrik durmuyordu. */
+.accordion__mark { width: 32px; height: 32px; display: grid; place-items: center; flex: 0 0 auto; border: 1px solid #d2d7de; border-radius: 50%; color: var(--orange-dark); transition: border-color .2s ease, background-color .2s ease, transform .28s var(--reveal-e); }
+.accordion__mark svg { width: 17px; height: 17px; fill: currentColor; }
+.accordion__mark-h, .accordion__mark-v { transform-box: fill-box; transform-origin: center; transition: transform .28s var(--reveal-e); }
+.accordion__item.is-open .accordion__mark { border-color: var(--orange); background: rgba(239,124,0,.12); transform: rotate(90deg); }
+.accordion__item.is-open .accordion__mark-v { transform: scaleY(0); }
 .accordion__panel { padding: 0 22px 21px; color: #4a5567; font-size: 14px; line-height: 1.62; }
 /* Bağlantı ızgaranın üçüncü ögesi; iki sütunlu düzende soru sütununun altında
    kalmalı, yoksa sol sütuna düşüp giriş metninin altında öksüz duruyor. */
@@ -461,7 +467,7 @@ address { font-style: normal; }
 /* SSS sayfasında sorular tek sütun; yan sütun sayfanın kendi ızgarasından gelir. */
 .faq-page .accordion { gap: 12px; }
 @media (prefers-reduced-motion: reduce) {
-  .accordion__item, .accordion button span { transition: none; }
+  .accordion__item, .accordion__mark, .accordion__mark-h, .accordion__mark-v { transition: none; }
 }
 
 .quote { color: #edf2f7; background: var(--navy); }
@@ -731,7 +737,10 @@ address { font-style: normal; }
   .why-us__cards article { min-height: 180px; padding: 24px; }
   .regions__visual { min-height: 0; padding: 14px; }
   .accordion h3 { font-size: 15px; }
-  .accordion button { padding: 21px 0; }
+  .accordion button { padding: 17px 16px; gap: 12px; }
+  .accordion__mark { width: 28px; height: 28px; }
+  .accordion__mark svg { width: 15px; height: 15px; }
+  .accordion__panel { padding: 0 16px 17px; }
   .quote-form { padding: 24px 18px; }
   .quote-form__head { align-items: start; flex-direction: column; gap: 4px; }
   .form-grid { grid-template-columns: 1fr; }
@@ -945,16 +954,20 @@ address { font-style: normal; }
 .final-cta.is-armed.is-visible .final-cta__actions .button { animation: cta-rise .55s cubic-bezier(.22,1,.36,1) both; }
 .final-cta.is-armed.is-visible .final-cta__actions .button:nth-child(1) { animation-delay: 520ms; }
 .final-cta.is-armed.is-visible .final-cta__actions .button:nth-child(2) { animation-delay: 610ms; }
-.final-cta.is-armed.is-visible .final-cta__truck-wrap { animation: cta-arrive 1.05s cubic-bezier(.16,.84,.3,1) 180ms both; }
+.final-cta.is-armed.is-visible .final-cta__truck-wrap { animation: cta-arrive 1.25s cubic-bezier(.22,1,.36,1) 700ms both; transform-origin: 22% 78%; }
 
 /* Döngüler */
-.final-cta.is-visible .final-cta__truck { animation: cta-idle 5.2s ease-in-out 1.4s infinite; }
-.final-cta.is-visible .final-cta__ground { animation: cta-ground 5.2s ease-in-out 1.4s infinite; }
+.final-cta.is-visible .final-cta__truck { animation: cta-idle 5.2s ease-in-out 2.1s infinite; }
+.final-cta.is-visible .final-cta__ground { animation: cta-ground 5.2s ease-in-out 2.1s infinite; }
 
 @keyframes cta-drop { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
 @keyframes cta-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 -2% 0 0); } }
 @keyframes cta-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-@keyframes cta-arrive { from { opacity: 0; transform: translateX(64px); } to { opacity: 1; transform: none; } }
+@keyframes cta-arrive {
+  from { opacity: 0; transform: translateX(-26%) scale(.62); }
+  60% { opacity: 1; }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
 @keyframes cta-idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 @keyframes cta-ground { 0%, 100% { transform: scaleX(1); opacity: 1; } 50% { transform: scaleX(.97); opacity: .82; } }
 
@@ -1035,8 +1048,10 @@ body.lightbox-open { position: fixed; left: 0; right: 0; overflow: hidden; }
   color: #fff; background: rgba(255,255,255,.09); cursor: pointer; line-height: 1;
   transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
 }
-.lightbox__nav { width: 52px; height: 52px; flex: 0 0 52px; font-size: 30px; }
-.lightbox__close { position: absolute; top: -54px; right: 0; width: 42px; height: 42px; font-size: 24px; }
+.lightbox__nav { width: 52px; height: 52px; flex: 0 0 52px; }
+.lightbox__close { position: absolute; top: -54px; right: 0; width: 42px; height: 42px; }
+.lightbox__icon { width: 24px; height: 24px; }
+.lightbox__close .lightbox__icon { width: 19px; height: 19px; }
 .lightbox__nav:hover, .lightbox__close:hover { border-color: var(--orange); background: rgba(239,124,0,.3); }
 .lightbox__nav:active, .lightbox__close:active { transform: scale(.93); }
 .lightbox__nav:focus-visible, .lightbox__close:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
@@ -1050,7 +1065,8 @@ body.lightbox-open { position: fixed; left: 0; right: 0; overflow: hidden; }
 @media (max-width: 720px) {
   .lightbox__panel { grid-template-columns: minmax(0, 1fr); }
   .lightbox__figure { grid-column: 1; grid-row: 1; }
-  .lightbox__nav { position: absolute; top: 50%; z-index: 2; width: 44px; height: 44px; flex-basis: 44px; margin-top: -40px; font-size: 26px; background: rgba(8,14,24,.62); }
+  .lightbox__nav { position: absolute; top: 50%; z-index: 2; width: 44px; height: 44px; flex-basis: 44px; margin-top: -40px; background: rgba(8,14,24,.62); }
+  .lightbox__icon { width: 21px; height: 21px; }
   .lightbox__nav--prev { grid-column: 1; grid-row: 1; left: 6px; }
   .lightbox__nav--next { grid-column: 1; grid-row: 1; right: 6px; }
   .lightbox__close { top: -50px; right: 2px; }
@@ -1100,19 +1116,23 @@ body.lightbox-open { position: fixed; left: 0; right: 0; overflow: hidden; }
 
    Yatay kaydırma bilerek kullanılmıyor; ekran kenarına yakın bloklarda
    içeriği sola kaçmış gibi gösteriyordu.
+
+   Zamanlama: her öge 85 ms arayla, 0,72 saniyede yerine oturur; gecikme 12
+   ögeden sonra sabitlenir ki uzun bölümlerde son satırlar dakikalarca
+   beklemesin. Bir bölümün tamamı en fazla ~1,7 saniyede tamamlanır.
 --------------------------------------------------------------------------- */
 :root { --reveal-e: cubic-bezier(.22, 1, .36, 1); }
 
 main > section.is-armed .reveal {
   opacity: 0;
   transform: var(--reveal-from, translateY(20px));
-  transition: opacity .5s ease, transform .58s var(--reveal-e);
-  transition-delay: calc(min(var(--reveal-i, 0), 14) * 55ms);
+  transition: opacity .62s ease, transform .72s var(--reveal-e);
+  transition-delay: calc(min(var(--reveal-i, 0), 12) * 85ms);
 }
 main > section.is-visible .reveal {
   opacity: 1;
   transform: none;
-  transition-delay: calc(min(var(--reveal-i, 0), 14) * 55ms);
+  transition-delay: calc(min(var(--reveal-i, 0), 12) * 85ms);
 }
 
 /* Bölüm karakterleri: yalnız başlangıç dönüşümü değişir. */

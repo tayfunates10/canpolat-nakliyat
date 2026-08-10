@@ -41,7 +41,7 @@ for (const token of [
   'name="adSoyad"', 'name="telefon"', 'name="nereden"', 'name="nereye"', 'name="tarih"', 'name="eposta"', 'name="notlar"', 'name="website"',
   'Edremit / Balıkesir',
   '0535&nbsp;912&nbsp;06&nbsp;91',
-  '/js/script.js?v=20260810-03', '/js/hero-animated.js?v=20260810-01', '/js/quote-form.js?v=20260809-01',
+  '/js/script.js?v=20260810-05', '/js/hero-animated.js?v=20260810-02', '/js/quote-form.js?v=20260809-01',
 ]) requireToken('index-template.html', template, token, `production ana sayfa öğesi eksik: ${token}`);
 
 for (const service of [
