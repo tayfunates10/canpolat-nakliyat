@@ -277,7 +277,16 @@ jobs:
           grep -q '<h1>Edremit Paketleme ve Montaj</h1>' "${SERVICE_BODY}" || { echo 'FAIL: Paketleme & Montaj içeriği canlıda eksik'; fail=1; }
 
           [[ "${privacy_code}" == "200" ]] || { echo "FAIL: gizlilik HTTP ${privacy_code}"; fail=1; }
-          grep -q 'Camivasat Mah. Akçay Cad. No: 78' "${PRIVACY_BODY}" || { echo 'FAIL: güncel iletişim adresi gizlilik sayfasında eksik'; fail=1; }
+          grep -q 'Edremit / Balıkesir' "${PRIVACY_BODY}" || { echo 'FAIL: güncel iletişim bilgisi gizlilik sayfasında eksik'; fail=1; }
+          # Kaldırılan bilgiler canlıya geri sızarsa yayın kırmızıya dönsün.
+          # Koşul "if" ile yazılır: set -e altında "grep && ..." kalıbı, iz
+          # bulunmadığında (yani her şey yolundayken) adımı düşürürdü.
+          for iz in 'Camivasat' 'Hafta içi' 'info@canpolatnakliyat.com'; do
+            if grep -qF "${iz}" "${HOME_BODY}" "${PRIVACY_BODY}" "${SERVICE_BODY}"; then
+              echo "FAIL: canlıda kaldırılmış bilgi bulundu: ${iz}"
+              fail=1
+            fi
+          done
           grep -q 'üçüncü taraf analiz amacıyla çerez kullanmaz' "${PRIVACY_BODY}" || { echo 'FAIL: güncel çerez açıklaması canlıda eksik'; fail=1; }
 
           [[ "${robots_code}" == "200" ]] || { echo "FAIL: robots HTTP ${robots_code}"; fail=1; }
