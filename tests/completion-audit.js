@@ -94,8 +94,6 @@ requireToken('robots.txt', robots, 'Disallow: /index-template.html', 'private ş
 requireToken('robots.txt', robots, 'Sitemap: https://www.canpolatnakliyat.com/sitemap.xml', 'sitemap adresi canonical origin kullanmalıdır.');
 
 const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);
-if (sitemapUrls.length !== 12) failures.push(`sitemap.xml: 12 public URL bekleniyor, bulunan ${sitemapUrls.length}.`);
-if (new Set(sitemapUrls).size !== sitemapUrls.length) failures.push('sitemap.xml: yinelenen URL bulundu.');
 const expectedSitemapUrls = [
   'https://www.canpolatnakliyat.com/',
   'https://www.canpolatnakliyat.com/hakkimizda.html',
@@ -107,9 +105,19 @@ const expectedSitemapUrls = [
   'https://www.canpolatnakliyat.com/hizmetler/paketleme-montaj.html',
   'https://www.canpolatnakliyat.com/hizmetler/parca-esya-tasimaciligi.html',
   'https://www.canpolatnakliyat.com/bolgeler/edremit-nakliyat.html',
+  'https://www.canpolatnakliyat.com/bolgeler/akcay-nakliyat.html',
+  'https://www.canpolatnakliyat.com/bolgeler/altinoluk-nakliyat.html',
+  'https://www.canpolatnakliyat.com/bolgeler/ayvalik-nakliyat.html',
+  'https://www.canpolatnakliyat.com/bolgeler/burhaniye-nakliyat.html',
+  'https://www.canpolatnakliyat.com/bolgeler/havran-nakliyat.html',
+  'https://www.canpolatnakliyat.com/bolgeler/kucukkuyu-nakliyat.html',
+  'https://www.canpolatnakliyat.com/bolgeler/gure-nakliyat.html',
+  'https://www.canpolatnakliyat.com/bolgeler/gomec-nakliyat.html',
   'https://www.canpolatnakliyat.com/gizlilik.html',
   'https://www.canpolatnakliyat.com/sss.html',
 ];
+if (sitemapUrls.length !== expectedSitemapUrls.length) failures.push(`sitemap.xml: ${expectedSitemapUrls.length} public URL bekleniyor, bulunan ${sitemapUrls.length}.`);
+if (new Set(sitemapUrls).size !== sitemapUrls.length) failures.push('sitemap.xml: yinelenen URL bulundu.');
 for (const url of expectedSitemapUrls) if (!sitemapUrls.includes(url)) failures.push(`sitemap.xml: public URL eksik: ${url}`);
 for (const url of sitemapUrls) {
   if (!url.startsWith('https://www.canpolatnakliyat.com/')) failures.push(`sitemap.xml: canonical olmayan URL: ${url}`);
