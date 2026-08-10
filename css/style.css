@@ -954,7 +954,7 @@ address { font-style: normal; }
 .final-cta.is-armed.is-visible .final-cta__actions .button { animation: cta-rise .55s cubic-bezier(.22,1,.36,1) both; }
 .final-cta.is-armed.is-visible .final-cta__actions .button:nth-child(1) { animation-delay: 520ms; }
 .final-cta.is-armed.is-visible .final-cta__actions .button:nth-child(2) { animation-delay: 610ms; }
-.final-cta.is-armed.is-visible .final-cta__truck-wrap { animation: cta-arrive 1.25s cubic-bezier(.22,1,.36,1) 700ms both; transform-origin: 22% 78%; }
+.final-cta.is-armed.is-visible .final-cta__truck-wrap { animation: cta-arrive 1.25s cubic-bezier(.22,1,.36,1) 700ms both; transform-origin: 78% 78%; }
 
 /* Döngüler */
 .final-cta.is-visible .final-cta__truck { animation: cta-idle 5.2s ease-in-out 2.1s infinite; }
@@ -964,7 +964,7 @@ address { font-style: normal; }
 @keyframes cta-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 -2% 0 0); } }
 @keyframes cta-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 @keyframes cta-arrive {
-  from { opacity: 0; transform: translateX(-26%) scale(.62); }
+  from { opacity: 0; transform: translateX(26%) scale(.62); }
   60% { opacity: 1; }
   to { opacity: 1; transform: translateX(0) scale(1); }
 }
