@@ -14,6 +14,30 @@
   stroke-linejoin: round !important;
 }
 
+/* Desktop header phone action: enlarge the complete Hemen Ara block on hover
+   without disturbing the phone icon's existing ring/shake animation. */
+@media (min-width: 961px) {
+  .site-header .header-phone {
+    transform-origin: center;
+    transition: transform .2s cubic-bezier(.22,1,.36,1);
+  }
+  .site-header .header-phone:hover {
+    transform: scale(1.09);
+  }
+}
+
+/* Inner-page hero/CTA headings use the same white + brand-orange language as
+   the approved home hero and CTA. JS adds only the accent wrapper; typography
+   and existing entrance effects stay owned by the original components. */
+.page-hero h1 {
+  color: #fff;
+}
+.page-hero h1 .page-title-accent,
+.final-cta h2 em {
+  color: var(--orange) !important;
+  font-style: normal;
+}
+
 /* The region group is deliberately two columns so long local-page labels do
    not build one tall/overflowing stack. This overrides the generic footer-nav
    phone rule while leaving the other footer groups unchanged. */
