@@ -1,0 +1,144 @@
+/* Shared site chrome consistency — 2026-08-11
+   Loaded after style.css and site-overrides.css on every public page. */
+
+/* Header/logo: inner pages use the image logo while the home page keeps its
+   approved inline SVG. Both must occupy the same responsive header footprint. */
+.site-header .brand {
+  min-width: 0;
+}
+.site-header .brand > img.brand__logo {
+  display: block;
+  max-width: 100%;
+  height: auto !important;
+  object-fit: contain;
+}
+
+/* Footer: region links are injected by script.js. Give the second footer group
+   deliberate spacing and prevent long labels from escaping their grid cell. */
+.site-footer .footer-grid > div {
+  min-width: 0;
+}
+.site-footer .footer-regions__title {
+  margin-top: 34px;
+}
+.site-footer [data-footer-regions] {
+  min-width: 0;
+}
+.site-footer nav:not(.footer-social) a,
+.site-footer address a {
+  max-width: 100%;
+  min-width: 0;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.site-footer .footer-social {
+  flex-wrap: wrap;
+}
+
+/* Fixed mobile actions: minmax(0, 1fr) is important on narrow screens; without
+   it a long label such as "Yol Tarifi" can force columns into each other. */
+.mobile-contact-bar {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+.mobile-contact-bar a {
+  min-width: 0;
+  padding-inline: 4px;
+  text-align: center;
+  white-space: nowrap;
+}
+.mobile-contact-bar svg {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 960px) {
+  .site-header__inner {
+    gap: 14px;
+  }
+  .site-header .brand {
+    max-width: calc(100% - 58px);
+  }
+}
+
+@media (max-width: 720px) {
+  /* One clean footer column on phones. This also prevents the dynamically
+     added ten service-area links from colliding with the services column. */
+  .footer-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 32px !important;
+  }
+  .footer-brand {
+    grid-column: auto !important;
+  }
+  .site-footer .footer-grid > div {
+    width: 100%;
+  }
+  .site-footer h2 {
+    margin-bottom: 16px;
+  }
+  .site-footer .footer-regions__title {
+    margin-top: 30px !important;
+  }
+  .site-footer nav:not(.footer-social),
+  .site-footer address {
+    width: 100%;
+    gap: 10px;
+  }
+  .site-footer nav:not(.footer-social) a,
+  .site-footer address a {
+    width: 100%;
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+  .footer-bottom {
+    margin-top: 38px;
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  .mobile-contact-bar {
+    left: 8px !important;
+    right: 8px !important;
+    gap: 4px !important;
+    padding: 5px !important;
+  }
+  .mobile-contact-bar a {
+    min-height: 42px !important;
+    gap: 5px !important;
+    padding-inline: 3px !important;
+    font-size: clamp(9px, 2.7vw, 11px) !important;
+  }
+  .mobile-contact-bar svg {
+    width: 17px !important;
+    height: 17px !important;
+  }
+  .site-footer {
+    padding-bottom: 112px !important;
+  }
+
+  /* Inner/local SEO pages share the same phone geometry as the rest of site. */
+  .page-hero__actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .page-hero__actions .button {
+    width: 100%;
+  }
+  .page-aside .side-card,
+  .page-aside .side-links,
+  .prose,
+  .content-grid,
+  .page-hero__content {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .mobile-contact-bar a {
+    gap: 3px !important;
+    font-size: 9px !important;
+  }
+  .mobile-contact-bar svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+}
