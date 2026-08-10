@@ -401,16 +401,41 @@ address { font-style: normal; }
 .final-cta__phone:focus-visible { outline: 3px solid var(--orange); outline-offset: 4px; border-radius: 8px; }
 
 .site-footer { padding: 72px 0 26px; color: #c0c8d3; background: #0d1623; }
-.footer-grid { display: grid; grid-template-columns: 1.35fr .85fr .85fr 1.05fr 1fr; gap: 38px; }
+.footer-grid { display: grid; grid-template-columns: 1.35fr 1.05fr 1.05fr 1.05fr; gap: 38px; }
 .footer-brand img { width: 245px; height: auto; filter: brightness(0) invert(1); opacity: .92; }
 .footer-brand p { max-width: 310px; margin-top: 24px; color: #9ca8b6; font-size: 13px; }
 .site-footer h2 { margin: 12px 0 22px; color: #fff; font-size: 13px; text-transform: uppercase; letter-spacing: .07em; }
 .site-footer nav, .site-footer address { display: grid; gap: 11px; color: #9faab7; font-size: 12px; }
-.site-footer nav a:hover, .site-footer address a:hover { color: #ffad4a; }
 .site-footer address span { line-height: 1.7; }
-.hours { display: grid; gap: 10px; color: #9faab7; font-size: 12px; }
-.hours li { display: flex; justify-content: space-between; gap: 14px; }
-.hours strong { color: #d8dee6; font-weight: 700; }
+
+/* Footer bağlantıları: turuncu ok ucu bunların tıklanabilir olduğunu ilk bakışta
+   belli eder; üzerine gelindiğinde ok bir tık sağa kayar ve alt çizgi soldan açılır. */
+.site-footer nav a, .site-footer address a {
+  position: relative; width: fit-content; padding-left: 16px;
+  color: #9faab7; transition: color .2s ease;
+}
+.site-footer nav a::before, .site-footer address a::before {
+  content: "›"; position: absolute; left: 0; top: 50%;
+  color: var(--orange); font-size: 16px; font-weight: 700; line-height: 1;
+  transform: translateY(-54%); transition: transform .2s ease;
+}
+.site-footer nav a::after, .site-footer address a::after {
+  content: ""; position: absolute; left: 16px; right: 0; bottom: -3px; height: 1px;
+  background: currentColor; transform: scaleX(0); transform-origin: left;
+  transition: transform .25s ease;
+}
+.site-footer nav a:hover, .site-footer address a:hover { color: #ffc06a; }
+.site-footer nav a:hover::before, .site-footer address a:hover::before { transform: translate(3px, -54%); }
+.site-footer nav a:hover::after, .site-footer address a:hover::after { transform: scaleX(1); }
+.site-footer nav a:focus-visible, .site-footer address a:focus-visible {
+  outline: 2px solid var(--orange); outline-offset: 3px; border-radius: 3px; color: #fff;
+}
+.site-footer nav a:active, .site-footer address a:active { color: var(--orange); }
+@media (prefers-reduced-motion: reduce) {
+  .site-footer nav a, .site-footer address a,
+  .site-footer nav a::before, .site-footer address a::before,
+  .site-footer nav a::after, .site-footer address a::after { transition: none; }
+}
 .footer-bottom { margin-top: 54px; padding-top: 23px; border-top: 1px solid rgba(255,255,255,.1); display: flex; justify-content: space-between; gap: 20px; color: #8793a1; font-size: 11px; }
 
 /* ---------------------------------------------------------------------------
@@ -454,7 +479,7 @@ address { font-style: normal; }
   .hero__inner { grid-template-columns: .9fr 1.1fr; }
   .hero-scene { width: 125%; margin-left: -18%; }
   .footer-grid { grid-template-columns: 1.4fr 1fr 1fr; }
-  .footer-grid > div:nth-child(4), .footer-grid > div:nth-child(5) { margin-top: 12px; }
+  .footer-grid > div:nth-child(4) { margin-top: 12px; }
 }
 
 @media (max-width: 960px) {
@@ -493,7 +518,6 @@ address { font-style: normal; }
   .container { width: calc(100% - 30px); }
   .section { padding: 68px 0; }
   .utility-bar__list .utility-bar__item:first-child { display: none; }
-  .utility-bar__item--hours { display: none; }
   .utility-bar__inner { justify-content: center; }
   .utility-bar__actions { justify-content: flex-end; }
   .utility-bar__inner { gap: 14px; }

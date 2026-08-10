@@ -39,9 +39,8 @@ for (const token of [
   '<link rel="preload" as="image" href="/assets/images/hero-r8/truck-t00-r6.png"',
   'id="quote-request-form" action="/api/teklif.php" method="post"',
   'name="adSoyad"', 'name="telefon"', 'name="nereden"', 'name="nereye"', 'name="tarih"', 'name="eposta"', 'name="notlar"', 'name="website"',
-  'Camivasat Mah. Akçay Cad. No: 78',
+  'Edremit / Balıkesir',
   '0535&nbsp;912&nbsp;06&nbsp;91',
-  '08:00–20:00', '08:00–18:00', '09:00–17:00',
   '/js/script.js?v=20260809-04', '/js/hero-animated.js?v=20260809-03', '/js/quote-form.js?v=20260809-01',
 ]) requireToken('index-template.html', template, token, `production ana sayfa öğesi eksik: ${token}`);
 
@@ -130,7 +129,7 @@ for (const token of [
   'Fiyat teklif formunu kullandığınızda',
   'pazarlama veya reklam iletisi',
   'Kanun’un 11. maddesi',
-  'Camivasat Mah. Akçay Cad. No: 78',
+  'Edremit / Balıkesir',
   'reklam hedefleme, kullanıcı profilleme veya üçüncü taraf analiz amacıyla çerez kullanmaz',
   'Son güncelleme:</strong> 9 Ağustos 2026',
 ]) requireToken('gizlilik.html', privacy, token, `gizlilik açıklaması eksik: ${token}`);
