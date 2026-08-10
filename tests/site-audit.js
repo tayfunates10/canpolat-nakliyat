@@ -68,7 +68,7 @@ for (const relative of publicPages.concat(['404.html'])) {
     'id="ana-icerik"',
     'rel="icon" href="/assets/images/favicon-canpolat.svg"',
     'rel="manifest" href="/manifest.webmanifest"',
-    'href="/css/style.css?v=20260809-13"',
+    'href="/css/style.css?v=20260809-14"',
     'href="tel:+905359120691"',
     'https://wa.me/905359120691',
     'Camivasat Mah. Akçay Cad. No: 78',
@@ -286,8 +286,49 @@ heroLayers.forEach(([id], index) => {
 const htaccess = read('.htaccess');
 for (const token of ['DirectoryIndex index.php', '!^www\\.canpolatnakliyat\\.com$', 'RewriteRule ^$ index.php [L]', 'RewriteCond %{REQUEST_FILENAME} !-f', 'RewriteCond %{REQUEST_FILENAME} !-d', 'Header always unset X-Okur-Htaccess', 'Content-Security-Policy', "script-src 'self'", 'Strict-Transport-Security']) requireToken('.htaccess', htaccess, token, `production kuralı eksik: ${token}`);
 
+/*
+ * Galeri. Kareler gerçek saha fotoğrafları; her biri markalı alt bandıyla
+ * birlikte 4/3 üretilir. Denetim; kare sayısını, iki srcset genişliğinin de
+ * diskte durduğunu ve arama motoru için anlamlı alt metni zorunlu tutar.
+ */
+const galleryPages = [['index-template.html', template, 6], ['galeri.html', read('galeri.html'), 16]];
+const galleryNames = new Set();
+
+for (const [relative, source, expected] of galleryPages) {
+  const grid = source.match(/<div class="gallery__grid">([\s\S]*?)<\/div>/);
+  if (!grid) {
+    failures.push(`${relative}: galeri ızgarası bulunamadı.`);
+    continue;
+  }
+
+  const images = [...grid[1].matchAll(/<img\b[^>]*>/g)].map(match => match[0]);
+  if (images.length !== expected) failures.push(`${relative}: ${expected} galeri karesi bekleniyor, bulunan ${images.length}.`);
+
+  for (const image of images) {
+    const source1x = image.match(/src="\/assets\/images\/galeri\/([a-z0-9-]+)\.webp/);
+    if (!source1x) {
+      failures.push(`${relative}: galeri karesi /assets/images/galeri altından gelmelidir.`);
+      continue;
+    }
+    galleryNames.add(source1x[1]);
+
+    for (const suffix of ['', '-640']) {
+      const file = path.join(root, 'assets/images/galeri', `${source1x[1]}${suffix}.webp`);
+      if (!fs.existsSync(file)) failures.push(`${relative}: galeri görseli eksik: ${source1x[1]}${suffix}.webp`);
+    }
+    if (!image.includes(`/assets/images/galeri/${source1x[1]}-640.webp`)) failures.push(`${relative}: ${source1x[1]} için srcset dar genişliği eksik.`);
+    if (!/\bsizes="/.test(image)) failures.push(`${relative}: ${source1x[1]} için sizes tanımı eksik.`);
+
+    const alt = image.match(/alt="([^"]*)"/);
+    if (!alt || alt[1].trim().length < 30) failures.push(`${relative}: galeri karesi açıklayıcı alt metin taşımalıdır: ${source1x[1]}`);
+  }
+}
+
+if (galleryNames.size !== 16) failures.push(`galeri: 16 benzersiz kare bekleniyor, bulunan ${galleryNames.size}.`);
+
 const deploy = read('scripts/prepare-deploy.sh');
 for (const token of ['"index-template.html"', '"api"', '"css"', '"js"', '"hizmetler"', '"bolgeler"']) requireToken('scripts/prepare-deploy.sh', deploy, token, `yayın yolu eksik: ${token}`);
+for (const name of galleryNames) requireToken('scripts/prepare-deploy.sh', deploy, `"${name}"`, `Galeri karesi yayın doğrulamasında eksik: ${name}`);
 for (const [, filename] of heroLayers) requireToken('scripts/prepare-deploy.sh', deploy, `assets/images/hero-r8/${filename}`, `Hero dosyası yayın doğrulamasında eksik: ${filename}`);
 
 if (failures.length) {

@@ -114,7 +114,17 @@ for (const url of expectedSitemapUrls) if (!sitemapUrls.includes(url)) failures.
 for (const url of sitemapUrls) {
   if (!url.startsWith('https://www.canpolatnakliyat.com/')) failures.push(`sitemap.xml: canonical olmayan URL: ${url}`);
 }
-if ((sitemap.match(/<lastmod>2026-08-09<\/lastmod>/g) || []).length !== 11) failures.push('sitemap.xml: tüm URL’lerde güncel lastmod bulunmalıdır.');
+const lastmods = [...sitemap.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].map(match => match[1]);
+if (lastmods.length !== sitemapUrls.length) failures.push('sitemap.xml: her URL bir lastmod taşımalıdır.');
+for (const value of lastmods) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || value < '2026-08-09') failures.push(`sitemap.xml: geçersiz veya bayat lastmod: ${value}`);
+}
+const galleryImages = [...sitemap.matchAll(/<image:loc>([^<]+)<\/image:loc>/g)].map(match => match[1]);
+if (galleryImages.length !== 16) failures.push(`sitemap.xml: 16 galeri görseli bekleniyor, bulunan ${galleryImages.length}.`);
+for (const url of galleryImages) {
+  const file = url.replace('https://www.canpolatnakliyat.com/', '');
+  if (!fs.existsSync(path.join(root, file))) failures.push(`sitemap.xml: görsel sunucuda yok: ${file}`);
+}
 
 for (const token of [
   'Fiyat teklif formunu kullandığınızda',

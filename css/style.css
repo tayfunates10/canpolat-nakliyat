@@ -783,23 +783,37 @@ address { font-style: normal; }
 }
 
 /* ---------------------------------------------------------------------------
-   Galeri. Ana sayfada bir seçki, /galeri.html sayfasında tamamı; ikisi de
-   aynı ızgarayı kullanır. Görseller 16/10 kaynak oranında kırpılmadan durur.
+   Galeri. Ana sayfada altı kare, /galeri.html sayfasında tamamı. Fotoğraflar
+   markalı alt bandıyla birlikte 4/3 oranında üretilir; oran burada birebir
+   aynı verildiği için object-fit hiçbir şeyi kırpmaz, bant her zaman görünür.
+   Kare sayısı her kırılımda sütun sayısına tam bölünür: ana sayfada 6 kare
+   3/2/1 sütuna, galeri sayfasında 16 kare 4/2/1 sütuna eksiksiz oturur.
 --------------------------------------------------------------------------- */
 .gallery { background: var(--cream-2); }
 .gallery__grid { margin-top: 8px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-.gallery__item { margin: 0; overflow: hidden; border: 1px solid rgba(37,51,73,.1); border-radius: var(--radius-md); background: var(--cream); box-shadow: 0 8px 24px rgba(23,32,51,.06); }
-.gallery__item img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; transition: transform .45s ease; }
+.gallery__item { margin: 0; overflow: hidden; border: 1px solid rgba(37,51,73,.1); border-radius: var(--radius-md); background: var(--cream); box-shadow: 0 8px 24px rgba(23,32,51,.06); transition: box-shadow .3s ease, border-color .3s ease; }
+.gallery__item img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; transition: transform .45s ease; }
+.gallery__item:hover { border-color: rgba(239,124,0,.35); box-shadow: 0 14px 34px rgba(23,32,51,.14); }
 .gallery__item:hover img { transform: scale(1.04); }
 .gallery__all { margin-top: 34px; }
 .gallery--page { background: var(--cream); }
-.gallery--page .gallery__grid { margin-top: 0; }
+.gallery--page .gallery__grid { margin-top: 0; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+@media (max-width: 1100px) {
+  .gallery--page .gallery__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+}
 
 @media (max-width: 960px) {
   .gallery__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 }
 
 @media (max-width: 560px) {
-  .gallery__grid { grid-template-columns: minmax(0, 1fr); }
+  .gallery__grid,
+  .gallery--page .gallery__grid { grid-template-columns: minmax(0, 1fr); }
   .gallery__all { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery__item img { transition: none; }
+  .gallery__item:hover img { transform: none; }
 }
