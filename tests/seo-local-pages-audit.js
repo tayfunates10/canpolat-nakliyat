@@ -29,10 +29,11 @@ for (const relative of pages) {
     '<html lang="tr">', '<meta name="theme-color" content="#253349">',
     '<meta name="robots" content="index, follow', `<link rel="canonical" href="${canonical}">`,
     `<meta property="og:url" content="${canonical}">`, 'href="/css/style.css?v=20260810-20"',
-    'id="ana-icerik"', '<nav class="breadcrumb container"', '"@type": "Service"',
+    'id="ana-icerik"', '<nav class="breadcrumb container"',
     'BreadcrumbList', 'href="tel:+905359120691"', 'https://wa.me/905359120691', 'Edremit / Balıkesir'
   ];
   for (const token of required) if (!source.includes(token)) failures.push(`${relative}: zorunlu öğe eksik: ${token}`);
+  if (!/"@type"\s*:\s*"Service"/.test(source)) failures.push(`${relative}: Service JSON-LD eksik.`);
 
   if (/Camivasat|"streetAddress"|openingHoursSpecification|info@canpolatnakliyat\.com|mailto:/i.test(source)) failures.push(`${relative}: kaldırılmış açık adres/saat/e-posta bilgisi geri eklenmiş.`);
   if (/canpolatevdenevenakliyat\.com/i.test(source)) failures.push(`${relative}: kapsam dışı eski alan adına referans var.`);
