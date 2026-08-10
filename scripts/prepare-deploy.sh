@@ -84,7 +84,12 @@ required_paths=(
   "assets/images/service-paketleme.webp"
   "assets/images/about-tasima.webp"
   "assets/images/cta-kamyon.webp"
-  "assets/images/cta-koli.webp"
+  "assets/images/cta/koli-grubu.webp"
+  "assets/images/cta/koltuk.webp"
+  "assets/images/cta/hali-rulo.webp"
+  "assets/images/cta/tasima-kizagi.webp"
+  "assets/images/cta/gardirop.webp"
+  "assets/images/cta/camasir-makinesi.webp"
 )
 
 for path in "${required_paths[@]}"; do
@@ -129,7 +134,12 @@ required_output_files=(
   "assets/images/service-paketleme.webp"
   "assets/images/about-tasima.webp"
   "assets/images/cta-kamyon.webp"
-  "assets/images/cta-koli.webp"
+  "assets/images/cta/koli-grubu.webp"
+  "assets/images/cta/koltuk.webp"
+  "assets/images/cta/hali-rulo.webp"
+  "assets/images/cta/tasima-kizagi.webp"
+  "assets/images/cta/gardirop.webp"
+  "assets/images/cta/camasir-makinesi.webp"
   "assets/images/hero-r8/platform-p00-r8-reference-exact.png"
   "assets/images/hero-r8/truck-t00-r6.png"
   "assets/images/hero-r8/layer-l01-r6.png"
