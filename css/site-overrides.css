@@ -1,8 +1,11 @@
 /* Canpolat live polish — 2026-08-10 */
 
-/* Uploaded master logo is used without recoloring. */
-.footer-brand img {
-  filter: none !important;
+/* The uploaded master logo stays untouched on light surfaces. On the two dark
+   surfaces, the same transparent artwork is rendered as a high-contrast white
+   mark so its navy portions cannot disappear into the background. */
+.footer-brand img,
+.final-cta .cta__logo {
+  filter: brightness(0) invert(1) !important;
   opacity: 1 !important;
 }
 
