@@ -79,6 +79,8 @@ for (const relative of publicPages.concat(['404.html'])) {
   for (const [pattern, label] of [
     [/Camivasat|Ak%C3%A7ay|"streetAddress"/, 'açık adres'],
     [/Çalışma Saatleri|Hafta içi|openingHoursSpecification|i-saat/, 'çalışma saati'],
+    // Kutu adresi yalnız api/teklif.php içinde kalır; hiçbir sayfada görünmez.
+    [/info@canpolatnakliyat\.com|mailto:/, 'e-posta'],
   ]) if (pattern.test(source)) failures.push(`${relative}: ${label} bilgisi kaldırılmış olmalıydı.`);
 
   // Footer sütun sırası her sayfada aynı olmalı: Kurumsal, Hizmetlerimiz, İletişim.

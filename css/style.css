@@ -217,6 +217,12 @@ address { font-style: normal; }
 .section-heading--center .eyebrow { justify-content: center; }
 .section-heading--center > p { max-width: 660px; }
 
+/* Her bölümün en üstünde, menüdeki adıyla aynı kısa bölüm adı durur. Ölçüsü ve
+   alt boşluğu tüm bölümlerde aynı; yalnızca renk zemine göre değişir, çünkü
+   açık zeminde okunan turuncu koyu zeminde yeterli kontrastı vermiyor. */
+.section-tag { margin: 0 0 13px; color: var(--orange-dark); font-size: 13px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+.about .section-tag, .why-us .section-tag, .quote .section-tag { color: #ffad4a; }
+
 .services { background: var(--cream); }
 .service-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 20px; }
 .service-card { grid-column: span 2; min-width: 0; border: 1px solid #dddfe3; border-radius: var(--radius-md); background: #fff; overflow: hidden; box-shadow: 0 8px 24px rgba(23,32,51,.055); transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease; }
@@ -278,8 +284,18 @@ address { font-style: normal; }
 .why-us__cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .why-us__cards article { min-height: 210px; padding: 28px; border: 1px solid rgba(255,255,255,.12); border-radius: var(--radius-md); background: rgba(255,255,255,.035); transition: background .2s ease, border-color .2s ease; }
 .why-us__cards article:hover { border-color: rgba(239,124,0,.55); background: rgba(255,255,255,.06); }
-.why-us__cards span { color: #ffad4a; font-size: 11px; font-weight: 900; }
-.why-us__cards h3 { margin-top: 24px; color: #fff; font-size: 20px; }
+/* Kutucuk başlığı: solda ikon rozeti, sağda sıra numarası. Dört ikon da aynı
+   24'lük ızgarada ve dikey eksene göre simetrik çizildi. */
+.why-us__head { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.why-us__icon { width: 52px; height: 52px; display: grid; place-items: center; flex: 0 0 auto; border: 1px solid rgba(239,124,0,.3); border-radius: 15px; background: rgba(239,124,0,.12); color: var(--orange); transition: border-color .2s ease, background-color .2s ease, transform .2s ease; }
+.why-us__icon svg { width: 26px; height: 26px; }
+.why-us__cards article:hover .why-us__icon { border-color: rgba(239,124,0,.7); background: rgba(239,124,0,.2); transform: translateY(-2px); }
+@media (prefers-reduced-motion: reduce) {
+  .why-us__icon { transition: border-color .2s ease, background-color .2s ease; }
+  .why-us__cards article:hover .why-us__icon { transform: none; }
+}
+.why-us__no { color: #ffad4a; font-size: 11px; font-weight: 900; }
+.why-us__cards h3 { margin-top: 22px; color: #fff; font-size: 20px; }
 .why-us__cards p { margin-top: 10px; color: #aeb9c6; font-size: 13px; }
 
 .regions { background: var(--cream-2); }
@@ -309,7 +325,9 @@ address { font-style: normal; }
 .regions__visual.is-armed .regions-map .rt:nth-child(5) { transition-delay: 480ms; }
 .regions__visual.is-armed .regions-map .rt:nth-child(6) { transition-delay: 600ms; }
 
-.faq { background: #fff; }
+/* Bölüm zeminleri açık-koyu-açık sırayla ilerler; iki komşu bölüm asla aynı
+   rengi almaz, yoksa aralarındaki sınır kaybolur (bölgeler ve galeri böyleydi). */
+.faq { background: var(--cream-2); }
 .faq__grid { display: grid; grid-template-columns: .7fr 1.3fr; gap: 72px; }
 .faq__intro { align-self: start; position: sticky; top: 126px; }
 .faq__intro > p:not(.eyebrow) { margin-top: 22px; color: var(--muted); }
@@ -813,7 +831,7 @@ address { font-style: normal; }
    Kare sayısı her kırılımda sütun sayısına tam bölünür: ana sayfada 6 kare
    3/2/1 sütuna, galeri sayfasında 16 kare 4/2/1 sütuna eksiksiz oturur.
 --------------------------------------------------------------------------- */
-.gallery { background: var(--cream-2); }
+.gallery { background: var(--white); }
 .gallery__grid { margin-top: 8px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
 .gallery__item { margin: 0; overflow: hidden; border: 1px solid rgba(37,51,73,.1); border-radius: var(--radius-md); background: var(--cream); box-shadow: 0 8px 24px rgba(23,32,51,.06); transition: box-shadow .3s ease, border-color .3s ease; }
 .gallery__item img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; transition: transform .45s ease; }
