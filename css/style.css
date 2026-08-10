@@ -333,7 +333,12 @@ address { font-style: normal; }
 .final-cta__inner { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); align-items: center; gap: 34px; padding: 44px 0 48px; }
 .final-cta__content { min-width: 0; }
 .cta__logo { display: block; width: 208px; height: auto; overflow: visible; }
-.cta__logo [fill="#253349"] { fill: #ffffff; }
+/* Logonun lacivert parçaları koyu zeminde görünmüyor. Yazı beyaza çevrilir,
+   ama amblemdeki kavis beyaz yapıldığında turuncu "A"nın çevresinde beyaz bir
+   kenar gibi okunuyordu; kavis markanın turuncusuna alınır, amblem tek parça
+   kalır. */
+.cta__logo g[fill="#253349"] { fill: #ffffff; }
+.cta__logo > path[fill="#253349"] { fill: var(--orange); }
 .final-cta h2 { margin-top: 22px; font-size: clamp(34px, 4.4vw, 62px); line-height: 1.02; letter-spacing: -.045em; font-weight: 850; }
 .final-cta h2 em { color: var(--orange); font-style: normal; }
 /* clip-path satır içi ögede güvenilir çalışmaz; parçalar inline-block olur. */

@@ -68,7 +68,7 @@ for (const relative of publicPages.concat(['404.html'])) {
     'id="ana-icerik"',
     'rel="icon" href="/assets/images/favicon-canpolat.svg"',
     'rel="manifest" href="/manifest.webmanifest"',
-    'href="/css/style.css?v=20260810-04"',
+    'href="/css/style.css?v=20260810-05"',
     'href="tel:+905359120691"',
     'https://wa.me/905359120691',
     'Camivasat Mah. Akçay Cad. No: 78',
