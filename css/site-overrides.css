@@ -1,0 +1,65 @@
+/* Canpolat live polish — 2026-08-10 */
+
+/* Uploaded master logo is used without recoloring. */
+.footer-brand img {
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* Footer bottom: legal line centered, duplicate address removed. */
+.footer-bottom {
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+.footer-bottom > span:last-child {
+  display: none !important;
+}
+
+/* Hero: remove the artificial vertical offset around the copy and center both
+   columns. The .hero-scene / R8 rules and all R8 layers remain untouched. */
+.hero__content {
+  align-self: center !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  transform: none !important;
+}
+.hero__visual {
+  align-self: stretch !important;
+  align-items: center !important;
+}
+
+@media (max-width: 960px) {
+  .hero__inner { padding-top: 0 !important; }
+  .hero__content { padding: 26px 0 0 !important; }
+  .hero__visual { align-items: center !important; }
+}
+
+@media (max-width: 720px) {
+  .hero__content { padding-top: 20px !important; }
+  .hero h1 { margin-top: 0 !important; }
+  .footer-bottom { flex-direction: row !important; }
+}
+
+/* Per-content reveal. The legacy section-level is-visible flag is deliberately
+   ignored; only the content observer's is-content-visible class may finish a
+   reveal. This prevents a whole section from arriving at once. */
+main > section.is-armed .reveal {
+  opacity: 0 !important;
+  transform: var(--reveal-from, translateY(20px)) !important;
+  transition-delay: 0ms !important;
+}
+main > section.is-armed .reveal.is-content-visible {
+  opacity: 1 !important;
+  transform: none !important;
+  transition-delay: 0ms !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main > section.is-armed .reveal,
+  main > section.is-armed .reveal.is-content-visible {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
