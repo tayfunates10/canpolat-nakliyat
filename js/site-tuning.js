@@ -38,12 +38,13 @@
 
   /* Upgrade only compact local-SEO templates to the full shared site chrome. */
   (function normalizeSharedChrome() {
+    var compactTemplate = false;
     var header = document.querySelector('.site-header');
     if (header) {
-      var compactHeader = !header.id || !header.querySelector('.menu-toggle') || !header.querySelector('#mobile-menu') || !document.querySelector('.utility-bar');
+      compactTemplate = !header.id || !header.querySelector('.menu-toggle') || !header.querySelector('#mobile-menu') || !document.querySelector('.utility-bar');
       header.id = 'site-header';
 
-      if (compactHeader && !document.querySelector('.utility-bar')) {
+      if (compactTemplate && !document.querySelector('.utility-bar')) {
         var utility = document.createElement('div');
         utility.className = 'utility-bar';
         utility.innerHTML = '<div class="marquee" role="group" aria-label="Hizmetlerimiz">' +
@@ -68,7 +69,7 @@
       if (brand) brand.setAttribute('aria-label', 'Canpolat Nakliyat ana sayfa');
 
       var desktopNav = header.querySelector('.desktop-nav');
-      if (compactHeader && desktopNav) {
+      if (compactTemplate && desktopNav) {
         desktopNav.setAttribute('aria-label', 'Ana menü');
         desktopNav.innerHTML = '<a href="/">Ana Sayfa</a>' +
           '<a href="/#hizmetler">Hizmetler</a>' +
@@ -80,7 +81,7 @@
       }
 
       var headerPhone = header.querySelector('.header-phone');
-      if (compactHeader && headerPhone) {
+      if (compactTemplate && headerPhone) {
         headerPhone.innerHTML = iconMarkup(ICON_PHONE) + '<span><small>Hemen arayın</small><strong>0535 912 06 91</strong></span>';
       }
 
@@ -89,7 +90,7 @@
       var mobileMenu = header.querySelector('#mobile-menu');
       var createdMenu = false;
 
-      if (compactHeader && inner && !menuButton) {
+      if (compactTemplate && inner && !menuButton) {
         menuButton = document.createElement('button');
         menuButton.className = 'menu-toggle';
         menuButton.type = 'button';
@@ -101,7 +102,7 @@
         createdMenu = true;
       }
 
-      if (compactHeader && !mobileMenu) {
+      if (compactTemplate && !mobileMenu) {
         mobileMenu = document.createElement('div');
         mobileMenu.className = 'mobile-menu';
         mobileMenu.id = 'mobile-menu';
@@ -137,6 +138,49 @@
         document.addEventListener('keydown', function (event) {
           if (event.key === 'Escape') setLocalMenu(false);
         });
+      }
+
+      if (compactTemplate) {
+        function updateCompactHeader() {
+          header.classList.toggle('is-scrolled', window.scrollY > 10);
+        }
+        window.addEventListener('scroll', updateCompactHeader, { passive: true });
+        updateCompactHeader();
+      }
+    }
+
+    var main = document.querySelector('main');
+    if (compactTemplate && main && !main.querySelector('.final-cta')) {
+      var sharedCta = document.createElement('section');
+      sharedCta.className = 'final-cta';
+      sharedCta.setAttribute('data-shared-cta', '');
+      sharedCta.innerHTML = '<div class="container final-cta__inner">' +
+        '<div class="final-cta__content">' +
+          '<img class="cta__logo" src="' + LOGO_SRC + '" alt="" width="1457" height="478" loading="lazy">' +
+          '<h2>Taşınma planınızı birlikte oluşturalım.</h2>' +
+          '<p class="final-cta__lead">Adres, kat, eşya ve tarih bilgilerinizi paylaşın; uygun taşıma kapsamını birlikte değerlendirelim.</p>' +
+          '<div class="final-cta__actions">' +
+            '<a class="button button--primary" href="https://wa.me/905359120691" target="_blank" rel="noopener">' + iconMarkup(ICON_WA) + 'WhatsApp\'tan Teklif Al</a>' +
+            '<a class="button button--ghost" href="tel:+905359120691">' + iconMarkup(ICON_PHONE) + 'Hemen Ara</a>' +
+          '</div>' +
+        '</div>' +
+        '<div class="final-cta__visual">' +
+          '<div class="final-cta__stage"><span class="final-cta__ground" aria-hidden="true"></span><div class="final-cta__truck-wrap"><img class="final-cta__truck" src="/assets/images/cta-kamyon.webp?v=20260809-02" alt="Canpolat Nakliyat kamyonu" width="980" height="713" loading="lazy" decoding="async"></div></div>' +
+          '<a class="final-cta__phone" href="tel:+905359120691"><span class="final-cta__phone-icon" aria-hidden="true">' + iconMarkup(ICON_PHONE) + '</span><span class="final-cta__phone-text"><strong>0535&nbsp;912&nbsp;06&nbsp;91</strong><small>Hızlı Geri Dönüş</small></span></a>' +
+        '</div>' +
+      '</div>';
+      main.appendChild(sharedCta);
+
+      if (typeof IntersectionObserver === 'function') {
+        sharedCta.classList.add('is-armed');
+        var sharedCtaObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            sharedCta.classList.add('is-visible');
+            sharedCtaObserver.disconnect();
+          });
+        }, { threshold: 0.01, rootMargin: '0px 0px -6% 0px' });
+        sharedCtaObserver.observe(sharedCta);
       }
     }
 
