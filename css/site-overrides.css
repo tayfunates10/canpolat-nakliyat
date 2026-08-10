@@ -9,14 +9,23 @@
   opacity: 1 !important;
 }
 
-/* Footer bottom: legal line centered, duplicate address removed. */
+/* Footer bottom: legal line centered, duplicate address removed. The copyright
+   line is deliberately excluded from all reveal/transition effects and stays
+   visible from the first paint. */
 .footer-bottom {
   justify-content: center !important;
   align-items: center !important;
   text-align: center !important;
 }
-.footer-bottom > span:last-child {
+.footer-bottom > span + span {
   display: none !important;
+}
+.footer-bottom > span:first-child {
+  display: inline !important;
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
 }
 
 /* Hero: remove the artificial vertical offset around the copy and center both
