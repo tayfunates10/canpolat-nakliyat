@@ -173,33 +173,11 @@ address { font-style: normal; }
 .hero-scene { position: relative; width: 118%; aspect-ratio: 3 / 2; margin-left: -10%; margin-bottom: -10%; filter: drop-shadow(0 26px 22px rgba(0,0,0,.34)); }
 .scene-layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 
-.trust-bar { position: relative; z-index: 4; color: #fff; background: var(--orange); }
 /* minmax(0,...) olmadan kolonlar min-content altına inemez ve dar masaüstünde şeridi taşırır. */
-.trust-bar__grid { min-height: 110px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.trust-bar__item { display: flex; align-items: center; gap: 14px; padding: 20px 26px; border-left: 1px solid rgba(37,51,73,.2); }
-.trust-bar__item:last-child { border-right: 1px solid rgba(37,51,73,.2); }
-.trust-bar__icon { flex: 0 0 42px; width: 42px; height: 42px; display: grid; place-items: center; border: 1px solid rgba(37,51,73,.28); border-radius: 12px; background: rgba(255,255,255,.16); color: var(--navy-3); }
-.trust-bar__icon svg { width: 22px; height: 22px; stroke-width: 1.7; }
-.trust-bar__text { min-width: 0; display: grid; gap: 2px; }
-.trust-bar strong { color: var(--navy-3); font-size: 16px; line-height: 1.25; }
-.trust-bar__text > span { color: #4f2b05; font-size: 12px; font-weight: 650; }
 
 /* Giriş: şerit görünür alana girince ikonlar ve metin sırayla yerine oturur. */
-.trust-bar__item { opacity: 1; transform: none; }
-.trust-bar.is-armed .trust-bar__item { opacity: 0; transform: translateY(14px); }
-.trust-bar.is-armed.is-visible .trust-bar__item { opacity: 1; transform: none; transition: opacity .55s cubic-bezier(.22,1,.36,1), transform .55s cubic-bezier(.22,1,.36,1); }
-.trust-bar.is-armed.is-visible .trust-bar__item:nth-child(1) { transition-delay: 0ms; }
-.trust-bar.is-armed.is-visible .trust-bar__item:nth-child(2) { transition-delay: 90ms; }
-.trust-bar.is-armed.is-visible .trust-bar__item:nth-child(3) { transition-delay: 180ms; }
-.trust-bar.is-armed.is-visible .trust-bar__item:nth-child(4) { transition-delay: 270ms; }
 
 /* İkonun kendi hareketi: kutular sırayla hafifçe yükselip iner. */
-.trust-bar.is-visible .trust-bar__icon { animation: trust-float 4.6s ease-in-out 900ms infinite; }
-.trust-bar.is-visible .trust-bar__item:nth-child(2) .trust-bar__icon { animation-delay: 1200ms; }
-.trust-bar.is-visible .trust-bar__item:nth-child(3) .trust-bar__icon { animation-delay: 1500ms; }
-.trust-bar.is-visible .trust-bar__item:nth-child(4) .trust-bar__icon { animation-delay: 1800ms; }
-.trust-bar__item:hover .trust-bar__icon { border-color: rgba(37,51,73,.5); background: rgba(255,255,255,.3); }
-.trust-bar.is-visible .trust-bar.is-visible 
 @keyframes trust-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 @keyframes trust-draw { to { stroke-dashoffset: 0; } }
 @keyframes trust-sweep { from { transform: rotate(-330deg); } to { transform: rotate(0deg); } }
@@ -210,7 +188,7 @@ address { font-style: normal; }
    aralıkta okunmadığı için negatif harf aralığı neredeyse sıfıra çekilir;
    büyütme CSS'te yapılır, böylece işaretlemede metin doğal hâlinde kalır ve
    Türkçe büyük harf dönüşümünü tarayıcı lang="tr" ile doğru uygular. */
-.section-heading h2, .about h2, .why-us h2, .regions h2, .faq h2, .quote h2 { font-size: clamp(32px, 3.5vw, 50px); line-height: 1.1; letter-spacing: -.005em; text-transform: uppercase; }
+.section-heading h2, .about h2, .why-us h2, .regions h2, .faq h2, .quote h2 { font-size: clamp(32px, 3.5vw, 50px); line-height: 1.1; letter-spacing: -.005em; text-transform: uppercase; overflow-wrap: break-word; }
 .section-heading > p { max-width: 430px; color: var(--muted); }
 .section-heading--center { align-items: center; flex-direction: column; text-align: center; gap: 18px; }
 .section-heading--center .eyebrow { justify-content: center; }
@@ -351,13 +329,6 @@ address { font-style: normal; }
    logo, başlık, iki aksiyon ve üç hizmet kısayolu.
 --------------------------------------------------------------------------- */
 .final-cta { position: relative; overflow: hidden; color: #f4f7fb; background: radial-gradient(120% 150% at 82% 40%, rgba(239,124,0,.16), transparent 55%), linear-gradient(105deg, #0c1523 0%, #16243a 52%, #1b2c46 100%); }
-.final-cta__scene { position: absolute; inset: 0; pointer-events: none; }
-.final-cta__skyline { position: absolute; right: -2%; bottom: 0; width: min(78%, 1240px); height: 74%; fill: rgba(150,180,220,.055); stroke: none; }
-.final-cta__arc { position: absolute; right: 3%; top: 8%; width: min(38%, 540px); height: 42%; }
-.final-cta__arc-line { fill: none; stroke: rgba(239,124,0,.55); stroke-width: 2; stroke-dasharray: 9 11; stroke-linecap: round; }
-.final-cta__pin { position: absolute; right: 40.5%; top: 4.5%; width: 28px; height: 28px; color: var(--orange); }
-.final-cta__pin svg { position: relative; z-index: 1; width: 28px; height: 28px; fill: var(--orange); stroke: none; }
-.final-cta__pin-ring { position: absolute; z-index: 0; left: 50%; top: 34%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border: 2px solid rgba(239,124,0,.85); border-radius: 50%; opacity: 0; }
 
 .final-cta__inner { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); align-items: center; gap: 34px; padding: 44px 0 48px; }
 .final-cta__content { min-width: 0; }
@@ -382,7 +353,7 @@ address { font-style: normal; }
 
 /* Kamyon sahnesi. Zemin gölgesi ve yansıma ayrı katmanlar; kamyon kendi
    içinde salındığı için gölge yerinde kalır, aksi hâlde havada sallanır. */
-.final-cta__stage { position: relative; width: 100%; max-width: 470px; }
+.final-cta__stage { position: relative; width: 100%; max-width: 620px; }
 /* Neredeyse siyah zeminde koyu gölge görünmez; bu yüzden zemin ters kurulur:
    altta yansıtıcı zemini temsil eden soluk bir ışık havuzu, üstünde tekerlek
    temas çizgisinde dar ve koyu bir çekirdek. Ellipsin merkezi tekerlek
@@ -465,8 +436,6 @@ address { font-style: normal; }
   .site-header__inner { min-height: 74px; }
   .brand { flex-basis: 220px; }
   .brand img { width: 220px; }
-  .trust-bar__grid { min-height: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .trust-bar__item { min-height: 92px; border-bottom: 1px solid rgba(37,51,73,.18); }
   .hero, .hero__inner { min-height: auto; }
   .hero { background-image: radial-gradient(circle at 80% 12%, rgba(239, 124, 0, .1), transparent 34%), linear-gradient(180deg, rgba(17, 28, 45, .93) 0%, rgba(17, 28, 45, .85) 40%, rgba(19, 31, 50, .56) 70%, rgba(24, 38, 59, .26) 100%), url('/assets/images/hero/canpolat-hero-bg-2026.webp?v=20260809-02'); background-size: cover; background-position: center center, center center, 66% 42%; }
   .hero__inner { grid-template-columns: 1fr; gap: 0; padding-top: 22px; }
@@ -480,11 +449,12 @@ address { font-style: normal; }
   .service-card, .service-card--wide { grid-column: span 3; }
   /* Tek sayida kart iki kolonluk dizilimde son satirda delik birakir; sonuncusu tam genislige oturur. */
   .service-card:last-child { grid-column: span 6; }
-  .about__grid, .why-us__grid, .regions__grid, .faq__grid, .quote__grid { grid-template-columns: 1fr; gap: 48px; }
+  .about__grid, .why-us__grid, .regions__grid, .faq__grid, .quote__grid { grid-template-columns: minmax(0, 1fr); gap: 48px; }
   .final-cta__inner { grid-template-columns: 1fr; gap: 34px; }
   .final-cta__visual { justify-items: start; }
-  .final-cta__stage { max-width: 520px; }
-  .final-cta__arc, .final-cta__pin { display: none; }
+  .final-cta__stage { max-width: none; }
+  /* Koliler dar ekranda sahnenin soluna taşıp sayfa kenarında kesiliyordu. */
+  .final-cta__boxes { left: 0; }
   .about__grid { gap: 54px; }
   .why-us__intro { max-width: 680px; }
   .regions__visual { min-height: 0; }
@@ -516,12 +486,6 @@ address { font-style: normal; }
   .hero__facts li { font-size: 10px; }
   .hero__visual { min-height: 350px; }
   .hero-scene { width: calc(100% + 30px); margin: -20px -15px -8%; }
-  .trust-bar__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .trust-bar__item { min-height: 88px; gap: 11px; padding: 15px 16px; border-bottom: 1px solid rgba(37,51,73,.18); }
-  .trust-bar__icon { flex-basis: 34px; width: 34px; height: 34px; border-radius: 10px; }
-  .trust-bar__icon svg { width: 18px; height: 18px; }
-  .trust-bar__text > span { font-size: 11px; }
-  .trust-bar strong { font-size: 15px; }
   .section-heading { align-items: start; flex-direction: column; gap: 16px; margin-bottom: 34px; }
   .section-heading h2, .about h2, .why-us h2, .regions h2, .faq h2, .quote h2 { font-size: 36px; }
   .service-grid { grid-template-columns: 1fr; gap: 14px; }
@@ -730,11 +694,6 @@ address { font-style: normal; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .trust-bar.is-armed .trust-bar__item,
-  .trust-bar.is-armed.is-visible .trust-bar__item { opacity: 1; transform: none; transition: none; }
-  .trust-bar.is-visible .trust-bar__icon,
-  .trust-bar.is-visible .trust-bar__tick,
-  .trust-bar.is-visible   }
 
 @media (prefers-reduced-motion: reduce) {
   .utility-bar__item, .utility-bar__phone { animation: none; }
@@ -776,20 +735,16 @@ address { font-style: normal; }
 .final-cta.is-armed.is-visible .final-cta__boxes { animation: cta-settle .7s cubic-bezier(.3,1.5,.5,1) 1.15s both; }
 
 /* Döngüler */
-.final-cta.is-visible .final-cta__arc-line { animation: cta-flow 3.5s linear infinite; }
 .final-cta.is-visible .final-cta__truck { animation: cta-idle 5.2s ease-in-out 1.4s infinite; }
 .final-cta.is-visible .final-cta__ground { animation: cta-ground 5.2s ease-in-out 1.4s infinite; }
-.final-cta.is-visible .final-cta__pin-ring { animation: cta-ping 8.3s cubic-bezier(.2,.7,.4,1) 2.2s infinite; }
 
 @keyframes cta-drop { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
 @keyframes cta-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 -2% 0 0); } }
 @keyframes cta-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 @keyframes cta-arrive { from { opacity: 0; transform: translateX(64px); } to { opacity: 1; transform: none; } }
 @keyframes cta-settle { 0% { opacity: 0; transform: translateY(-30px); } 60% { opacity: 1; } 100% { opacity: 1; transform: none; } }
-@keyframes cta-flow { to { stroke-dashoffset: -40; } }
 @keyframes cta-idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 @keyframes cta-ground { 0%, 100% { transform: scaleX(1); opacity: 1; } 50% { transform: scaleX(.97); opacity: .82; } }
-@keyframes cta-ping { 0%, 88% { transform: scale(.7); opacity: 0; } 91% { opacity: .9; } 100% { transform: scale(2.4); opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
   .final-cta.is-armed .cta__logo,
@@ -802,10 +757,9 @@ address { font-style: normal; }
   .final-cta.is-armed.is-visible .final-cta__actions .button,
   .final-cta.is-armed.is-visible .final-cta__truck-wrap,
   .final-cta.is-armed.is-visible .final-cta__boxes,
-  .final-cta.is-visible .final-cta__arc-line,
   .final-cta.is-visible .final-cta__truck,
   .final-cta.is-visible .final-cta__ground,
-  .final-cta.is-visible .final-cta__pin-ring { animation: none; }
+  .final-cta.is-visible .final-cta__truck-wrap { animation: none; }
 }
 
 /* ---------------------------------------------------------------------------

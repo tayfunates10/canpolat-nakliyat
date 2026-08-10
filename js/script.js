@@ -100,7 +100,6 @@
     observer.observe(node);
   }
 
-  revealOnView('.trust-bar', 0.25);
   revealOnView('.regions__visual', 0.3);
   revealOnView('.final-cta', 0.22);
 })();
