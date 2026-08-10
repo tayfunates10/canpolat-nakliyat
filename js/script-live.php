@@ -7,3 +7,5 @@ echo "\n";
 readfile(__DIR__ . '/site-tuning.js');
 echo "\n";
 readfile(__DIR__ . '/header-logo-fix.js');
+echo "\n";
+readfile(__DIR__ . '/shared-ui-final.js');
