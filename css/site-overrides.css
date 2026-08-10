@@ -216,6 +216,20 @@
   .final-cta.is-armed.is-visible.is-cta-viewport-ready .final-cta__ground {
     animation: cta-ground-in .45s ease 650ms both, cta-ground 5.2s ease-in-out 2.1s infinite !important;
   }
+
+  /* CTA truck gets its own viewport gate on phones. The existing CTA content
+     trigger remains untouched; only the truck waits for its stage to reach the
+     same lower-middle trigger line used by the R8 timing adjustment. */
+  .final-cta.is-armed:not(.is-cta-truck-viewport-ready) .final-cta__truck-wrap {
+    opacity: 0 !important;
+    transform: translateX(26%) scale(.62) !important;
+    animation: none !important;
+    transition: none !important;
+  }
+  .final-cta.is-armed.is-visible.is-cta-truck-viewport-ready .final-cta__truck-wrap {
+    animation: cta-arrive 1.25s cubic-bezier(.22,1,.36,1) 120ms both !important;
+    transform-origin: 78% 78%;
+  }
 }
 
 @keyframes cta-support-in {
@@ -300,7 +314,14 @@ main > section.is-armed .reveal.is-content-visible {
   .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__lead,
   .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__features,
   .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__phone,
-  .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__ground {
+  .final-cta.is-armed:not(.is-cta-viewport-ready) .final-cta__ground,
+  .final-cta.is-armed:not(.is-cta-truck-viewport-ready) .final-cta__truck-wrap {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+  .final-cta.is-armed.is-visible.is-cta-truck-viewport-ready .final-cta__truck-wrap {
     opacity: 1 !important;
     transform: none !important;
     animation: none !important;
