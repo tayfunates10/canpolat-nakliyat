@@ -6,12 +6,14 @@
   var r8 = document.getElementById('heroAnimated');
   if (!r8) return;
 
-  var TRIGGER_LINE = 0.48;
+  var TRIGGER_LINE = 0.30;
   var initialScroll = window.scrollY || window.pageYOffset || 0;
   var userMoved = initialScroll > 8;
   var frame = 0;
 
-  /* Keep the approved R8 hidden even if the legacy 78% gate fires first. */
+  /* Keep the approved R8 hidden even if an older mobile gate fires first.
+     The legacy 48 class name is retained only for compatibility; the actual
+     visible reveal threshold is now 30% of the usable viewport. */
   r8.classList.add('is-r8-trigger-48-lock');
 
   function usableViewportHeight() {
