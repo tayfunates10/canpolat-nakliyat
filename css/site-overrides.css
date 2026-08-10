@@ -95,6 +95,13 @@
   .hero h1 { margin-top: 0 !important; }
   .footer-bottom { flex-direction: row !important; }
 
+  /* Move the complete R8 stage down on phones to use the empty space beneath
+     it. Only the outer scene is translated; every R8 layer keeps its original
+     coordinates, scale, z-order and entrance animation. */
+  .hero-scene {
+    transform: translateY(26px) !important;
+  }
+
   /* Mobile hero info cards: the DOM order already places these immediately
      after the two hero actions, so they naturally sit below the WhatsApp
      button. Two cards form the top row; the third is centered below them. */
