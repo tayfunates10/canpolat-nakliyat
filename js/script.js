@@ -39,6 +39,51 @@
   window.addEventListener('scroll', updateHeader, { passive: true });
   updateHeader();
 
+  /*
+   * Yerel SEO sayfalarını bütün sayfalardaki mevcut footer tasarımına bağlar.
+   * Yeni bir grid kolonu açmak yerine Kurumsal kolonunun altında ikinci bir
+   * başlık ve nav kullanılır; böylece desktop/tablet/mobile grid ölçüleri
+   * değişmez. data-footer-regions koruması kodun iki kez çalışması hâlinde
+   * yinelenen bağlantı oluşmasını engeller.
+   */
+  (function addFooterRegionLinks() {
+    var footer = document.querySelector('.site-footer');
+    if (!footer || footer.querySelector('[data-footer-regions]')) return;
+
+    var grid = footer.querySelector('.footer-grid');
+    if (!grid || grid.children.length < 2) return;
+
+    var corporateColumn = grid.children[1];
+    var title = document.createElement('h2');
+    var nav = document.createElement('nav');
+    var regions = [
+      ['Edremit Nakliyat', '/bolgeler/edremit-nakliyat.html'],
+      ['Akçay Nakliyat', '/bolgeler/akcay-nakliyat.html'],
+      ['Güre Nakliyat', '/bolgeler/gure-nakliyat.html'],
+      ['Altınoluk Nakliyat', '/bolgeler/altinoluk-nakliyat.html'],
+      ['Küçükkuyu Nakliyat', '/bolgeler/kucukkuyu-nakliyat.html'],
+      ['Havran Nakliyat', '/bolgeler/havran-nakliyat.html'],
+      ['İvrindi Nakliyat', '/bolgeler/ivrindi-nakliyat.html'],
+      ['Burhaniye Nakliyat', '/bolgeler/burhaniye-nakliyat.html'],
+      ['Gömeç Nakliyat', '/bolgeler/gomec-nakliyat.html'],
+      ['Ayvalık Nakliyat', '/bolgeler/ayvalik-nakliyat.html']
+    ];
+
+    title.textContent = 'Hizmet Bölgeleri';
+    nav.setAttribute('aria-label', 'Footer hizmet bölgeleri');
+    nav.setAttribute('data-footer-regions', '');
+
+    regions.forEach(function (region) {
+      var link = document.createElement('a');
+      link.href = region[1];
+      link.textContent = region[0];
+      nav.appendChild(link);
+    });
+
+    corporateColumn.appendChild(title);
+    corporateColumn.appendChild(nav);
+  })();
+
   document.querySelectorAll('.accordion__item button').forEach(function (button) {
     button.addEventListener('click', function () {
       var targetId = button.getAttribute('aria-controls');
@@ -142,7 +187,7 @@
       var chosen = [];
       Array.prototype.forEach.call(section.querySelectorAll(REVEAL), function (node) {
         for (var i = 0; i < chosen.length; i++) {
-          if (chosen[i].contains(node)) return;   // seçilmiş bir ögenin içindeyse atla
+          if (chosen[i].contains(node)) return;
         }
         chosen.push(node);
       });
@@ -174,8 +219,6 @@
       };
     });
 
-    // Pencere ikonları 24'lük ızgarada çizilir; metin glifleri (× ‹ ›) yazı
-    // tipine göre farklı optik ağırlıkta geldiği için simetrik durmuyordu.
     function ikon(d) {
       return '<svg class="lightbox__icon" viewBox="0 0 24 24" aria-hidden="true">' +
              '<path d="' + d + '" fill="none" stroke="currentColor" stroke-width="2.2" ' +
@@ -225,8 +268,6 @@
     function openBox(index) {
       lastFocused = document.activeElement;
       lockedScroll = window.scrollY || window.pageYOffset || 0;
-      // Gövde bulunduğu konumda sabitlenir: yalnız overflow: hidden vermek
-      // telefonda sayfayı birkaç piksel kaydırıyordu.
       var gap = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.paddingRight = gap > 0 ? gap + 'px' : '';
       document.body.style.top = -lockedScroll + 'px';
@@ -241,8 +282,6 @@
       document.body.classList.remove('lightbox-open');
       document.body.style.top = '';
       document.body.style.paddingRight = '';
-      // html'de scroll-behavior: smooth açık; kapanışta konumu geri alırken
-      // yumuşak kaydırma devreye girmesin diye geçici olarak kapatılır.
       var root = document.documentElement;
       var previous = root.style.scrollBehavior;
       root.style.scrollBehavior = 'auto';
@@ -268,7 +307,6 @@
       if (event.key === 'ArrowRight') { event.preventDefault(); show(current + 1); return; }
       if (event.key === 'ArrowLeft') { event.preventDefault(); show(current - 1); return; }
       if (event.key !== 'Tab') return;
-      // Odak pencerenin içinde kalsın; arkadaki sayfaya sekmeyle geçilmemeli.
       var stops = box.querySelectorAll('button');
       var first = stops[0];
       var last = stops[stops.length - 1];
@@ -276,7 +314,6 @@
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
     });
 
-    // Telefonda parmakla sağa/sola kaydırarak geçiş.
     var touchStart = null;
     box.addEventListener('touchstart', function (event) {
       touchStart = event.changedTouches[0].clientX;
