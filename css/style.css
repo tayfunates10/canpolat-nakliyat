@@ -160,7 +160,7 @@ address { font-style: normal; }
 .eyebrow { display: flex; align-items: center; gap: 10px; color: var(--orange-dark); font-size: 12px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
 .eyebrow span { width: 24px; height: 2px; background: currentColor; }
 .eyebrow--light { color: #ffad4a; }
-.hero h1 { max-width: 630px; margin-top: 22px; font-size: clamp(52px, 5vw, 76px); line-height: .98; letter-spacing: -.055em; font-weight: 850; }
+.hero h1 { max-width: 630px; font-size: clamp(52px, 5vw, 76px); line-height: .98; letter-spacing: -.055em; font-weight: 850; }
 .hero h1 em { color: var(--orange); font-style: normal; }
 .hero__lead { max-width: 565px; margin-top: 28px; color: #cbd3de; font-size: 17px; line-height: 1.75; }
 .hero__actions { margin-top: 34px; display: flex; flex-wrap: wrap; gap: 12px; }
@@ -490,7 +490,7 @@ address { font-style: normal; }
   .hero { background-image: radial-gradient(circle at 80% 12%, rgba(239, 124, 0, .1), transparent 34%), linear-gradient(180deg, rgba(17, 28, 45, .93) 0%, rgba(17, 28, 45, .85) 40%, rgba(19, 31, 50, .56) 70%, rgba(24, 38, 59, .26) 100%), url('/assets/images/hero/canpolat-hero-bg-2026.webp?v=20260809-02'); background-size: cover; background-position: center center, center center, 66% 42%; }
   .hero__inner { grid-template-columns: 1fr; gap: 0; padding-top: 22px; }
   .hero__content { padding: 48px 0 0; text-align: center; }
-  .hero__content .eyebrow, .hero__facts { justify-content: center; }
+  .hero__facts { justify-content: center; }
   .hero h1, .hero__lead { margin-left: auto; margin-right: auto; }
   .hero__actions { justify-content: center; }
   .hero__visual { min-height: 480px; justify-content: center; }
