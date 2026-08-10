@@ -54,7 +54,12 @@ for (const relative of pages) {
 }
 
 const sitemap = read('sitemap.xml');
-for (const relative of pages) if (!sitemap.includes(`<loc>https://www.canpolatnakliyat.com/${relative}</loc>`)) failures.push(`sitemap.xml: ${relative} eksik.`);
+const deployScript = read('scripts/prepare-deploy.sh');
+for (const relative of pages) {
+  if (!sitemap.includes(`<loc>https://www.canpolatnakliyat.com/${relative}</loc>`)) failures.push(`sitemap.xml: ${relative} eksik.`);
+  const deployOccurrences = deployScript.split(`"${relative}"`).length - 1;
+  if (deployOccurrences < 2) failures.push(`scripts/prepare-deploy.sh: ${relative} hem kaynak hem çıktı doğrulamasında zorunlu olmalı.`);
+}
 
 if (failures.length) {
   console.error(`Yerel SEO denetimi başarısız (${failures.length}):`);
