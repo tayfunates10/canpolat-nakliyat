@@ -151,11 +151,38 @@ address { font-style: normal; }
 .desktop-nav a::after { content: ""; position: absolute; left: 50%; right: 50%; bottom: 18px; height: 2px; background: var(--orange); transition: left .18s ease, right .18s ease; }
 .desktop-nav a:hover::after, .desktop-nav a:focus-visible::after, .desktop-nav a[aria-current="page"]::after { left: 0; right: 0; }
 .header-actions { display: flex; align-items: center; gap: 14px; }
-.header-phone { display: flex; align-items: center; gap: 10px; padding-left: 4px; }
-.header-phone svg { width: 25px; height: 25px; color: var(--orange-dark); }
+/* Masaüstü telefon bloğu: kısa aralıkla tekrar eden bildirim. Ahize sallanırken
+   üzerinden bir halka açılıp söner; ikisi de aynı 2,4 saniyelik döngüde. */
+.header-phone { position: relative; display: flex; align-items: center; gap: 10px; padding-left: 4px; }
+.header-phone svg { width: 25px; height: 25px; color: var(--orange-dark); animation: header-phone-shake 2.4s cubic-bezier(.36,.07,.19,.97) infinite; }
+.header-phone::before {
+  content: ""; position: absolute; left: 4px; top: 50%; width: 25px; height: 25px; margin-top: -13px;
+  border: 2px solid var(--orange); border-radius: 50%; opacity: 0; pointer-events: none;
+  animation: header-phone-ring 2.4s cubic-bezier(.2,.7,.4,1) infinite;
+}
 .header-phone span { display: grid; line-height: 1.1; }
 .header-phone small { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .09em; }
-.header-phone strong { margin-top: 4px; color: var(--navy); font-size: 14px; }
+.header-phone strong { margin-top: 4px; color: var(--navy); font-size: 14px; transition: color .18s ease; }
+.header-phone:hover strong { color: var(--orange-dark); }
+.header-phone:focus-visible { outline: 3px solid var(--orange); outline-offset: 4px; border-radius: 8px; }
+@keyframes header-phone-shake {
+  0%, 6% { transform: rotate(0); }
+  11% { transform: rotate(-15deg); }
+  16% { transform: rotate(13deg); }
+  21% { transform: rotate(-9deg); }
+  26% { transform: rotate(6deg); }
+  31%, 100% { transform: rotate(0); }
+}
+@keyframes header-phone-ring {
+  0% { transform: scale(.85); opacity: 0; }
+  10% { opacity: .8; }
+  52%, 100% { transform: scale(2.15); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .header-phone svg { animation: none; }
+  .header-phone::before { display: none; }
+  .header-phone strong { transition: none; }
+}
 .menu-toggle { display: none; margin-left: auto; width: 46px; height: 46px; border: 1px solid var(--line); border-radius: 12px; background: #fff; cursor: pointer; }
 .menu-toggle span { display: block; width: 21px; height: 2px; margin: 4px auto; background: var(--navy); transition: transform .2s ease, opacity .2s ease; }
 .menu-toggle.is-open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
@@ -300,7 +327,6 @@ address { font-style: normal; }
 .service-card__media img { width: 100%; height: 100%; object-fit: cover; transition: transform .45s ease; }
 .service-card:hover img { transform: scale(1.035); }
 .service-card__body { position: relative; padding: 25px 26px 28px; }
-.service-card__body > span { position: absolute; right: 22px; top: 20px; color: #c8cdd5; font-size: 12px; font-weight: 900; }
 .service-card h3 { padding-right: 40px; color: var(--navy); font-size: 20px; line-height: 1.25; }
 .service-card p { min-height: 50px; margin-top: 11px; color: var(--muted); font-size: 14px; }
 .service-card strong { display: inline-flex; gap: 9px; margin-top: 20px; color: var(--orange-dark); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
@@ -351,7 +377,7 @@ address { font-style: normal; }
 .why-us__cards article:hover { border-color: rgba(239,124,0,.55); background: rgba(255,255,255,.06); }
 /* Kutucuk başlığı: solda ikon rozeti, sağda sıra numarası. Dört ikon da aynı
    24'lük ızgarada ve dikey eksene göre simetrik çizildi. */
-.why-us__head { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.why-us__head { display: flex; align-items: center; }
 .why-us__icon { width: 52px; height: 52px; display: grid; place-items: center; flex: 0 0 auto; border: 1px solid rgba(239,124,0,.3); border-radius: 15px; background: rgba(239,124,0,.12); color: var(--orange); transition: border-color .2s ease, background-color .2s ease, transform .2s ease; }
 .why-us__icon svg { width: 26px; height: 26px; }
 .why-us__cards article:hover .why-us__icon { border-color: rgba(239,124,0,.7); background: rgba(239,124,0,.2); transform: translateY(-2px); }
@@ -359,7 +385,6 @@ address { font-style: normal; }
   .why-us__icon { transition: border-color .2s ease, background-color .2s ease; }
   .why-us__cards article:hover .why-us__icon { transform: none; }
 }
-.why-us__no { color: #ffad4a; font-size: 11px; font-weight: 900; }
 .why-us__cards h3 { margin-top: 22px; color: #fff; font-size: 20px; }
 .why-us__cards p { margin-top: 10px; color: #aeb9c6; font-size: 13px; }
 
@@ -422,12 +447,30 @@ address { font-style: normal; }
 .faq__intro { align-self: start; position: sticky; top: 126px; }
 .faq__intro > p:not(.eyebrow) { margin-top: 22px; color: var(--muted); }
 .faq__intro .button { margin-top: 28px; }
-.accordion { border-top: 1px solid var(--line); }
-.accordion__item { border-bottom: 1px solid var(--line); }
+/* Sorular ayrı ayrı beyaz kutularda durur: çizgiyle ayrılmış liste hem karışık
+   görünüyordu hem de cevap metni krem zeminde 4,04:1'de kalıp okuma eşiğinin
+   altına düşüyordu. Beyaz kutu ve koyulaştırılmış metinle oran 7,54:1. */
+.accordion { display: grid; gap: 12px; }
+.accordion__item { border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--white); box-shadow: 0 6px 18px rgba(23,32,51,.05); transition: border-color .2s ease, box-shadow .2s ease; }
+.accordion__item:hover { border-color: rgba(239,124,0,.4); }
+.accordion__item.is-open { border-color: rgba(239,124,0,.55); box-shadow: 0 12px 28px rgba(23,32,51,.1); }
 .accordion h3 { font-size: 17px; }
-.accordion button { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 25px 0; border: 0; color: var(--navy); background: transparent; text-align: left; font-weight: 780; cursor: pointer; }
-.accordion button span { width: 34px; height: 34px; display: grid; place-items: center; flex: 0 0 auto; border: 1px solid #d2d7de; border-radius: 50%; color: var(--orange-dark); font-size: 19px; }
-.accordion__panel { padding: 0 52px 25px 0; color: var(--muted); font-size: 14px; }
+.accordion button { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 19px 22px; border: 0; border-radius: var(--radius-md); color: var(--navy); background: transparent; text-align: left; font-weight: 780; cursor: pointer; }
+.accordion button:hover { color: var(--orange-dark); }
+.accordion button:focus-visible { outline: 3px solid var(--orange); outline-offset: -3px; }
+.accordion button span { width: 32px; height: 32px; display: grid; place-items: center; flex: 0 0 auto; border: 1px solid #d2d7de; border-radius: 50%; color: var(--orange-dark); font-size: 19px; transition: border-color .2s ease, background-color .2s ease; }
+.accordion__item.is-open button span { border-color: var(--orange); background: rgba(239,124,0,.12); }
+.accordion__panel { padding: 0 22px 21px; color: #4a5567; font-size: 14px; line-height: 1.62; }
+/* Bağlantı ızgaranın üçüncü ögesi; iki sütunlu düzende soru sütununun altında
+   kalmalı, yoksa sol sütuna düşüp giriş metninin altında öksüz duruyor. */
+.faq__more { margin-top: 22px; }
+@media (min-width: 961px) { .faq__more { grid-column: 2; } }
+
+/* SSS sayfasında sorular tek sütun; yan sütun sayfanın kendi ızgarasından gelir. */
+.faq-page .accordion { gap: 12px; }
+@media (prefers-reduced-motion: reduce) {
+  .accordion__item, .accordion button span { transition: none; }
+}
 
 .quote { color: #edf2f7; background: var(--navy); }
 .quote__grid { display: grid; grid-template-columns: .72fr 1.28fr; gap: 72px; align-items: start; }
@@ -671,7 +714,6 @@ address { font-style: normal; }
   .service-card a { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
   .service-card__media { height: auto; min-height: 0; aspect-ratio: 16 / 10; }
   .service-card__body { padding: 20px 17px; }
-  .service-card__body > span { display: none; }
   .service-card h3 { padding-right: 0; font-size: 16px; }
   .service-card p { min-height: auto; font-size: 12px; }
   .service-card strong { margin-top: 12px; font-size: 10px; }
