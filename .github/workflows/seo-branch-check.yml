@@ -33,9 +33,10 @@ jobs:
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@1e60f620b9541dca1515405c02a0891d1b43639c # v6
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
+          package-manager-cache: false
 
       - name: Run production-equivalent test suite
         run: npm test
