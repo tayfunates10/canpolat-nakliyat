@@ -68,11 +68,33 @@ for (const relative of publicPages.concat(['404.html'])) {
     'id="ana-icerik"',
     'rel="icon" href="/assets/images/favicon-canpolat.svg"',
     'rel="manifest" href="/manifest.webmanifest"',
-    'href="/css/style.css?v=20260810-07"',
+    'href="/css/style.css?v=20260810-09"',
     'href="tel:+905359120691"',
     'https://wa.me/905359120691',
-    'Camivasat Mah. Akçay Cad. No: 78',
+    'Edremit / Balıkesir',
   ]) requireToken(relative, source, token, `zorunlu üretim öğesi eksik: ${token}`);
+
+  // Açık adres ve çalışma saatleri site genelinden kaldırıldı; hiçbir sayfaya
+  // sprite ikonu, yapısal veri veya yol tarifi bağlantısı üzerinden geri sızmamalı.
+  for (const [pattern, label] of [
+    [/Camivasat|Ak%C3%A7ay|"streetAddress"/, 'açık adres'],
+    [/Çalışma Saatleri|Hafta içi|openingHoursSpecification|i-saat/, 'çalışma saati'],
+    // Kutu adresi yalnız api/teklif.php içinde kalır; hiçbir sayfada görünmez.
+    [/info@canpolatnakliyat\.com|mailto:/, 'e-posta'],
+    // Konum butonları işletmenin Google Haritalar kaydına gider, adres sorgusuna değil.
+    [/google\.com\/maps\/dir/, 'eski yol tarifi sorgusu'],
+  ]) if (pattern.test(source)) failures.push(`${relative}: ${label} bilgisi kaldırılmış olmalıydı.`);
+
+  const mapLinks = (source.match(/href="https:\/\/maps\.app\.goo\.gl\/soogyt8uA8WxuFEM8"/g) || []).length;
+  if (mapLinks !== 2) failures.push(`${relative}: iki konum butonu da Google Haritalar kaydına bağlanmalı, bulunan ${mapLinks}.`);
+
+  // Footer sütun sırası her sayfada aynı olmalı: Kurumsal, Hizmetlerimiz, İletişim.
+  const footerMarkup = (source.match(/<div class="container footer-grid">[\s\S]*?<div class="container footer-bottom">/) || [''])[0];
+  const footerHeadings = (footerMarkup.match(/<h2>([^<]+)<\/h2>/g) || [])
+    .map(match => match.replace(/<[^>]+>/g, ''));
+  if (footerHeadings.join(' | ') !== 'Kurumsal | Hizmetlerimiz | İletişim') {
+    failures.push(`${relative}: footer sütun sırası beklenenden farklı: ${footerHeadings.join(' | ')}`);
+  }
 
   const titleMatch = source.match(/<title>([^<]+)<\/title>/);
   if (!titleMatch) {
@@ -205,7 +227,6 @@ for (const token of [
   '"@type": "MovingCompany"',
   '"@type": "FAQPage"',
   '"@type": "WebSite"',
-  '"opens": "08:00", "closes": "20:00"',
 ]) requireToken('index-template.html', template, token, `ana sayfa zorunlu öğesi eksik: ${token}`);
 
 const serviceLinks = [

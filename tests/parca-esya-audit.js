@@ -20,7 +20,7 @@ if (!fs.existsSync(pagePath)) {
     '"@type": "Service"',
     '"@type": "BreadcrumbList"',
     'href="/hizmetler/parca-esya-tasimaciligi.html" aria-current="page"',
-    'Camivasat Mah. Akçay Cad. No: 78',
+    'Edremit / Balıkesir',
     'href="tel:+905359120691"',
     'https://wa.me/905359120691',
     'Akçay', 'Altınoluk', 'Havran', 'İvrindi', 'Balıkesir', 'Türkiye',
