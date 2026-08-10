@@ -7,16 +7,18 @@
   if (!r8) return;
 
   var CONTACT_BAR_GAP = 12;
+  var PRE_ROLL_RATIO = 0.35;
+  var PRE_ROLL_MAX = 150;
   var initialScroll = window.scrollY || window.pageYOffset || 0;
   var userMoved = initialScroll > 8;
   var frame = 0;
 
   /* Keep the approved R8 hidden even if older percentage-based gates fire.
      The legacy class name is retained only for compatibility with the final
-     CSS lock; the actual reveal point is now tied to the fixed mobile bar. */
+     CSS lock. The visible timing is derived from the fixed mobile contact bar. */
   r8.classList.add('is-r8-trigger-48-lock');
 
-  function triggerLine() {
+  function contactBarTop() {
     var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
     var bar = document.querySelector('.mobile-contact-bar');
     if (!bar || window.getComputedStyle(bar).display === 'none') {
@@ -54,12 +56,16 @@
     if (!userMoved) return;
 
     var rect = r8.getBoundingClientRect();
-    var line = triggerLine();
+    var barTop = contactBarTop();
+    var preRoll = Math.min(PRE_ROLL_MAX, Math.max(72, rect.height * PRE_ROLL_RATIO));
+    var trigger = barTop + preRoll;
 
-    /* Start exactly as the hidden R8 stage reaches the area immediately above
-       the fixed mobile contact buttons. No percentage/phone-height tuning is
-       needed, so this remains visually stable across different devices. */
-    if (rect.bottom > 0 && rect.top <= line) {
+    /* Start slightly before the R8 box itself reaches the fixed contact bar.
+       This compensates for the staged entrance delay: by the time the first
+       visible R8 layers arrive, the scene is visually sitting just above the
+       fixed mobile buttons. Geometry, layer positions and animation timings are
+       untouched; only the moment the existing animation begins is advanced. */
+    if (rect.bottom > 0 && rect.top <= trigger) {
       r8.classList.add('is-r8-viewport-ready');
       r8.classList.add('is-r8-trigger-48-ready');
       cleanup();
