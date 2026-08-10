@@ -206,7 +206,11 @@ address { font-style: normal; }
 
 .section-heading { margin-bottom: 48px; display: flex; align-items: end; justify-content: space-between; gap: 50px; }
 .section-heading > div { max-width: 720px; }
-.section-heading h2, .about h2, .why-us h2, .regions h2, .faq h2, .quote h2 { margin-top: 14px; font-size: clamp(36px, 4vw, 58px); line-height: 1.08; letter-spacing: -.04em; }
+/* Bölüm başlıkları etiketsiz ve düz büyük harf. Büyük harf metin sıkışık
+   aralıkta okunmadığı için negatif harf aralığı neredeyse sıfıra çekilir;
+   büyütme CSS'te yapılır, böylece işaretlemede metin doğal hâlinde kalır ve
+   Türkçe büyük harf dönüşümünü tarayıcı lang="tr" ile doğru uygular. */
+.section-heading h2, .about h2, .why-us h2, .regions h2, .faq h2, .quote h2 { font-size: clamp(32px, 3.5vw, 50px); line-height: 1.1; letter-spacing: -.005em; text-transform: uppercase; }
 .section-heading > p { max-width: 430px; color: var(--muted); }
 .section-heading--center { align-items: center; flex-direction: column; text-align: center; gap: 18px; }
 .section-heading--center .eyebrow { justify-content: center; }
@@ -601,7 +605,7 @@ address { font-style: normal; }
 }
 
 /* İç sayfalar */
-.page-hero { position: relative; overflow: hidden; padding: 86px 0 82px; color: #f8fafc; background: radial-gradient(circle at 82% 12%, rgba(239,124,0,.14), transparent 32%), linear-gradient(125deg, #111c2d, #253349 68%, #1c2b41); }
+.page-hero { position: relative; overflow: hidden; padding: 86px 0 82px; color: #f8fafc; background-color: #111c2d; background-image: radial-gradient(circle at 82% 12%, rgba(239,124,0,.14), transparent 32%), linear-gradient(105deg, rgba(15,25,41,.93) 0%, rgba(16,27,43,.85) 32%, rgba(20,33,52,.52) 62%, rgba(24,39,61,.2) 100%), url('/assets/images/hero/canpolat-hero-bg-2026.webp?v=20260809-02'); background-repeat: no-repeat; background-size: cover; background-position: center center, center center, center 38%; }
 .page-hero::before { content: ""; position: absolute; inset: 0; opacity: .16; background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px); background-size: 42px 42px; mask-image: linear-gradient(90deg, transparent, #000); }
 .page-hero__grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.04fr) minmax(320px, .72fr); align-items: center; gap: 66px; }
 .page-hero__grid--single { grid-template-columns: minmax(0, 1fr); }
@@ -625,8 +629,6 @@ address { font-style: normal; }
 .page-hero__actions { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 12px; }
 .page-hero__media { position: relative; overflow: hidden; min-height: 330px; border: 1px solid rgba(255,255,255,.18); border-radius: 26px; background: #18263a; box-shadow: 0 28px 60px rgba(0,0,0,.28); }
 .page-hero__media img { width: 100%; height: 100%; min-height: 330px; object-fit: cover; }
-.page-hero__media::after { content: ""; position: absolute; inset: auto 0 0; height: 42%; background: linear-gradient(transparent, rgba(8,15,25,.7)); pointer-events: none; }
-.page-hero__badge { position: absolute; z-index: 2; left: 20px; bottom: 18px; padding: 10px 13px; border: 1px solid rgba(255,255,255,.2); border-radius: 10px; color: #fff; background: rgba(12,22,36,.82); backdrop-filter: blur(10px); font-size: 11px; font-weight: 800; }
 
 .page-section { padding: 88px 0; }
 .page-section--white { background: #fff; }
@@ -702,7 +704,18 @@ address { font-style: normal; }
 }
 
 @media (max-width: 720px) {
-  .page-hero { padding: 58px 0 54px; }
+  /* Dar ekranda 105 derecelik geçiş metnin bulunduğu sol üstü neredeyse
+     tamamen kapatıyordu. Dikey geçişe dönülür: başlığın olduğu üst bölge
+     kontrast için koyu kalır, alt bölge fotoğrafı görünür bırakır. Kadraj da
+     görselin yüksek kontrastlı sağ tarafına nişanlanır. */
+  .page-hero {
+    padding: 58px 0 54px;
+    background-image: radial-gradient(circle at 82% 14%, rgba(239,124,0,.12), transparent 38%),
+                      linear-gradient(180deg, rgba(15,25,41,.9) 0%, rgba(15,25,41,.8) 40%, rgba(17,28,45,.5) 74%, rgba(20,33,52,.24) 100%),
+                      url('/assets/images/hero/canpolat-hero-bg-2026.webp?v=20260809-02');
+    background-size: auto 126%;
+    background-position: center center, center center, 84% 52%;
+  }
   .page-hero h1 { font-size: 43px; }
   .page-hero__lead { font-size: 15px; }
   .page-hero__media, .page-hero__media img { min-height: 240px; }
