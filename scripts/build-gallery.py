@@ -29,25 +29,29 @@ LARGE, LARGE_BUDGET = (1000, 750), 150 * 1024
 WIDE_M, PHOTO_H_M, BAND_H_M = 1440, 936, 144
 MOBILE, MOBILE_BUDGET = (900, 675), 85 * 1024
 
+# Sıra galeride göründüğü sıradır: en yeni kare en üstte, yeni fotoğraf
+# listenin başına eklenir.
+# Sıra galeride göründüğü sıradır: en yeni kare en üstte, yeni fotoğraf
+# listenin başına eklenir.
 # Dikey kadraj çıpası: 0 üstü, 1 altı korur. Dikey telefon karelerinde 4/3'e
 # inerken hangi bandın kalacağını belirler, her kare için ayrı seçilmiştir.
 PHOTOS = [
-    ("asansorlu-tasima-edremit", 0.45),
-    ("kamyona-esya-yukleme", 0.45),
-    ("sehirler-arasi-nakliyat-istanbul", 0.55),
-    ("paketlenmis-esyalar-tasimaya-hazir", 0.55),
-    ("evden-eve-nakliyat-araci-edremit", 0.45),
-    ("kamyon-ici-esya-istifleme", 0.50),
-    ("apartman-onunde-yukleme", 0.65),
-    ("salon-koltuk-takimi-paketleme", 0.55),
-    ("yuksek-kata-tasima-hazirligi", 0.50),
-    ("yatak-koruyucu-kilif-paketleme", 0.45),
-    ("kapali-kasa-nakliyat-kamyonu", 0.50),
-    ("koltuk-koruyucu-kilif-sarim", 0.50),
-    ("gece-tasima-hizmeti", 0.40),
-    ("kusakli-mobilya-sabitleme", 0.66),
-    ("yagmurda-nakliyat-tasima", 0.60),
     ("baza-yatak-koruma-ortusu", 0.60),
+    ("yagmurda-nakliyat-tasima", 0.60),
+    ("kusakli-mobilya-sabitleme", 0.66),
+    ("gece-tasima-hizmeti", 0.40),
+    ("koltuk-koruyucu-kilif-sarim", 0.50),
+    ("kapali-kasa-nakliyat-kamyonu", 0.50),
+    ("yatak-koruyucu-kilif-paketleme", 0.45),
+    ("yuksek-kata-tasima-hazirligi", 0.50),
+    ("salon-koltuk-takimi-paketleme", 0.55),
+    ("apartman-onunde-yukleme", 0.65),
+    ("kamyon-ici-esya-istifleme", 0.50),
+    ("evden-eve-nakliyat-araci-edremit", 0.45),
+    ("paketlenmis-esyalar-tasimaya-hazir", 0.55),
+    ("sehirler-arasi-nakliyat-istanbul", 0.55),
+    ("kamyona-esya-yukleme", 0.45),
+    ("asansorlu-tasima-edremit", 0.45),
 ]
 
 

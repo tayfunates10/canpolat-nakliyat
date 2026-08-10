@@ -101,5 +101,153 @@
   }
 
   revealOnView('.regions__visual', 0.3);
-  revealOnView('.final-cta', 0.22);
+
+  /*
+   * Her bölüm görünür alana girdiğinde kendi geliş efektini oynatır. is-armed
+   * yalnız gözlemci varken eklenir; JS çalışmazsa hiçbir bölüm gizlenmez.
+   * Eşik 0.01: bir bölüm ekrandan uzun olduğunda yüzdelik eşik hiç dolmayabilir,
+   * bu yüzden "ilk pikseli girdiğinde" tetiklenir.
+   */
+  (function armSections() {
+    var sections = document.querySelectorAll('main > section');
+    if (!sections.length || typeof IntersectionObserver !== 'function') return;
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.01, rootMargin: '0px 0px -8% 0px' });
+
+    sections.forEach(function (section) {
+      section.classList.add('is-armed');
+      observer.observe(section);
+    });
+  })();
+
+  /*
+   * Galeri önizlemesi. Kareler <button> olduğu için tıklama adres çubuğuna
+   * bir çapa yazmaz; sayfa kaydırma konumu hiç değişmez, pencere bulunulan
+   * yerde açılır. Arka planın kayması gövdeye overflow: hidden ile durdurulur
+   * ve kaybolan kaydırma çubuğu kadar sağdan boşluk bırakılır, aksi hâlde
+   * pencere açılırken tüm sayfa yana sıçrar.
+   */
+  var openers = Array.prototype.slice.call(document.querySelectorAll('.gallery__open'));
+  if (openers.length) {
+    var slides = openers.map(function (opener) {
+      var figure = opener.closest('.gallery__item');
+      var image = opener.querySelector('img');
+      var wide = opener.querySelector('source');
+      var caption = figure ? figure.querySelector('figcaption') : null;
+      return {
+        src: (wide && wide.getAttribute('srcset')) || image.getAttribute('src'),
+        alt: image.getAttribute('alt') || '',
+        caption: caption ? caption.textContent : ''
+      };
+    });
+
+    var box = document.createElement('div');
+    box.className = 'lightbox';
+    box.hidden = true;
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-modal', 'true');
+    box.setAttribute('aria-label', 'Galeri önizlemesi');
+    box.innerHTML =
+      '<div class="lightbox__backdrop" data-close></div>' +
+      '<div class="lightbox__panel">' +
+        '<button type="button" class="lightbox__close" data-close aria-label="Önizlemeyi kapat">&times;</button>' +
+        '<button type="button" class="lightbox__nav lightbox__nav--prev" data-step="-1" aria-label="Önceki görsel">&#8249;</button>' +
+        '<figure class="lightbox__figure">' +
+          '<img class="lightbox__image" alt="">' +
+          '<figcaption class="lightbox__caption"><span class="lightbox__text"></span>' +
+          '<span class="lightbox__count" aria-hidden="true"></span></figcaption>' +
+        '</figure>' +
+        '<button type="button" class="lightbox__nav lightbox__nav--next" data-step="1" aria-label="Sonraki görsel">&#8250;</button>' +
+      '</div>';
+    document.body.appendChild(box);
+
+    var boxImage = box.querySelector('.lightbox__image');
+    var boxText = box.querySelector('.lightbox__text');
+    var boxCount = box.querySelector('.lightbox__count');
+    var current = 0;
+    var lastFocused = null;
+
+    function show(index) {
+      current = (index + slides.length) % slides.length;
+      var slide = slides[current];
+      boxImage.setAttribute('src', slide.src);
+      boxImage.setAttribute('alt', slide.alt);
+      boxText.textContent = slide.caption;
+      boxCount.textContent = (current + 1) + ' / ' + slides.length;
+    }
+
+    var lockedScroll = 0;
+
+    function openBox(index) {
+      lastFocused = document.activeElement;
+      lockedScroll = window.scrollY || window.pageYOffset || 0;
+      // Gövde bulunduğu konumda sabitlenir: yalnız overflow: hidden vermek
+      // telefonda sayfayı birkaç piksel kaydırıyordu.
+      var gap = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.paddingRight = gap > 0 ? gap + 'px' : '';
+      document.body.style.top = -lockedScroll + 'px';
+      document.body.classList.add('lightbox-open');
+      show(index);
+      box.hidden = false;
+      box.querySelector('.lightbox__close').focus();
+    }
+
+    function closeBox() {
+      box.hidden = true;
+      document.body.classList.remove('lightbox-open');
+      document.body.style.top = '';
+      document.body.style.paddingRight = '';
+      // html'de scroll-behavior: smooth açık; kapanışta konumu geri alırken
+      // yumuşak kaydırma devreye girmesin diye geçici olarak kapatılır.
+      var root = document.documentElement;
+      var previous = root.style.scrollBehavior;
+      root.style.scrollBehavior = 'auto';
+      window.scrollTo(0, lockedScroll);
+      root.style.scrollBehavior = previous;
+      if (lastFocused && lastFocused.focus) lastFocused.focus();
+    }
+
+    openers.forEach(function (opener, index) {
+      opener.addEventListener('click', function () { openBox(index); });
+    });
+
+    box.addEventListener('click', function (event) {
+      var target = event.target;
+      if (target.hasAttribute('data-close')) { closeBox(); return; }
+      var stepper = target.closest('[data-step]');
+      if (stepper) show(current + Number(stepper.getAttribute('data-step')));
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (box.hidden) return;
+      if (event.key === 'Escape') { closeBox(); return; }
+      if (event.key === 'ArrowRight') { event.preventDefault(); show(current + 1); return; }
+      if (event.key === 'ArrowLeft') { event.preventDefault(); show(current - 1); return; }
+      if (event.key !== 'Tab') return;
+      // Odak pencerenin içinde kalsın; arkadaki sayfaya sekmeyle geçilmemeli.
+      var stops = box.querySelectorAll('button');
+      var first = stops[0];
+      var last = stops[stops.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    });
+
+    // Telefonda parmakla sağa/sola kaydırarak geçiş.
+    var touchStart = null;
+    box.addEventListener('touchstart', function (event) {
+      touchStart = event.changedTouches[0].clientX;
+    }, { passive: true });
+    box.addEventListener('touchend', function (event) {
+      if (touchStart === null) return;
+      var delta = event.changedTouches[0].clientX - touchStart;
+      if (Math.abs(delta) > 45) show(current + (delta < 0 ? 1 : -1));
+      touchStart = null;
+    }, { passive: true });
+  }
 })();

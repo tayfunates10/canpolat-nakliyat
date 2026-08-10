@@ -47,6 +47,7 @@ const publicPages = [
   'hakkimizda.html',
   'galeri.html',
   'gizlilik.html',
+  'sss.html',
   'bolgeler/edremit-nakliyat.html',
   'hizmetler/evden-eve-nakliyat.html',
   'hizmetler/sehirler-arasi-nakliyat.html',
@@ -68,7 +69,7 @@ for (const relative of publicPages.concat(['404.html'])) {
     'id="ana-icerik"',
     'rel="icon" href="/assets/images/favicon-canpolat.svg"',
     'rel="manifest" href="/manifest.webmanifest"',
-    'href="/css/style.css?v=20260810-09"',
+    'href="/css/style.css?v=20260810-14"',
     'href="tel:+905359120691"',
     'https://wa.me/905359120691',
     'Edremit / Balıkesir',
@@ -202,8 +203,8 @@ if (homeSchemaMatch) {
   const homeSchema = JSON.parse(homeSchemaMatch[1]);
   const faq = homeSchema['@graph'].find(item => item['@type'] === 'FAQPage');
   const visibleTemplate = template.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-  if (!faq || !Array.isArray(faq.mainEntity) || faq.mainEntity.length !== 5) {
-    failures.push('index-template.html: tam 5 FAQ JSON-LD kaydı bulunmalıdır.');
+  if (!faq || !Array.isArray(faq.mainEntity) || faq.mainEntity.length !== 6) {
+    failures.push('index-template.html: tam 6 FAQ JSON-LD kaydı bulunmalıdır.');
   } else {
     for (const question of faq.mainEntity) {
       if (!visibleTemplate.includes(question.name) || !visibleTemplate.includes(question.acceptedAnswer.text)) failures.push(`index-template.html: FAQ JSON-LD görünür içerikle eşleşmiyor: ${question.name}`);
@@ -385,4 +386,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log('PASS: 10 indekslenebilir sayfa, 5 hizmet içeriği, SEO/bağlantı yapısı, NAP, güvenlik, 5/5 hizmet görseli ve 14/14 kilitli Hero R8 katmanı doğrulandı.');
+console.log(`PASS: ${publicPages.length} indekslenebilir sayfa, 5 hizmet içeriği, SEO/bağlantı yapısı, NAP, güvenlik, 5/5 hizmet görseli ve 14/14 kilitli Hero R8 katmanı doğrulandı.`);

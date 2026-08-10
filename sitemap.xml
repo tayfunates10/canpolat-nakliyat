@@ -30,5 +30,6 @@
     <image:image><image:loc>https://www.canpolatnakliyat.com/assets/images/galeri/yagmurda-nakliyat-tasima.webp</image:loc></image:image>
     <image:image><image:loc>https://www.canpolatnakliyat.com/assets/images/galeri/baza-yatak-koruma-ortusu.webp</image:loc></image:image>
   </url>
+  <url><loc>https://www.canpolatnakliyat.com/sss.html</loc><lastmod>2026-08-10</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.canpolatnakliyat.com/gizlilik.html</loc><lastmod>2026-08-09</lastmod><changefreq>yearly</changefreq><priority>0.2</priority></url>
 </urlset>

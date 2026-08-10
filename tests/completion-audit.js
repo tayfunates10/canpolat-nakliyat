@@ -41,7 +41,7 @@ for (const token of [
   'name="adSoyad"', 'name="telefon"', 'name="nereden"', 'name="nereye"', 'name="tarih"', 'name="eposta"', 'name="notlar"', 'name="website"',
   'Edremit / Balıkesir',
   '0535&nbsp;912&nbsp;06&nbsp;91',
-  '/js/script.js?v=20260809-04', '/js/hero-animated.js?v=20260809-03', '/js/quote-form.js?v=20260809-01',
+  '/js/script.js?v=20260810-02', '/js/hero-animated.js?v=20260809-03', '/js/quote-form.js?v=20260809-01',
 ]) requireToken('index-template.html', template, token, `production ana sayfa öğesi eksik: ${token}`);
 
 for (const service of [
@@ -94,7 +94,7 @@ requireToken('robots.txt', robots, 'Disallow: /index-template.html', 'private ş
 requireToken('robots.txt', robots, 'Sitemap: https://www.canpolatnakliyat.com/sitemap.xml', 'sitemap adresi canonical origin kullanmalıdır.');
 
 const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);
-if (sitemapUrls.length !== 11) failures.push(`sitemap.xml: 11 public URL bekleniyor, bulunan ${sitemapUrls.length}.`);
+if (sitemapUrls.length !== 12) failures.push(`sitemap.xml: 12 public URL bekleniyor, bulunan ${sitemapUrls.length}.`);
 if (new Set(sitemapUrls).size !== sitemapUrls.length) failures.push('sitemap.xml: yinelenen URL bulundu.');
 const expectedSitemapUrls = [
   'https://www.canpolatnakliyat.com/',
@@ -108,6 +108,7 @@ const expectedSitemapUrls = [
   'https://www.canpolatnakliyat.com/hizmetler/parca-esya-tasimaciligi.html',
   'https://www.canpolatnakliyat.com/bolgeler/edremit-nakliyat.html',
   'https://www.canpolatnakliyat.com/gizlilik.html',
+  'https://www.canpolatnakliyat.com/sss.html',
 ];
 for (const url of expectedSitemapUrls) if (!sitemapUrls.includes(url)) failures.push(`sitemap.xml: public URL eksik: ${url}`);
 for (const url of sitemapUrls) {
