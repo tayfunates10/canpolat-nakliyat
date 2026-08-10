@@ -50,6 +50,7 @@
 
     var r8 = document.getElementById('heroAnimated');
     var cta = document.querySelector('.final-cta');
+    var ctaTruck = cta ? cta.querySelector('.final-cta__stage') : null;
     if (!r8 && !cta) return;
 
     var frame = 0;
@@ -66,7 +67,8 @@
 
     function done() {
       return (!r8 || r8.classList.contains('is-r8-viewport-ready')) &&
-             (!cta || cta.classList.contains('is-cta-viewport-ready'));
+             (!cta || cta.classList.contains('is-cta-viewport-ready')) &&
+             (!ctaTruck || cta.classList.contains('is-cta-truck-viewport-ready'));
     }
 
     function check() {
@@ -90,10 +92,19 @@
 
       if (cta && !cta.classList.contains('is-cta-viewport-ready')) {
         var ctaRect = cta.getBoundingClientRect();
-        /* CTA gets a little more room: its top must reach 68% of the usable
-           viewport before any of its staged entrance is allowed to play. */
+        /* Keep the existing CTA content trigger unchanged. */
         if (ctaRect.bottom > 0 && ctaRect.top <= viewport * 0.68) {
           cta.classList.add('is-cta-viewport-ready');
+        }
+      }
+
+      if (ctaTruck && !cta.classList.contains('is-cta-truck-viewport-ready')) {
+        var truckRect = ctaTruck.getBoundingClientRect();
+        /* The truck has its own mobile gate. Start while the truck stage is in
+           the lower part of the usable viewport so its arrival is visible near
+           the screen middle rather than after it has already moved upward. */
+        if (truckRect.bottom > 0 && truckRect.top <= viewport * 0.78) {
+          cta.classList.add('is-cta-truck-viewport-ready');
         }
       }
 
