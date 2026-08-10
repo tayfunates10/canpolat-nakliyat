@@ -79,9 +79,11 @@
 
       if (r8 && !r8.classList.contains('is-r8-viewport-ready')) {
         var r8Rect = r8.getBoundingClientRect();
-        /* R8 starts only when its TOP reaches 62% of the usable viewport.
-           At that point the scene is visibly entering the lower-middle area. */
-        if (r8Rect.bottom > 0 && r8Rect.top <= viewport * 0.62) {
+        /* R8 uses a deliberately slow staged entrance on mobile. Start while
+           the scene is still in the lower part of the viewport so the visible
+           layers arrive around the screen's middle instead of after the scene
+           has already scrolled too high. */
+        if (r8Rect.bottom > 0 && r8Rect.top <= viewport * 0.78) {
           r8.classList.add('is-r8-viewport-ready');
         }
       }
