@@ -15,16 +15,14 @@
     return image;
   }
 
-  /* Every visible site logo is normalized to the uploaded master artwork. */
+  /* Image-based site logos use the uploaded master artwork. The header logo is
+     intentionally excluded: its original inline SVG is required for the
+     existing piece-by-piece brand animation. */
   document.querySelectorAll('img[src*="canpolat-logo"]').forEach(function (image) {
     image.src = LOGO_SRC;
     image.width = 1457;
     image.height = 478;
     image.alt = image.alt || LOGO_ALT;
-  });
-
-  document.querySelectorAll('svg.brand__logo').forEach(function (logo) {
-    logo.replaceWith(makeLogo('brand__logo'));
   });
 
   document.querySelectorAll('svg.cta__logo').forEach(function (logo) {
