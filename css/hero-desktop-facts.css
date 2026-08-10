@@ -1,24 +1,46 @@
-/* Desktop-only hero facts placement — 2026-08-11
-   Keep the approved R8 stage in its existing desktop position. Only move the
-   three existing fact items into the open strip beneath the R8 scene. Their
-   original icon + text styling is preserved; tablet/mobile stays unchanged. */
+/* Desktop-only hero layout — 2026-08-11
+   IMPORTANT: the approved R8 stage geometry, position, scale, layer order and
+   animation are intentionally untouched. Only the left copy/action spacing and
+   the existing fact-row placement are adjusted so the complete hero is visible
+   in the initial desktop viewport. Tablet/mobile keeps its existing layout. */
 @media (min-width: 961px) {
+  /* The previous 505px lead width wrapped the paragraph into too many lines on
+     desktop and pushed the action row below the first viewport. Use the space
+     already available in the left grid column instead of moving the R8 scene. */
+  .hero__content {
+    min-width: 0;
+  }
+
+  .hero__lead {
+    max-width: 630px !important;
+    margin-top: 20px !important;
+    line-height: 1.58 !important;
+  }
+
+  .hero__actions {
+    margin-top: 24px !important;
+  }
+
+  /* Keep the three original fact items beneath the R8 stage, distributed
+     left/centre/right. Their original icon + text visual language is preserved. */
   .hero__facts {
     position: absolute;
     z-index: 4;
     left: calc(41% + 10px);
     right: 0;
-    bottom: 34px;
+    bottom: 42px;
     width: auto;
     margin: 0 !important;
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px !important;
     align-items: center;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
 
-  /* Restore the original desktop visual language: no cards, no panel fill,
-     no added border or blur. Only the placement changes. */
+  /* Original desktop appearance: no cards, no panel fill, no added border or
+     blur. Only the location changes. */
   .hero__facts li {
     min-width: 0;
     min-height: 0;
@@ -46,8 +68,13 @@
 }
 
 /* At the narrower desktop grid the R8 column starts farther right. Adjust only
-   the fact-row anchor; the scene itself and its geometry remain untouched. */
+   the fact-row anchor and copy wrapping; the scene itself remains untouched. */
 @media (min-width: 961px) and (max-width: 1160px) {
+  .hero__lead {
+    max-width: 560px !important;
+    font-size: 16px;
+  }
+
   .hero__facts {
     left: calc(45% + 9px);
     gap: 8px !important;
@@ -55,5 +82,22 @@
 
   .hero__facts li {
     font-size: 11px;
+  }
+}
+
+/* Short desktop viewports need a little more vertical economy. This affects
+   only text/action spacing and never the R8 visual column. */
+@media (min-width: 961px) and (max-height: 900px) {
+  .hero__lead {
+    margin-top: 16px !important;
+    line-height: 1.5 !important;
+  }
+
+  .hero__actions {
+    margin-top: 18px !important;
+  }
+
+  .hero__facts {
+    bottom: 30px;
   }
 }
