@@ -1,0 +1,63 @@
+/* Footer service-area layout correction — 2026-08-11.
+   Desktop: dedicated column beside the other footer groups.
+   Mobile: one full-width vertical list. */
+.site-footer .footer-regions-column {
+  min-width: 0;
+}
+
+@media (min-width: 961px) {
+  .site-footer .footer-grid {
+    grid-template-columns: minmax(200px, 1.35fr) minmax(0, .9fr) minmax(0, 1.12fr) minmax(0, 1.25fr) minmax(0, .95fr) !important;
+    gap: 28px !important;
+    align-items: start;
+  }
+
+  .site-footer .footer-regions-column {
+    grid-column: auto !important;
+  }
+
+  .site-footer .footer-regions__title {
+    margin: 12px 0 22px !important;
+  }
+
+  .site-footer .footer-regions {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px 14px !important;
+    width: 100% !important;
+  }
+
+  .site-footer .footer-regions a {
+    min-width: 0;
+    width: auto !important;
+    padding: 0 !important;
+    line-height: 1.4 !important;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+}
+
+@media (max-width: 720px) {
+  .site-footer .footer-regions-column {
+    grid-column: 1 / -1 !important;
+    width: 100%;
+  }
+
+  .site-footer .footer-regions__title {
+    margin: 8px 0 14px !important;
+  }
+
+  .site-footer .footer-regions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 9px !important;
+    width: 100% !important;
+  }
+
+  .site-footer .footer-regions a {
+    width: 100% !important;
+    padding: 2px 0 !important;
+    font-size: 13px;
+    line-height: 1.45 !important;
+  }
+}
