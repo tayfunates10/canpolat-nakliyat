@@ -1,36 +1,39 @@
 /* Desktop-only hero layout — 2026-08-11
    IMPORTANT: the approved R8 stage geometry, position, scale, layer order and
-   animation are intentionally untouched. Only desktop copy/action placement,
-   fact-row placement and the hero's excess bottom layout area are adjusted.
-   Tablet/mobile keeps its existing layout. */
+   animation are intentionally untouched. Only the desktop copy/action/fact flow
+   and the hero's excess bottom layout area are adjusted. Tablet/mobile keeps
+   its existing layout. */
 @media (min-width: 961px) {
-  /* R8's 3:2 transparent canvas is taller than its visible artwork and was
-     making the hero section taller than the first desktop viewport. Keep the
-     inner grid at its natural size and anchored to the same top edge so R8 does
-     not move; only clip the unused lower part of the hero section. */
+  /* Keep the R8/grid origin unchanged and clip only the unused transparent
+     lower canvas area so the hero does not create excess page height. */
   .hero {
     height: clamp(680px, calc(100svh - 128px), 730px) !important;
     min-height: 0 !important;
     align-items: flex-start !important;
   }
 
+  /* Move the complete left column as one unit. This keeps heading, lead,
+     actions and facts in one natural document flow instead of visually moving
+     some children while absolutely positioning the facts elsewhere. */
   .hero__content {
+    position: relative;
+    z-index: 5;
     min-width: 0;
+    max-width: 570px;
+    translate: 0 -70px;
   }
 
-  /* Move only the copy/actions upward. The independent translate property is
-     used so the existing transform-based entrance animations remain intact and
-     the absolutely positioned fact row keeps .hero__inner as its containing
-     block. */
   .hero__content > .eyebrow,
   .hero h1,
   .hero__lead,
   .hero__actions {
-    translate: 0 -70px;
+    translate: none;
   }
 
+  /* The R8 canvas extends left of its visual column. Keep paragraph lines
+     inside a protected copy width so no text sits behind that artwork. */
   .hero__lead {
-    max-width: 630px !important;
+    max-width: 540px !important;
     margin-top: 20px !important;
     line-height: 1.58 !important;
   }
@@ -39,19 +42,14 @@
     margin-top: 24px !important;
   }
 
-  /* Align the three existing facts to the visible R8 platform footprint.
-     At 1920px this produces centres around x=795 / 1150 / 1510, matching the
-     left / centre / right thirds of the visible stage. Top anchoring keeps the
-     row visible even though the transparent R8 canvas itself extends lower. */
+  /* Three existing facts now belong directly below the two action buttons.
+     They stay in one desktop row and preserve the approved icon + text style. */
   .hero__facts {
-    position: absolute;
-    z-index: 4;
-    left: 32%;
-    right: 12%;
-    top: 590px;
-    bottom: auto;
-    width: auto;
-    margin: 0 !important;
+    position: static;
+    z-index: auto;
+    width: 100%;
+    max-width: 560px;
+    margin: 22px 0 0 !important;
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px !important;
@@ -60,15 +58,13 @@
     visibility: visible !important;
   }
 
-  /* Preserve the approved original desktop appearance: icon + text, without
-     introducing new cards, panel fill, blur or borders. */
   .hero__facts li {
     min-width: 0;
     min-height: 0;
     padding: 0;
     display: flex !important;
     align-items: center !important;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 8px !important;
     border: 0;
     border-radius: 0;
@@ -76,8 +72,8 @@
     color: #d7dde5;
     font-size: 12px;
     font-weight: 650;
-    line-height: 1.55;
-    text-align: center;
+    line-height: 1.4;
+    text-align: left;
     backdrop-filter: none;
   }
 
@@ -88,29 +84,25 @@
   }
 }
 
-/* Narrow desktop: keep the same intent but fit the smaller right column. R8
-   itself remains completely untouched. */
+/* Narrow desktop: protect the smaller copy column from the overlapping edge of
+   the unchanged R8 scene while retaining a single three-item fact row. */
 @media (min-width: 961px) and (max-width: 1160px) {
   .hero {
     height: clamp(680px, calc(100svh - 128px), 720px) !important;
   }
 
-  .hero__content > .eyebrow,
-  .hero h1,
-  .hero__lead,
-  .hero__actions {
+  .hero__content {
+    max-width: 510px;
     translate: 0 -54px;
   }
 
   .hero__lead {
-    max-width: 560px !important;
+    max-width: 480px !important;
     font-size: 16px;
   }
 
   .hero__facts {
-    left: 42%;
-    right: 5%;
-    top: 588px;
+    max-width: 505px;
     gap: 8px !important;
   }
 
@@ -119,7 +111,8 @@
   }
 }
 
-/* Extra-short desktop screens: reduce copy spacing only. R8 remains locked. */
+/* Extra-short desktop screens: use tighter vertical rhythm without changing
+   the R8 scene or its geometry. */
 @media (min-width: 961px) and (max-height: 900px) {
   .hero__lead {
     margin-top: 16px !important;
@@ -127,6 +120,10 @@
   }
 
   .hero__actions {
+    margin-top: 18px !important;
+  }
+
+  .hero__facts {
     margin-top: 18px !important;
   }
 }
