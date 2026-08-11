@@ -115,8 +115,8 @@ done
 # Lighthouse/SEOptimer raporlarında sayfa yükünün neredeyse tamamının büyük
 # hizmet görsellerinden geldiği görülüyor. Kaynak dosyaları ve görünüm aynen
 # korunur; production paketinde yalnız tarayıcının gerçek görüntüleme boyutuna
-# uygun, EXIF/metaverisi temizlenmiş WebP türevleri üretilir. 1280px türev
-# yüksek DPR ekranlarda da tasarım kalitesini korur.
+# uygun WebP türevleri üretilir. 1280px türev yüksek DPR ekranlarda da görsel
+# kaliteyi korur.
 responsive_stems=(
   "service-evden-eve"
   "service-sehirler-arasi"
@@ -130,12 +130,20 @@ responsive_widths=(640 960 1280)
 optimized_dir="${OUTPUT_PATH}/assets/images/optimized"
 mkdir -p "${optimized_dir}"
 
-if command -v magick >/dev/null 2>&1; then
+# GitHub hosted runner imajları zamanla değişebildiği için tek bir görsel CLI'a
+# bağımlı kalma. Önce FFmpeg/cwebp, sonra ImageMagick kullanılır; hiçbir araç
+# yoksa orijinali kopyalayıp sahte başarı üretmek yerine deploy güvenli biçimde
+# durur.
+if command -v ffmpeg >/dev/null 2>&1; then
+  IMAGE_TOOL="ffmpeg"
+elif command -v cwebp >/dev/null 2>&1; then
+  IMAGE_TOOL="cwebp"
+elif command -v magick >/dev/null 2>&1; then
   IMAGE_TOOL="magick"
 elif command -v convert >/dev/null 2>&1; then
   IMAGE_TOOL="convert"
 else
-  echo "HATA: Responsive WebP türevleri için ImageMagick bulunamadı." >&2
+  echo "HATA: Responsive WebP türevleri için FFmpeg/cwebp/ImageMagick bulunamadı." >&2
   exit 1
 fi
 
@@ -150,13 +158,30 @@ for stem in "${responsive_stems[@]}"; do
 
   for width in "${responsive_widths[@]}"; do
     output="${optimized_dir}/${stem}-${width}.webp"
-    "${IMAGE_TOOL}" "${input}" \
-      -auto-orient \
-      -strip \
-      -resize "${width}x>" \
-      -quality 86 \
-      -define webp:method=6 \
-      "${output}"
+
+    case "${IMAGE_TOOL}" in
+      ffmpeg)
+        ffmpeg -hide_banner -loglevel error -y \
+          -i "${input}" \
+          -vf "scale='min(${width},iw)':-2" \
+          -frames:v 1 \
+          -c:v libwebp \
+          -q:v 86 \
+          "${output}"
+        ;;
+      cwebp)
+        cwebp -quiet -q 86 -resize "${width}" 0 "${input}" -o "${output}"
+        ;;
+      magick|convert)
+        "${IMAGE_TOOL}" "${input}" \
+          -auto-orient \
+          -strip \
+          -resize "${width}x>" \
+          -quality 86 \
+          -define webp:method=6 \
+          "${output}"
+        ;;
+    esac
 
     if [[ ! -s "${output}" ]]; then
       echo "HATA: Responsive görsel üretilemedi: ${output}" >&2
@@ -238,8 +263,6 @@ def responsive_img(match):
 for html_path in root.rglob('*.html'):
     source = html_path.read_text(encoding='utf-8')
 
-    # Open Graph/Twitter paylaşım görseli tüm public HTML sayfalarında aynı,
-    # kullanıcı tarafından onaylanan Canpolat görseline bağlanır.
     if 'property="og:image"' in source:
         source = re.sub(
             r'(<meta\s+property="og:image"\s+content=")[^"]*(")',
@@ -277,10 +300,8 @@ for html_path in root.rglob('*.html'):
             flags=re.IGNORECASE,
         )
 
-    # Responsive image selection for below-the-fold visual content.
     source = img_re.sub(responsive_img, source)
 
-    # LCP hero background: already preloaded, now explicitly high priority.
     source = re.sub(
         r'(<link\s+rel="preload"\s+as="image"\s+href="/assets/images/hero/canpolat-hero-bg-2026\.webp\?v=20260809-02")(?![^>]*fetchpriority)',
         r'\1 fetchpriority="high"',
@@ -289,8 +310,6 @@ for html_path in root.rglob('*.html'):
         flags=re.IGNORECASE,
     )
 
-    # R8's large critical-layer preloads are useful on desktop where the scene
-    # is first-view content, but not on mobile where its animation is scroll-gated.
     for r8_path in (
         '/assets/images/hero-r8/platform-p00-r8-reference-exact.png',
         '/assets/images/hero-r8/truck-t00-r6.png',
@@ -304,9 +323,6 @@ for html_path in root.rglob('*.html'):
             flags=re.IGNORECASE,
         )
 
-    # Direct high priority on R8 images would still override the mobile network
-    # scheduling benefit. Desktop remains preloaded through the media-qualified
-    # links above; the image elements themselves return to normal priority.
     source = re.sub(
         r'(<img\b(?=[^>]*\bhero-r8__layer\b)[^>]*?)\s+fetchpriority="high"([^>]*>)',
         r'\1\2',
@@ -403,7 +419,7 @@ if ! grep -q 'canpolat-hero-bg-2026.webp?v=20260809-02" fetchpriority="high"' "$
   exit 1
 fi
 
-if ! grep -q 'platform-p00-r8-reference-exact.png" fetchpriority="high" media="(min-width: 961px)"' "${OUTPUT_PATH}/index-template.html"; then
+if ! grep -Eq 'platform-p00-r8-reference-exact\.png"[^>]*fetchpriority="high"[^>]*media="\(min-width: 961px\)"' "${OUTPUT_PATH}/index-template.html"; then
   echo "HATA: R8 platform preload'u masaüstüyle sınırlandırılamadı." >&2
   exit 1
 fi
