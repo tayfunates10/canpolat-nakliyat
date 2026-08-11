@@ -28,9 +28,10 @@
   }
 
   .site-footer .footer-regions a {
+    position: relative;
     min-width: 0;
     width: auto !important;
-    padding: 0 !important;
+    padding: 0 0 0 18px !important;
     line-height: 1.4 !important;
     overflow-wrap: normal;
     word-break: normal;
@@ -55,8 +56,9 @@
   }
 
   .site-footer .footer-regions a {
+    position: relative;
     width: 100% !important;
-    padding: 2px 0 !important;
+    padding: 2px 0 2px 18px !important;
     font-size: 13px;
     line-height: 1.45 !important;
   }
