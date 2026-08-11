@@ -5,8 +5,9 @@
   "description": "Canpolat Nakliyat kurumsal web sitesi",
   "scripts": {
     "serve": "php -S 127.0.0.1:8099",
+    "pretest": "node scripts/generate-r8-variants.js",
     "test:php": "php -l index.php && php -l api/teklif.php",
-    "test:js": "node --check js/script.js && node --check js/hero-animated.js && node --check js/shared-ui-final.js",
+    "test:js": "node --check js/script.js && node --check js/hero-animated.js && node --check js/shared-ui-final.js && node --check scripts/generate-r8-variants.js",
     "test:static": "node tests/site-audit.js && node tests/completion-audit.js && node tests/parca-esya-audit.js && node tests/seo-local-pages-audit.js && node tests/footer-region-links-audit.js && node tests/r8-mobile-trigger-audit.js && node tests/ftp-cleanup.js",
     "test": "npm run test:php && npm run test:js && npm run test:static"
   },
