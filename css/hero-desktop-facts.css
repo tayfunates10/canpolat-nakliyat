@@ -22,7 +22,7 @@
     z-index: 5;
     min-width: 0;
     max-width: 570px;
-    translate: 0 -70px;
+    translate: 0 -50px;
   }
 
   .hero__content > .eyebrow,
@@ -95,7 +95,7 @@
 
   .hero__content {
     max-width: 510px;
-    translate: 0 -54px;
+    translate: 0 -34px;
   }
 
   .hero__lead {
