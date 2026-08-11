@@ -130,25 +130,59 @@ responsive_widths=(640 960 1280)
 optimized_dir="${OUTPUT_PATH}/assets/images/optimized"
 mkdir -p "${optimized_dir}"
 
-# GitHub hosted runner imajları zamanla değişebildiği için tek bir görsel CLI'a
-# bağımlı kalma. Önce FFmpeg/cwebp, sonra ImageMagick kullanılır; hiçbir araç
-# yoksa orijinali kopyalayıp sahte başarı üretmek yerine deploy güvenli biçimde
-# durur.
-if command -v ffmpeg >/dev/null 2>&1; then
-  IMAGE_TOOL="ffmpeg"
-elif command -v cwebp >/dev/null 2>&1; then
-  IMAGE_TOOL="cwebp"
-elif command -v magick >/dev/null 2>&1; then
-  IMAGE_TOOL="magick"
-elif command -v convert >/dev/null 2>&1; then
-  IMAGE_TOOL="convert"
-else
-  echo "HATA: Responsive WebP türevleri için FFmpeg/cwebp/ImageMagick bulunamadı." >&2
-  exit 1
-fi
+make_webp_variant() {
+  local input="$1"
+  local width="$2"
+  local output="$3"
+  rm -f "${output}"
 
-echo "Responsive görsel üretimi: ${IMAGE_TOOL}"
+  if command -v cwebp >/dev/null 2>&1; then
+    if cwebp -quiet -q 86 -resize "${width}" 0 "${input}" -o "${output}" >/dev/null 2>&1 \
+      && [[ -s "${output}" ]]; then
+      echo "cwebp"
+      return 0
+    fi
+    rm -f "${output}"
+  fi
+
+  if command -v magick >/dev/null 2>&1; then
+    if magick "${input}" -auto-orient -strip -resize "${width}x>" -quality 86 -define webp:method=6 "${output}" >/dev/null 2>&1 \
+      && [[ -s "${output}" ]]; then
+      echo "magick"
+      return 0
+    fi
+    rm -f "${output}"
+  fi
+
+  if command -v convert >/dev/null 2>&1; then
+    if convert "${input}" -auto-orient -strip -resize "${width}x>" -quality 86 -define webp:method=6 "${output}" >/dev/null 2>&1 \
+      && [[ -s "${output}" ]]; then
+      echo "convert"
+      return 0
+    fi
+    rm -f "${output}"
+  fi
+
+  if command -v ffmpeg >/dev/null 2>&1; then
+    if ffmpeg -hide_banner -loglevel error -y \
+      -i "${input}" \
+      -vf "scale='min(${width},iw)':-2" \
+      -frames:v 1 \
+      -c:v libwebp \
+      -q:v 86 \
+      "${output}" >/dev/null 2>&1 \
+      && [[ -s "${output}" ]]; then
+      echo "ffmpeg"
+      return 0
+    fi
+    rm -f "${output}"
+  fi
+
+  return 1
+}
+
 responsive_files=()
+encoder_used=""
 for stem in "${responsive_stems[@]}"; do
   input="${OUTPUT_PATH}/assets/images/${stem}.webp"
   if [[ ! -s "${input}" ]]; then
@@ -158,39 +192,15 @@ for stem in "${responsive_stems[@]}"; do
 
   for width in "${responsive_widths[@]}"; do
     output="${optimized_dir}/${stem}-${width}.webp"
-
-    case "${IMAGE_TOOL}" in
-      ffmpeg)
-        ffmpeg -hide_banner -loglevel error -y \
-          -i "${input}" \
-          -vf "scale='min(${width},iw)':-2" \
-          -frames:v 1 \
-          -c:v libwebp \
-          -q:v 86 \
-          "${output}"
-        ;;
-      cwebp)
-        cwebp -quiet -q 86 -resize "${width}" 0 "${input}" -o "${output}"
-        ;;
-      magick|convert)
-        "${IMAGE_TOOL}" "${input}" \
-          -auto-orient \
-          -strip \
-          -resize "${width}x>" \
-          -quality 86 \
-          -define webp:method=6 \
-          "${output}"
-        ;;
-    esac
-
-    if [[ ! -s "${output}" ]]; then
-      echo "HATA: Responsive görsel üretilemedi: ${output}" >&2
+    if ! encoder="$(make_webp_variant "${input}" "${width}" "${output}")"; then
+      echo "HATA: Responsive WebP üretilemedi (${stem}, ${width}px); kullanılabilir encoder yok veya codec başarısız." >&2
       exit 1
     fi
+    encoder_used="${encoder_used:-${encoder}}"
     responsive_files+=("assets/images/optimized/${stem}-${width}.webp")
   done
-
 done
+echo "Responsive WebP üretimi tamamlandı (encoder: ${encoder_used})."
 
 # HTML'deki görünüm, width/height oranları, lazy-loading ve animasyonlar aynen
 # kalır. Yalnız src/srcset/sizes üzerinden daha küçük dosya seçimi yapılır.
@@ -206,34 +216,13 @@ root = Path(sys.argv[1])
 og_url = 'https://www.canpolatnakliyat.com/assets/images/canpolat-opengraph-20260811.jpg'
 
 responsive = {
-    '/assets/images/service-evden-eve.webp': (
-        'service-evden-eve',
-        '(max-width: 720px) calc(100vw - 40px), (max-width: 1160px) 50vw, 40vw',
-    ),
-    '/assets/images/service-sehirler-arasi.webp': (
-        'service-sehirler-arasi',
-        '(max-width: 720px) calc(100vw - 40px), (max-width: 1160px) 50vw, 40vw',
-    ),
-    '/assets/images/service-ofis.webp': (
-        'service-ofis',
-        '(max-width: 720px) calc(100vw - 40px), (max-width: 1160px) 50vw, 34vw',
-    ),
-    '/assets/images/service-asansorlu.webp': (
-        'service-asansorlu',
-        '(max-width: 720px) calc(100vw - 40px), (max-width: 1160px) 50vw, 34vw',
-    ),
-    '/assets/images/service-paketleme.webp': (
-        'service-paketleme',
-        '(max-width: 720px) calc(100vw - 40px), (max-width: 1160px) 50vw, 34vw',
-    ),
-    '/assets/images/about-tasima.webp': (
-        'about-tasima',
-        '(max-width: 960px) calc(100vw - 40px), 50vw',
-    ),
-    '/assets/images/cta-kamyon.webp': (
-        'cta-kamyon',
-        '(max-width: 720px) 86vw, (max-width: 1160px) 52vw, 44vw',
-    ),
+    '/assets/images/service-evden-eve.webp': ('service-evden-eve', '(max-width: 720px) calc(100vw - 40px), (max-width: 1160px) 50vw, 40vw'),
+    '/assets/images/service-sehirler-arasi.webp': ('service-sehirler-arasi', '(max-width: 720px) calc(100vw - 40px), (max-width: 1160px) 50vw, 40vw'),
+    '/assets/images/service-ofis.webp': ('service-ofis', '(max-width: 720px) calc(100vw - 40px), (max-width: 1160px) 50vw, 34vw'),
+    '/assets/images/service-asansorlu.webp': ('service-asansorlu', '(max-width: 720px) calc(100vw - 40px), (max-width: 1160px) 50vw, 34vw'),
+    '/assets/images/service-paketleme.webp': ('service-paketleme', '(max-width: 720px) calc(100vw - 40px), (max-width: 1160px) 50vw, 34vw'),
+    '/assets/images/about-tasima.webp': ('about-tasima', '(max-width: 960px) calc(100vw - 40px), 50vw'),
+    '/assets/images/cta-kamyon.webp': ('cta-kamyon', '(max-width: 720px) 86vw, (max-width: 1160px) 52vw, 44vw'),
 }
 
 img_re = re.compile(r'<img\b[^>]*\bsrc="([^"]+)"[^>]*>', re.IGNORECASE)
@@ -250,85 +239,37 @@ def responsive_img(match):
     base = f'/assets/images/optimized/{stem}'
     src = f'{base}-1280.webp'
     srcset = f'{base}-640.webp 640w, {base}-960.webp 960w, {base}-1280.webp 1280w'
-
     tag = re.sub(r'\bsrc="[^"]+"', f'src="{src}"', tag, count=1, flags=re.IGNORECASE)
     if not re.search(r'\bsrcset=', tag, flags=re.IGNORECASE):
-        tag = tag.replace(
-            f'src="{src}"',
-            f'src="{src}" srcset="{srcset}" sizes="{sizes}"',
-            1,
-        )
+        tag = tag.replace(f'src="{src}"', f'src="{src}" srcset="{srcset}" sizes="{sizes}"', 1)
     return tag
 
 for html_path in root.rglob('*.html'):
     source = html_path.read_text(encoding='utf-8')
 
     if 'property="og:image"' in source:
-        source = re.sub(
-            r'(<meta\s+property="og:image"\s+content=")[^"]*(")',
-            lambda m: m.group(1) + og_url + m.group(2),
-            source,
-            count=1,
-            flags=re.IGNORECASE,
-        )
-        source = re.sub(
-            r'(<meta\s+name="twitter:image"\s+content=")[^"]*(")',
-            lambda m: m.group(1) + og_url + m.group(2),
-            source,
-            count=1,
-            flags=re.IGNORECASE,
-        )
-        source = re.sub(
-            r'(<meta\s+property="og:image:width"\s+content=")[^"]*(")',
-            lambda m: m.group(1) + '300' + m.group(2),
-            source,
-            count=1,
-            flags=re.IGNORECASE,
-        )
-        source = re.sub(
-            r'(<meta\s+property="og:image:height"\s+content=")[^"]*(")',
-            lambda m: m.group(1) + '200' + m.group(2),
-            source,
-            count=1,
-            flags=re.IGNORECASE,
-        )
-        source = re.sub(
-            r'(<meta\s+property="og:image:alt"\s+content=")[^"]*(")',
-            lambda m: m.group(1) + 'Canpolat Evden Eve Nakliyat - Edremit Balıkesir' + m.group(2),
-            source,
-            count=1,
-            flags=re.IGNORECASE,
-        )
+        source = re.sub(r'(<meta\s+property="og:image"\s+content=")[^"]*(")', lambda m: m.group(1) + og_url + m.group(2), source, count=1, flags=re.IGNORECASE)
+        source = re.sub(r'(<meta\s+name="twitter:image"\s+content=")[^"]*(")', lambda m: m.group(1) + og_url + m.group(2), source, count=1, flags=re.IGNORECASE)
+        source = re.sub(r'(<meta\s+property="og:image:width"\s+content=")[^"]*(")', lambda m: m.group(1) + '300' + m.group(2), source, count=1, flags=re.IGNORECASE)
+        source = re.sub(r'(<meta\s+property="og:image:height"\s+content=")[^"]*(")', lambda m: m.group(1) + '200' + m.group(2), source, count=1, flags=re.IGNORECASE)
+        source = re.sub(r'(<meta\s+property="og:image:alt"\s+content=")[^"]*(")', lambda m: m.group(1) + 'Canpolat Evden Eve Nakliyat - Edremit Balıkesir' + m.group(2), source, count=1, flags=re.IGNORECASE)
 
     source = img_re.sub(responsive_img, source)
 
     source = re.sub(
         r'(<link\s+rel="preload"\s+as="image"\s+href="/assets/images/hero/canpolat-hero-bg-2026\.webp\?v=20260809-02")(?![^>]*fetchpriority)',
-        r'\1 fetchpriority="high"',
-        source,
-        count=1,
-        flags=re.IGNORECASE,
-    )
+        r'\1 fetchpriority="high"', source, count=1, flags=re.IGNORECASE)
 
-    for r8_path in (
-        '/assets/images/hero-r8/platform-p00-r8-reference-exact.png',
-        '/assets/images/hero-r8/truck-t00-r6.png',
-    ):
+    for r8_path in ('/assets/images/hero-r8/platform-p00-r8-reference-exact.png', '/assets/images/hero-r8/truck-t00-r6.png'):
         escaped = re.escape(r8_path)
         source = re.sub(
             rf'(<link\s+rel="preload"\s+as="image"\s+href="{escaped}"[^>]*)(?=>)',
             lambda m: m.group(1) if 'media=' in m.group(1) else m.group(1) + ' media="(min-width: 961px)"',
-            source,
-            count=1,
-            flags=re.IGNORECASE,
-        )
+            source, count=1, flags=re.IGNORECASE)
 
     source = re.sub(
         r'(<img\b(?=[^>]*\bhero-r8__layer\b)[^>]*?)\s+fetchpriority="high"([^>]*>)',
-        r'\1\2',
-        source,
-        flags=re.IGNORECASE,
-    )
+        r'\1\2', source, flags=re.IGNORECASE)
 
     html_path.write_text(source, encoding='utf-8')
 PY
@@ -390,9 +331,7 @@ for file in "${required_output_files[@]}"; do
   fi
 done
 
-for forbidden in \
-  "assets/images/hero-canpolat.webp" \
-  "assets/images/hero-canpolat-mobil.webp"; do
+for forbidden in "assets/images/hero-canpolat.webp" "assets/images/hero-canpolat-mobil.webp"; do
   if [[ -e "${OUTPUT_PATH}/${forbidden}" ]]; then
     echo "HATA: Eski hero production paketinde bulunmamalı: ${forbidden}" >&2
     exit 1
