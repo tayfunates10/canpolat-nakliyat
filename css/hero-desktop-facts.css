@@ -4,10 +4,12 @@
    and the hero's excess bottom layout area are adjusted. Tablet/mobile keeps
    its existing layout. */
 @media (min-width: 961px) {
-  /* Keep the R8/grid origin unchanged and clip only the unused transparent
-     lower canvas area so the hero does not create excess page height. */
+  /* Keep the R8/grid origin unchanged. The inner grid still owns the approved
+     scene position; only the outer hero clipping boundary is shortened so the
+     transparent lower canvas does not leave a dark empty band below the visible
+     content. */
   .hero {
-    height: clamp(680px, calc(100svh - 128px), 730px) !important;
+    height: clamp(620px, calc(100svh - 170px), 650px) !important;
     min-height: 0 !important;
     align-items: flex-start !important;
   }
@@ -84,11 +86,11 @@
   }
 }
 
-/* Narrow desktop: protect the smaller copy column from the overlapping edge of
-   the unchanged R8 scene while retaining a single three-item fact row. */
+/* Narrow desktop: use the same compact outer clipping boundary while keeping
+   the unchanged R8 scene and protected copy width. */
 @media (min-width: 961px) and (max-width: 1160px) {
   .hero {
-    height: clamp(680px, calc(100svh - 128px), 720px) !important;
+    height: clamp(620px, calc(100svh - 170px), 650px) !important;
   }
 
   .hero__content {
