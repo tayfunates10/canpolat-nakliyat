@@ -112,9 +112,66 @@ for path in "${publish_paths[@]}"; do
   cp -a "${REPO_ROOT}/${path}" "${OUTPUT_PATH}/"
 done
 
-# Open Graph/Twitter paylaşım görseli tüm public HTML sayfalarında aynı,
-# kullanıcı tarafından onaylanan Canpolat görseline bağlanır. Kaynak HTML
-# dosyaları değişmeden kalır; yalnız production paketi normalize edilir.
+# Lighthouse/SEOptimer raporlarında sayfa yükünün neredeyse tamamının büyük
+# hizmet görsellerinden geldiği görülüyor. Kaynak dosyaları ve görünüm aynen
+# korunur; production paketinde yalnız tarayıcının gerçek görüntüleme boyutuna
+# uygun, EXIF/metaverisi temizlenmiş WebP türevleri üretilir. 1280px türev
+# yüksek DPR ekranlarda da tasarım kalitesini korur.
+responsive_stems=(
+  "service-evden-eve"
+  "service-sehirler-arasi"
+  "service-ofis"
+  "service-asansorlu"
+  "service-paketleme"
+  "about-tasima"
+  "cta-kamyon"
+)
+responsive_widths=(640 960 1280)
+optimized_dir="${OUTPUT_PATH}/assets/images/optimized"
+mkdir -p "${optimized_dir}"
+
+if command -v magick >/dev/null 2>&1; then
+  IMAGE_TOOL="magick"
+elif command -v convert >/dev/null 2>&1; then
+  IMAGE_TOOL="convert"
+else
+  echo "HATA: Responsive WebP türevleri için ImageMagick bulunamadı." >&2
+  exit 1
+fi
+
+echo "Responsive görsel üretimi: ${IMAGE_TOOL}"
+responsive_files=()
+for stem in "${responsive_stems[@]}"; do
+  input="${OUTPUT_PATH}/assets/images/${stem}.webp"
+  if [[ ! -s "${input}" ]]; then
+    echo "HATA: Responsive görsel kaynağı bulunamadı: ${input}" >&2
+    exit 1
+  fi
+
+  for width in "${responsive_widths[@]}"; do
+    output="${optimized_dir}/${stem}-${width}.webp"
+    "${IMAGE_TOOL}" "${input}" \
+      -auto-orient \
+      -strip \
+      -resize "${width}x>" \
+      -quality 86 \
+      -define webp:method=6 \
+      "${output}"
+
+    if [[ ! -s "${output}" ]]; then
+      echo "HATA: Responsive görsel üretilemedi: ${output}" >&2
+      exit 1
+    fi
+    responsive_files+=("assets/images/optimized/${stem}-${width}.webp")
+  done
+
+done
+
+# HTML'deki görünüm, width/height oranları, lazy-loading ve animasyonlar aynen
+# kalır. Yalnız src/srcset/sizes üzerinden daha küçük dosya seçimi yapılır.
+# Hero arka planı LCP kaynağı olduğundan yüksek öncelik alır; R8'in iki büyük
+# preload'u yalnız masaüstünde etkinleştirilir. Böylece mobilde gecikmeli R8
+# sahnesi ilk ekranın LCP kaynağıyla ağ önceliği için yarışmaz.
 python3 - "${OUTPUT_PATH}" <<'PY'
 from pathlib import Path
 import re
@@ -123,46 +180,140 @@ import sys
 root = Path(sys.argv[1])
 og_url = 'https://www.canpolatnakliyat.com/assets/images/canpolat-opengraph-20260811.jpg'
 
+responsive = {
+    '/assets/images/service-evden-eve.webp': (
+        'service-evden-eve',
+        '(max-width: 720px) calc(100vw - 40px), (max-width: 1160px) 50vw, 40vw',
+    ),
+    '/assets/images/service-sehirler-arasi.webp': (
+        'service-sehirler-arasi',
+        '(max-width: 720px) calc(100vw - 40px), (max-width: 1160px) 50vw, 40vw',
+    ),
+    '/assets/images/service-ofis.webp': (
+        'service-ofis',
+        '(max-width: 720px) calc(100vw - 40px), (max-width: 1160px) 50vw, 34vw',
+    ),
+    '/assets/images/service-asansorlu.webp': (
+        'service-asansorlu',
+        '(max-width: 720px) calc(100vw - 40px), (max-width: 1160px) 50vw, 34vw',
+    ),
+    '/assets/images/service-paketleme.webp': (
+        'service-paketleme',
+        '(max-width: 720px) calc(100vw - 40px), (max-width: 1160px) 50vw, 34vw',
+    ),
+    '/assets/images/about-tasima.webp': (
+        'about-tasima',
+        '(max-width: 960px) calc(100vw - 40px), 50vw',
+    ),
+    '/assets/images/cta-kamyon.webp': (
+        'cta-kamyon',
+        '(max-width: 720px) 86vw, (max-width: 1160px) 52vw, 44vw',
+    ),
+}
+
+img_re = re.compile(r'<img\b[^>]*\bsrc="([^"]+)"[^>]*>', re.IGNORECASE)
+
+def responsive_img(match):
+    tag = match.group(0)
+    raw_src = match.group(1)
+    source_path = raw_src.split('?', 1)[0]
+    config = responsive.get(source_path)
+    if not config:
+        return tag
+
+    stem, sizes = config
+    base = f'/assets/images/optimized/{stem}'
+    src = f'{base}-1280.webp'
+    srcset = f'{base}-640.webp 640w, {base}-960.webp 960w, {base}-1280.webp 1280w'
+
+    tag = re.sub(r'\bsrc="[^"]+"', f'src="{src}"', tag, count=1, flags=re.IGNORECASE)
+    if not re.search(r'\bsrcset=', tag, flags=re.IGNORECASE):
+        tag = tag.replace(
+            f'src="{src}"',
+            f'src="{src}" srcset="{srcset}" sizes="{sizes}"',
+            1,
+        )
+    return tag
+
 for html_path in root.rglob('*.html'):
     source = html_path.read_text(encoding='utf-8')
-    if 'property="og:image"' not in source:
-        continue
 
+    # Open Graph/Twitter paylaşım görseli tüm public HTML sayfalarında aynı,
+    # kullanıcı tarafından onaylanan Canpolat görseline bağlanır.
+    if 'property="og:image"' in source:
+        source = re.sub(
+            r'(<meta\s+property="og:image"\s+content=")[^"]*(")',
+            lambda m: m.group(1) + og_url + m.group(2),
+            source,
+            count=1,
+            flags=re.IGNORECASE,
+        )
+        source = re.sub(
+            r'(<meta\s+name="twitter:image"\s+content=")[^"]*(")',
+            lambda m: m.group(1) + og_url + m.group(2),
+            source,
+            count=1,
+            flags=re.IGNORECASE,
+        )
+        source = re.sub(
+            r'(<meta\s+property="og:image:width"\s+content=")[^"]*(")',
+            lambda m: m.group(1) + '300' + m.group(2),
+            source,
+            count=1,
+            flags=re.IGNORECASE,
+        )
+        source = re.sub(
+            r'(<meta\s+property="og:image:height"\s+content=")[^"]*(")',
+            lambda m: m.group(1) + '200' + m.group(2),
+            source,
+            count=1,
+            flags=re.IGNORECASE,
+        )
+        source = re.sub(
+            r'(<meta\s+property="og:image:alt"\s+content=")[^"]*(")',
+            lambda m: m.group(1) + 'Canpolat Evden Eve Nakliyat - Edremit Balıkesir' + m.group(2),
+            source,
+            count=1,
+            flags=re.IGNORECASE,
+        )
+
+    # Responsive image selection for below-the-fold visual content.
+    source = img_re.sub(responsive_img, source)
+
+    # LCP hero background: already preloaded, now explicitly high priority.
     source = re.sub(
-        r'(<meta\s+property="og:image"\s+content=")[^"]*(")',
-        lambda m: m.group(1) + og_url + m.group(2),
+        r'(<link\s+rel="preload"\s+as="image"\s+href="/assets/images/hero/canpolat-hero-bg-2026\.webp\?v=20260809-02")(?![^>]*fetchpriority)',
+        r'\1 fetchpriority="high"',
         source,
         count=1,
         flags=re.IGNORECASE,
     )
+
+    # R8's large critical-layer preloads are useful on desktop where the scene
+    # is first-view content, but not on mobile where its animation is scroll-gated.
+    for r8_path in (
+        '/assets/images/hero-r8/platform-p00-r8-reference-exact.png',
+        '/assets/images/hero-r8/truck-t00-r6.png',
+    ):
+        escaped = re.escape(r8_path)
+        source = re.sub(
+            rf'(<link\s+rel="preload"\s+as="image"\s+href="{escaped}"[^>]*)(?=>)',
+            lambda m: m.group(1) if 'media=' in m.group(1) else m.group(1) + ' media="(min-width: 961px)"',
+            source,
+            count=1,
+            flags=re.IGNORECASE,
+        )
+
+    # Direct high priority on R8 images would still override the mobile network
+    # scheduling benefit. Desktop remains preloaded through the media-qualified
+    # links above; the image elements themselves return to normal priority.
     source = re.sub(
-        r'(<meta\s+name="twitter:image"\s+content=")[^"]*(")',
-        lambda m: m.group(1) + og_url + m.group(2),
+        r'(<img\b(?=[^>]*\bhero-r8__layer\b)[^>]*?)\s+fetchpriority="high"([^>]*>)',
+        r'\1\2',
         source,
-        count=1,
         flags=re.IGNORECASE,
     )
-    source = re.sub(
-        r'(<meta\s+property="og:image:width"\s+content=")[^"]*(")',
-        lambda m: m.group(1) + '300' + m.group(2),
-        source,
-        count=1,
-        flags=re.IGNORECASE,
-    )
-    source = re.sub(
-        r'(<meta\s+property="og:image:height"\s+content=")[^"]*(")',
-        lambda m: m.group(1) + '200' + m.group(2),
-        source,
-        count=1,
-        flags=re.IGNORECASE,
-    )
-    source = re.sub(
-        r'(<meta\s+property="og:image:alt"\s+content=")[^"]*(")',
-        lambda m: m.group(1) + 'Canpolat Evden Eve Nakliyat - Edremit Balıkesir' + m.group(2),
-        source,
-        count=1,
-        flags=re.IGNORECASE,
-    )
+
     html_path.write_text(source, encoding='utf-8')
 PY
 
@@ -175,6 +326,7 @@ rm -rf "${OUTPUT_PATH}/assets/images/hero-parts"
 
 required_output_files=(
   "${gallery_files[@]}"
+  "${responsive_files[@]}"
   "${local_seo_pages[@]}"
   "index.php"
   "index.html"
@@ -238,6 +390,21 @@ fi
 
 if ! grep -q 'canpolat-opengraph-20260811.jpg' "${OUTPUT_PATH}/index-template.html"; then
   echo "HATA: Open Graph görseli production ana sayfasına uygulanamadı." >&2
+  exit 1
+fi
+
+if ! grep -q 'assets/images/optimized/service-evden-eve-640.webp 640w' "${OUTPUT_PATH}/index-template.html"; then
+  echo "HATA: Responsive hizmet görseli srcset production ana sayfasına uygulanamadı." >&2
+  exit 1
+fi
+
+if ! grep -q 'canpolat-hero-bg-2026.webp?v=20260809-02" fetchpriority="high"' "${OUTPUT_PATH}/index-template.html"; then
+  echo "HATA: Hero LCP preload yüksek önceliğe alınamadı." >&2
+  exit 1
+fi
+
+if ! grep -q 'platform-p00-r8-reference-exact.png" fetchpriority="high" media="(min-width: 961px)"' "${OUTPUT_PATH}/index-template.html"; then
+  echo "HATA: R8 platform preload'u masaüstüyle sınırlandırılamadı." >&2
   exit 1
 fi
 
