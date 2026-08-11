@@ -112,11 +112,6 @@ for path in "${publish_paths[@]}"; do
   cp -a "${REPO_ROOT}/${path}" "${OUTPUT_PATH}/"
 done
 
-# Lighthouse/SEOptimer raporlarında sayfa yükünün neredeyse tamamının büyük
-# hizmet görsellerinden geldiği görülüyor. Kaynak dosyaları ve görünüm aynen
-# korunur; production paketinde yalnız tarayıcının gerçek görüntüleme boyutuna
-# uygun WebP türevleri üretilir. 1280px türev yüksek DPR ekranlarda da görsel
-# kaliteyi korur.
 responsive_stems=(
   "service-evden-eve"
   "service-sehirler-arasi"
@@ -129,6 +124,15 @@ responsive_stems=(
 responsive_widths=(640 960 1280)
 optimized_dir="${OUTPUT_PATH}/assets/images/optimized"
 mkdir -p "${optimized_dir}"
+
+# GitHub runner üzerinde codec bulunmuyorsa yalnız CI ortamına resmi WebP CLI
+# kurulur. Bu işlem canlı hosting'e dokunmaz; deploy paketine sadece üretilmiş
+# statik .webp dosyaları gider. Yerel/başka ortamlarda sudo/apt zorlanmaz.
+if [[ "${GITHUB_ACTIONS:-}" == "true" ]] && ! command -v cwebp >/dev/null 2>&1; then
+  echo "GitHub runner: cwebp bulunamadı, webp CLI kuruluyor."
+  sudo apt-get update -qq
+  sudo apt-get install -y --no-install-recommends webp >/dev/null
+fi
 
 make_webp_variant() {
   local input="$1"
@@ -193,7 +197,7 @@ for stem in "${responsive_stems[@]}"; do
   for width in "${responsive_widths[@]}"; do
     output="${optimized_dir}/${stem}-${width}.webp"
     if ! encoder="$(make_webp_variant "${input}" "${width}" "${output}")"; then
-      echo "HATA: Responsive WebP üretilemedi (${stem}, ${width}px); kullanılabilir encoder yok veya codec başarısız." >&2
+      echo "HATA: Responsive WebP üretilemedi (${stem}, ${width}px)." >&2
       exit 1
     fi
     encoder_used="${encoder_used:-${encoder}}"
@@ -202,11 +206,6 @@ for stem in "${responsive_stems[@]}"; do
 done
 echo "Responsive WebP üretimi tamamlandı (encoder: ${encoder_used})."
 
-# HTML'deki görünüm, width/height oranları, lazy-loading ve animasyonlar aynen
-# kalır. Yalnız src/srcset/sizes üzerinden daha küçük dosya seçimi yapılır.
-# Hero arka planı LCP kaynağı olduğundan yüksek öncelik alır; R8'in iki büyük
-# preload'u yalnız masaüstünde etkinleştirilir. Böylece mobilde gecikmeli R8
-# sahnesi ilk ekranın LCP kaynağıyla ağ önceliği için yarışmaz.
 python3 - "${OUTPUT_PATH}" <<'PY'
 from pathlib import Path
 import re
@@ -214,7 +213,6 @@ import sys
 
 root = Path(sys.argv[1])
 og_url = 'https://www.canpolatnakliyat.com/assets/images/canpolat-opengraph-20260811.jpg'
-
 responsive = {
     '/assets/images/service-evden-eve.webp': ('service-evden-eve', '(max-width: 720px) calc(100vw - 40px), (max-width: 1160px) 50vw, 40vw'),
     '/assets/images/service-sehirler-arasi.webp': ('service-sehirler-arasi', '(max-width: 720px) calc(100vw - 40px), (max-width: 1160px) 50vw, 40vw'),
@@ -224,17 +222,14 @@ responsive = {
     '/assets/images/about-tasima.webp': ('about-tasima', '(max-width: 960px) calc(100vw - 40px), 50vw'),
     '/assets/images/cta-kamyon.webp': ('cta-kamyon', '(max-width: 720px) 86vw, (max-width: 1160px) 52vw, 44vw'),
 }
-
 img_re = re.compile(r'<img\b[^>]*\bsrc="([^"]+)"[^>]*>', re.IGNORECASE)
 
 def responsive_img(match):
     tag = match.group(0)
-    raw_src = match.group(1)
-    source_path = raw_src.split('?', 1)[0]
+    source_path = match.group(1).split('?', 1)[0]
     config = responsive.get(source_path)
     if not config:
         return tag
-
     stem, sizes = config
     base = f'/assets/images/optimized/{stem}'
     src = f'{base}-1280.webp'
@@ -246,7 +241,6 @@ def responsive_img(match):
 
 for html_path in root.rglob('*.html'):
     source = html_path.read_text(encoding='utf-8')
-
     if 'property="og:image"' in source:
         source = re.sub(r'(<meta\s+property="og:image"\s+content=")[^"]*(")', lambda m: m.group(1) + og_url + m.group(2), source, count=1, flags=re.IGNORECASE)
         source = re.sub(r'(<meta\s+name="twitter:image"\s+content=")[^"]*(")', lambda m: m.group(1) + og_url + m.group(2), source, count=1, flags=re.IGNORECASE)
@@ -255,7 +249,6 @@ for html_path in root.rglob('*.html'):
         source = re.sub(r'(<meta\s+property="og:image:alt"\s+content=")[^"]*(")', lambda m: m.group(1) + 'Canpolat Evden Eve Nakliyat - Edremit Balıkesir' + m.group(2), source, count=1, flags=re.IGNORECASE)
 
     source = img_re.sub(responsive_img, source)
-
     source = re.sub(
         r'(<link\s+rel="preload"\s+as="image"\s+href="/assets/images/hero/canpolat-hero-bg-2026\.webp\?v=20260809-02")(?![^>]*fetchpriority)',
         r'\1 fetchpriority="high"', source, count=1, flags=re.IGNORECASE)
@@ -270,7 +263,6 @@ for html_path in root.rglob('*.html'):
     source = re.sub(
         r'(<img\b(?=[^>]*\bhero-r8__layer\b)[^>]*?)\s+fetchpriority="high"([^>]*>)',
         r'\1\2', source, flags=re.IGNORECASE)
-
     html_path.write_text(source, encoding='utf-8')
 PY
 
