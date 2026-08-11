@@ -38,89 +38,139 @@ if (!is_file($templatePath) || !is_readable($templatePath)) {
     exit;
 }
 
+function appendHtmlAttributes(string $tag, string $attributes): string
+{
+    $end = strrpos($tag, '>');
+    if ($end === false) {
+        return $tag;
+    }
+
+    return substr($tag, 0, $end) . $attributes . substr($tag, $end);
+}
+
+function mapHtmlTags(string $html, string $tagName, callable $mapper): string
+{
+    $needle = '<' . $tagName;
+    $offset = 0;
+    $output = '';
+    $length = strlen($html);
+
+    while ($offset < $length) {
+        $start = strpos($html, $needle, $offset);
+        if ($start === false) {
+            $output .= substr($html, $offset);
+            break;
+        }
+
+        $end = strpos($html, '>', $start);
+        if ($end === false) {
+            $output .= substr($html, $offset);
+            break;
+        }
+
+        $output .= substr($html, $offset, $start - $offset);
+        $tag = substr($html, $start, $end - $start + 1);
+        $output .= $mapper($tag);
+        $offset = $end + 1;
+    }
+
+    return $output;
+}
+
+function responsiveR8Candidates(string $stem, string $optimizedDir): ?array
+{
+    $urls = [];
+    foreach ([640, 960, 1280] as $width) {
+        $file = $optimizedDir . '/' . $stem . '-' . $width . '.webp';
+        if (!is_file($file) || filesize($file) === 0) {
+            return null;
+        }
+        $urls[] = '/assets/images/hero-r8/optimized/' . $stem . '-' . $width . '.webp ' . $width . 'w';
+    }
+
+    return $urls;
+}
+
 /**
- * R8 kaynak PNG'leri repoda ve onaylı HTML'de aynen tutulur. Production CI,
- * aynı 3:2 alfa tuvalinin 640/960/1280 px WebP türevlerini üretir. Burada
- * yalnız tarayıcıya srcset/sizes bilgisi eklenir; class, z-sırası, width/height,
- * CSS geometrisi ve animasyon zamanlaması değişmez.
+ * Onaylı index-template.html byte düzeyinde korunur. CI tarafından üretilen
+ * responsive R8 türevleri varsa yalnız ilgili <img> ve iki preload etiketi
+ * çıktı anında zenginleştirilir. CSS sınıfları, width/height, z-sırası,
+ * koordinatlar ve animasyon JS'i değişmez. Variantlar yoksa eski readfile
+ * akışı kullanılır ve site mevcut PNG'lerle çalışmaya devam eder.
  */
-function addResponsiveR8Images(string $html): string
+function renderHomeTemplate(string $templatePath): void
 {
     $optimizedDir = __DIR__ . '/assets/images/hero-r8/optimized';
-    if (!is_dir($optimizedDir)) {
-        return $html;
+    $platformCandidates = responsiveR8Candidates('platform-p00-r8-reference-exact', $optimizedDir);
+    $truckCandidates = responsiveR8Candidates('truck-t00-r6', $optimizedDir);
+
+    if ($platformCandidates === null || $truckCandidates === null) {
+        readfile($templatePath);
+        return;
+    }
+
+    $html = file_get_contents($templatePath);
+    if (!is_string($html)) {
+        readfile($templatePath);
+        return;
     }
 
     $sizes = '(max-width: 960px) 100vw, 62vw';
+    $srcPrefix = 'src="/assets/images/hero-r8/';
 
-    $html = preg_replace_callback(
-        '~<img\b[^>]*class="[^"]*hero-r8__layer[^"]*"[^>]*src="/assets/images/hero-r8/([^"/?]+)\.png"[^>]*>~i',
-        static function (array $match) use ($optimizedDir, $sizes): string {
-            $tag = $match[0];
-            $stem = $match[1];
-
-            $candidates = [];
-            foreach ([640, 960, 1280] as $width) {
-                $diskPath = $optimizedDir . '/' . $stem . '-' . $width . '.webp';
-                if (!is_file($diskPath) || filesize($diskPath) === 0) {
-                    return $tag;
-                }
-                $candidates[] = '/assets/images/hero-r8/optimized/' . $stem . '-' . $width . '.webp ' . $width . 'w';
-            }
-
-            if (!preg_match('~\bsrcset=~i', $tag)) {
-                $tag = preg_replace(
-                    '~\s*/?>$~',
-                    ' srcset="' . implode(', ', $candidates) . '" sizes="' . $sizes . '">',
-                    $tag,
-                    1
-                ) ?? $tag;
-            }
-
-            if (!preg_match('~\bdecoding=~i', $tag)) {
-                $tag = preg_replace('~\s*>$~', ' decoding="async">', $tag, 1) ?? $tag;
-            }
-
+    $html = mapHtmlTags($html, 'img', static function (string $tag) use ($optimizedDir, $sizes, $srcPrefix): string {
+        if (strpos($tag, 'hero-r8__layer') === false) {
             return $tag;
-        },
-        $html
-    ) ?? $html;
+        }
 
-    // P00 ve T00 masaüstünde preload edilmeye devam eder; preload da aynı
-    // responsive adayları kullanır, böylece artık kullanılmayan büyük PNG için
-    // ikinci bir ağ isteği oluşmaz.
-    foreach (['platform-p00-r8-reference-exact', 'truck-t00-r6'] as $stem) {
-        $allVariantsExist = true;
-        $srcset = [];
-        foreach ([640, 960, 1280] as $width) {
-            $diskPath = $optimizedDir . '/' . $stem . '-' . $width . '.webp';
-            if (!is_file($diskPath) || filesize($diskPath) === 0) {
-                $allVariantsExist = false;
-                break;
+        $srcPos = strpos($tag, $srcPrefix);
+        if ($srcPos === false) {
+            return $tag;
+        }
+
+        $stemStart = $srcPos + strlen($srcPrefix);
+        $stemEnd = strpos($tag, '.png"', $stemStart);
+        if ($stemEnd === false) {
+            return $tag;
+        }
+
+        $stem = substr($tag, $stemStart, $stemEnd - $stemStart);
+        $candidates = responsiveR8Candidates($stem, $optimizedDir);
+        if ($candidates === null || strpos($tag, 'srcset=') !== false) {
+            return $tag;
+        }
+
+        $attributes = ' srcset="' . implode(', ', $candidates) . '" sizes="' . $sizes . '"';
+        if (strpos($tag, 'decoding=') === false) {
+            $attributes .= ' decoding="async"';
+        }
+
+        return appendHtmlAttributes($tag, $attributes);
+    });
+
+    $preloads = [
+        'platform-p00-r8-reference-exact' => $platformCandidates,
+        'truck-t00-r6' => $truckCandidates,
+    ];
+
+    $html = mapHtmlTags($html, 'link', static function (string $tag) use ($preloads): string {
+        if (strpos($tag, 'rel="preload"') === false || strpos($tag, 'as="image"') === false) {
+            return $tag;
+        }
+
+        foreach ($preloads as $stem => $candidates) {
+            $href = 'href="/assets/images/hero-r8/' . $stem . '.png"';
+            if (strpos($tag, $href) === false) {
+                continue;
             }
-            $srcset[] = '/assets/images/hero-r8/optimized/' . $stem . '-' . $width . '.webp ' . $width . 'w';
+
+            return '<link rel="preload" as="image" href="/assets/images/hero-r8/optimized/' . $stem . '-1280.webp" imagesrcset="' . implode(', ', $candidates) . '" imagesizes="62vw" fetchpriority="high" media="(min-width: 961px)">';
         }
 
-        if (!$allVariantsExist) {
-            continue;
-        }
+        return $tag;
+    });
 
-        $pattern = '~<link\b(?=[^>]*rel="preload")(?=[^>]*as="image")(?=[^>]*href="/assets/images/hero-r8/' . preg_quote($stem, '~') . '\.png")[^>]*>~i';
-        $replacement = '<link rel="preload" as="image" href="/assets/images/hero-r8/optimized/' . $stem . '-1280.webp" imagesrcset="' . implode(', ', $srcset) . '" imagesizes="62vw" fetchpriority="high" media="(min-width: 961px)">';
-        $html = preg_replace($pattern, $replacement, $html, 1) ?? $html;
-    }
-
-    return $html;
-}
-
-$template = file_get_contents($templatePath);
-if (!is_string($template)) {
-    http_response_code(500);
-    header('Content-Type: text/plain; charset=UTF-8');
-    header('Cache-Control: no-store, max-age=0');
-    header('X-Robots-Tag: noindex, nofollow');
-    echo 'Ana sayfa şablonu okunamadı.';
-    exit;
+    echo $html;
 }
 
 header('Content-Type: text/html; charset=UTF-8');
@@ -128,4 +178,4 @@ header('Cache-Control: no-cache, max-age=0, must-revalidate');
 header('X-Hero-Version: R8-11');
 header('Vary: Accept-Encoding');
 
-echo addResponsiveR8Images($template);
+renderHomeTemplate($templatePath);
