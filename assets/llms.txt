@@ -3,34 +3,38 @@
 Canpolat Nakliyat, Edremit / Balıkesir merkezli evden eve ve şehirler arası taşımacılık hizmeti sunar. Yerel hizmet alanları Edremit, Akçay, Altınoluk, Güre, Havran, İvrindi, Burhaniye, Gömeç, Ayvalık ve Küçükkuyu çevresidir. Şehirler arası taşıma Türkiye genelinde planlanır.
 
 ## Ana kaynaklar
-- Ana sayfa: https://www.canpolatnakliyat.com/
-- Hakkımızda: https://www.canpolatnakliyat.com/hakkimizda.html
-- Sık Sorulan Sorular: https://www.canpolatnakliyat.com/sss.html
-- Galeri: https://www.canpolatnakliyat.com/galeri.html
+
+- [Ana sayfa](https://www.canpolatnakliyat.com/)
+- [Hakkımızda](https://www.canpolatnakliyat.com/hakkimizda.html)
+- [Sık Sorulan Sorular](https://www.canpolatnakliyat.com/sss.html)
+- [Galeri](https://www.canpolatnakliyat.com/galeri.html)
 
 ## Hizmetler
-- Evden Eve Nakliyat: https://www.canpolatnakliyat.com/hizmetler/evden-eve-nakliyat.html
-- Şehirler Arası Nakliyat: https://www.canpolatnakliyat.com/hizmetler/sehirler-arasi-nakliyat.html
-- Ofis ve İş Yeri Taşıma: https://www.canpolatnakliyat.com/hizmetler/ofis-isyeri-tasima.html
-- Asansörlü Taşıma: https://www.canpolatnakliyat.com/hizmetler/asansorlu-tasima.html
-- Paketleme ve Montaj: https://www.canpolatnakliyat.com/hizmetler/paketleme-montaj.html
-- Parça Eşya Taşımacılığı: https://www.canpolatnakliyat.com/hizmetler/parca-esya-tasimaciligi.html
+
+- [Evden Eve Nakliyat](https://www.canpolatnakliyat.com/hizmetler/evden-eve-nakliyat.html)
+- [Şehirler Arası Nakliyat](https://www.canpolatnakliyat.com/hizmetler/sehirler-arasi-nakliyat.html)
+- [Ofis ve İş Yeri Taşıma](https://www.canpolatnakliyat.com/hizmetler/ofis-isyeri-tasima.html)
+- [Asansörlü Taşıma](https://www.canpolatnakliyat.com/hizmetler/asansorlu-tasima.html)
+- [Paketleme ve Montaj](https://www.canpolatnakliyat.com/hizmetler/paketleme-montaj.html)
+- [Parça Eşya Taşımacılığı](https://www.canpolatnakliyat.com/hizmetler/parca-esya-tasimaciligi.html)
 
 ## Hizmet bölgeleri
-- Edremit: https://www.canpolatnakliyat.com/bolgeler/edremit-nakliyat.html
-- Akçay: https://www.canpolatnakliyat.com/bolgeler/akcay-nakliyat.html
-- Altınoluk: https://www.canpolatnakliyat.com/bolgeler/altinoluk-nakliyat.html
-- Güre: https://www.canpolatnakliyat.com/bolgeler/gure-nakliyat.html
-- Havran: https://www.canpolatnakliyat.com/bolgeler/havran-nakliyat.html
-- İvrindi: https://www.canpolatnakliyat.com/bolgeler/ivrindi-nakliyat.html
-- Burhaniye: https://www.canpolatnakliyat.com/bolgeler/burhaniye-nakliyat.html
-- Gömeç: https://www.canpolatnakliyat.com/bolgeler/gomec-nakliyat.html
-- Ayvalık: https://www.canpolatnakliyat.com/bolgeler/ayvalik-nakliyat.html
-- Küçükkuyu: https://www.canpolatnakliyat.com/bolgeler/kucukkuyu-nakliyat.html
+
+- [Edremit](https://www.canpolatnakliyat.com/bolgeler/edremit-nakliyat.html)
+- [Akçay](https://www.canpolatnakliyat.com/bolgeler/akcay-nakliyat.html)
+- [Altınoluk](https://www.canpolatnakliyat.com/bolgeler/altinoluk-nakliyat.html)
+- [Güre](https://www.canpolatnakliyat.com/bolgeler/gure-nakliyat.html)
+- [Havran](https://www.canpolatnakliyat.com/bolgeler/havran-nakliyat.html)
+- [İvrindi](https://www.canpolatnakliyat.com/bolgeler/ivrindi-nakliyat.html)
+- [Burhaniye](https://www.canpolatnakliyat.com/bolgeler/burhaniye-nakliyat.html)
+- [Gömeç](https://www.canpolatnakliyat.com/bolgeler/gomec-nakliyat.html)
+- [Ayvalık](https://www.canpolatnakliyat.com/bolgeler/ayvalik-nakliyat.html)
+- [Küçükkuyu](https://www.canpolatnakliyat.com/bolgeler/kucukkuyu-nakliyat.html)
 
 ## İletişim
+
 - Telefon: +90 535 912 06 91
 - E-posta: info@canpolatnakliyat.com
 - Merkez: Edremit / Balıkesir, Türkiye
 
-Bu dosya yalnız site içeriğinin makine tarafından keşfini kolaylaştırmak için hazırlanmıştır. İşletme bilgileri ve hizmet kapsamı için yukarıdaki kanonik sayfalar esas alınmalıdır.
+Bu dosya, yapay zekâ ajanlarının ve büyük dil modeli tabanlı tarayıcıların sitenin kanonik kaynaklarını daha kolay keşfetmesi için hazırlanmıştır. İşletme bilgileri ve hizmet kapsamı için yukarıdaki kanonik sayfalar esas alınmalıdır.
