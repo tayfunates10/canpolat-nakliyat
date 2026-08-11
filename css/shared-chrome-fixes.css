@@ -98,24 +98,26 @@
     text-align: center !important;
   }
 
+  /* Fixed phone actions: slightly larger tap targets while keeping the same
+     three-column geometry, colors and bottom-safe-area positioning. */
   .mobile-contact-bar {
     left: 8px !important;
     right: 8px !important;
-    gap: 4px !important;
-    padding: 5px !important;
+    gap: 5px !important;
+    padding: 6px !important;
   }
   .mobile-contact-bar a {
-    min-height: 42px !important;
-    gap: 5px !important;
-    padding-inline: 3px !important;
-    font-size: clamp(9px, 2.7vw, 11px) !important;
+    min-height: 48px !important;
+    gap: 6px !important;
+    padding-inline: 4px !important;
+    font-size: clamp(10px, 3vw, 12px) !important;
   }
   .mobile-contact-bar svg {
-    width: 17px !important;
-    height: 17px !important;
+    width: 19px !important;
+    height: 19px !important;
   }
   .site-footer {
-    padding-bottom: 112px !important;
+    padding-bottom: 120px !important;
   }
 
   /* Inner/local SEO pages share the same phone geometry as the rest of site. */
@@ -137,12 +139,13 @@
 
 @media (max-width: 380px) {
   .mobile-contact-bar a {
-    gap: 3px !important;
-    font-size: 9px !important;
+    min-height: 46px !important;
+    gap: 4px !important;
+    font-size: 10px !important;
   }
   .mobile-contact-bar svg {
-    width: 16px !important;
-    height: 16px !important;
+    width: 18px !important;
+    height: 18px !important;
   }
 }
 
